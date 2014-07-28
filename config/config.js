@@ -1,5 +1,5 @@
 
-moudle.exports = {
+module.exports = {
 	test: {
 
 	},
