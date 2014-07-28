@@ -1,10 +1,10 @@
 # Enterprise
 
-Enterprise
+Enterprise is a spacecraft(DataFactory) carrying several crews(tasks) for DataAnalysis.
 
 ## Installing
 
-	git clone https://github.com/song940/enterprise.git enterprise
+	git clone https://github.com/guanghetv/enterprise.git enterprise
 	
 	cd enterprise
 	
@@ -18,7 +18,7 @@ Enterprise
 
 The MIT License (MIT)
 
-Copyright (c) 2014 Lsong
+Copyright (c) 2014 guanghe.tv
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
