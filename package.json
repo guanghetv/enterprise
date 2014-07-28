@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/song940/enterprise/issues"
   },
-  "homepage": "https://github.com/song940/enterprise"
+  "homepage": "https://github.com/song940/enterprise",
+  "dependencies": {
+    "promise": "^5.0.0"
+  }
 }
