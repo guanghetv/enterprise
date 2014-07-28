@@ -1,0 +1,23 @@
+{
+  "name": "Enterprise",
+  "version": "1.0.0",
+  "description": "enterprise",
+  "main": "app.js",
+  "scripts": {
+    "app": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/song940/enterprise.git"
+  },
+  "keywords": [
+    "enterprise"
+  ],
+  "author": "lsong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/song940/enterprise/issues"
+  },
+  "homepage": "https://github.com/song940/enterprise"
+}
