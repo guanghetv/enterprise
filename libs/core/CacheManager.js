@@ -1,11 +1,11 @@
 
 var MEMORY_CACHE = {
-	origin: [],
-	middle: []
+	origin: {},
+	middle: {}
 };
 
 exports.storage = function(data, callback){
-	MEMORY_CACHE['origin'] = data;
+	MEMORY_CACHE['origin']['tracks'] = data['tracks'];
 	console.log('[CacheManager]: storage data', data);
 	callback(null, data);
 };

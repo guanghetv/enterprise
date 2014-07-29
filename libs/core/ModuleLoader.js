@@ -1,4 +1,5 @@
-var testModule = require('../../modules/test/index.js');
+var testModule = require('.././index.js');
+
 
 exports.load = function(callback){
 	var modules = [];

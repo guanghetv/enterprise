@@ -16,13 +16,13 @@ exports.bootstrap = function(config, callback){
 					if(err)callback(err);
 					taskManager.register(module);
 				});*/
-				taskManager.run(modules, res, function(err, name, d){
+				/*taskManager.run(modules, res, function(err, name, d){
 					if(err)callback(err);
 					cacheManager.save(name, d, function(err ,r){
 						if(err)callback(err);
 						console.log('[AppEngine] task save :' , r);
 					});
-				});
+				});*/
 			});
 		});
 	});
