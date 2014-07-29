@@ -1,12 +1,22 @@
+/**
+ * Created by solomon on 14-7-29.
+ */
+
+var request = require('request');
 
 exports.load = function(callback){
-	//TODO: load data from database .
-	var data = [];
 
-	data.push({ user: 'lsong', age: 25 });
-	
-	console.info('[DataManager]: load data %s', data);
-	callback(null, data);
+    request('http://localhost:1337', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var data = [];
+            data = JSON.parse(body);
+            console.info('[DataManager]: load data %s', data);
+            callback(null, data);
+        }else{
+            console.err("Error occur when loading origin data: "+ error);
+        }
+    });
+
 };
 
 exports.save = function(data, callback){

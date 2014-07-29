@@ -5,7 +5,6 @@ var MEMORY_CACHE = {
 };
 
 exports.storage = function(data, callback){
-	//TODO:  
 	MEMORY_CACHE['origin'] = data;
 	console.log('[CacheManager]: storage data', data);
 	callback(null, data);
@@ -14,7 +13,7 @@ exports.storage = function(data, callback){
 exports.save = function(name, data, callback){
 	var d = {};
 	d[ name ] = data;
-	MEMORY_CACHE['stats'].push(d);
+	MEMORY_CACHE['middle'].push(d);
 	console.log('[CacheManager]: save data from: %s', name);
 	callback(null, data);
 };

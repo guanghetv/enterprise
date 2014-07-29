@@ -12,15 +12,18 @@
     "url": "https://github.com/guanghetv/enterprise.git"
   },
   "keywords": [
-    "enterprise"
+    "enterprise",
+    "big data",
+    "data analysis"
   ],
-  "author": "lsong",
+  "author": "lsong, gynsolomon",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/guanghetv/enterprise/issues"
   },
   "homepage": "https://github.com/guanghetv/enterprise",
   "dependencies": {
-    "promise": "^5.0.0"
+    "promise": "^5.0.0",
+    "request": "~2.39.0"
   }
 }
