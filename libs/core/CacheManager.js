@@ -1,7 +1,7 @@
 
 var MEMORY_CACHE = {
 	origin: [],
-	stats: []
+	middle: []
 };
 
 exports.storage = function(data, callback){
