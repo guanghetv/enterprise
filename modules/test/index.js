@@ -1,6 +1,9 @@
-/**
- * Created by solomon on 14-7-28.
- */
+
+exports.create = function(data, callback){
+	data['email'] = 'hi@lsong.org';
+	callback(null, data);
+};
+
 exports.restore = function(){
 
-}
+};
