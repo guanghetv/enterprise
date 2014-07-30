@@ -13,7 +13,8 @@ exports.load = function(callback){
             console.info('[DataManager]: load data %s', data);
             callback(null, data);
         }else{
-            console.err("Error occur when loading origin data: "+ error);
+            console.error("Error occur when loading origin data: "+ error);
+            callback(error);
         }
     });
 

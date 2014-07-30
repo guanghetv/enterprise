@@ -10,12 +10,12 @@ exports.bootstrap = function(config, callback){
 		if(err)callback(err);
 		cacheManager.storage(data, function(err, res){
 			if(err)callback(err);
-			moduleLoader.load(function(err, modules){
+			moduleLoader.load(config, function(err, modules){
 				if(err)callback(err);
-				/*moduleLoader.watch(function(err, module){
+				moduleLoader.watch(function(err, module){
 					if(err)callback(err);
 					taskManager.register(module);
-				});*/
+				});
 				taskManager.run(modules, res, function(err, name, d){
 					if(err)callback(err);
 					cacheManager.save(name, d, function(err ,r){
