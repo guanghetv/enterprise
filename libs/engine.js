@@ -5,16 +5,21 @@ var cacheManager	= require('./core/CacheManager');
 var dataManager		= require('./core/DataManager');
 
 exports.bootstrap = function(config, callback){
+	//dataManager
 	dataManager.load(function(err, data){
 		if(err)callback(err);
+		//cacheManager
 		cacheManager.storage(data, function(err, res){
 			if(err)callback(err);
+			//moduleLoader
 			moduleLoader.load(config, function(err, modules){
 				if(err)callback(err);
-				moduleLoader.watch(function(err, module){
+				//moduleWatcher
+				moduleLoader.watch(config,function(err, module){
 					if(err)callback(err);
 					taskManager.register(module);
 				});
+				//taskManager
 				taskManager.run(modules, res, function(err, name, d){
 					if(err)callback(err);
 					cacheManager.save(name, d, function(err ,r){
@@ -22,6 +27,7 @@ exports.bootstrap = function(config, callback){
 						console.log('[AppEngine] task save :' , r);
 					});
 				});
+
 			});
 		});
 	});
