@@ -20,6 +20,7 @@ exports.bootstrap = function(config, callback){
 					taskManager.register(module);
 				});
 				//taskManager
+
 				taskManager.run(modules, res, function(err, name, d){
 					if(err)callback(err);
 					cacheManager.save(name, d, function(err ,r){
@@ -33,3 +34,4 @@ exports.bootstrap = function(config, callback){
 	});
 	callback();
 };
+

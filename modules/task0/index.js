@@ -6,11 +6,11 @@ exports.create = function(data, originData, callback){
         data[key].forEach(function(item){
             var user = _.find(users,function(user){
                 return user.name == key;
-            })
+            });
             item.user['age'] = user.age;
         })
     }
-    callback(null, data);
+	callback(null, data);
 };
 
 exports.restore = function(){
