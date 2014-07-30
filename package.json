@@ -24,6 +24,7 @@
   "homepage": "https://github.com/guanghetv/enterprise",
   "dependencies": {
     "promise": "^5.0.0",
-    "request": "~2.39.0"
+    "request": "~2.39.0",
+    "express": "~4.7.2"
   }
 }

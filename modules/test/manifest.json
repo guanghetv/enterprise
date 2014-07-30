@@ -1,7 +1,0 @@
-{
-    "name": "crew_0001",
-    "description": "This is a task just for test",
-    "type":"individual",
-    "entrance": "index.js",
-    "dependencies":[]
-}

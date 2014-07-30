@@ -1,31 +1,19 @@
 var fileSystem = require('fs');
 var path = require('path');
 
-var loadModules = function(){
-
+var findModules = function(modules_path){
+	var manifests = [];
+	var files = fileSystem.readdirSync(modules_path);
+	files.forEach(function(filename){
+		console.log(path.join(modules_path, filename, 'manifest.json'));
+	});
 };
 
 exports.load = function(config, callback){
 
 	var modules = [];
-	fileSystem.readdir(config.modules_path, function(err, files){
-		files.forEach(function(filename){
-			var manifest = path.join(config.modules_path, filename, 'manifest.json'); 
-			fileSystem.exists(manifest, function(exists){
-				if(!exists)return;
-				var options = {
-					encoding: 'utf8'
-				};
-				fileSystem.readFile(manifest, options, function(err, stream){
-					var json = JSON.parse(stream);
-					console.log(json);
-				});
-			});
-		});
-
-		console.info('[ModulesLoader]: load modules %s', modules);
-		callback(null, modules);
-	});
+	findModules(config.modules_path);
+	
 };
 
 exports.watch = function(){
