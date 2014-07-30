@@ -1,3 +1,6 @@
+/**
+ * Created by solomon on 14-7-29.
+ */
 
 var MEMORY_CACHE = {
 	origin: {},
@@ -5,15 +8,17 @@ var MEMORY_CACHE = {
 };
 
 exports.storage = function(data, callback){
-	MEMORY_CACHE['origin']['tracks'] = data['tracks'];
-	//console.log('[CacheManager]: storage data', data);
-	callback(null, data);
+    MEMORY_CACHE.origin['tracks'] = data['tracks'];
+    MEMORY_CACHE.origin['users'] = data['users'];
+    MEMORY_CACHE.origin['rooms'] = data['rooms'];
+    MEMORY_CACHE.origin['courses'] = data['courses'];
+
+    console.log('[CacheManager]: storage data',data);
+	callback(null, MEMORY_CACHE['origin']);
 };
 
 exports.save = function(name, data, callback){
-	var d = {};
-	d[ name ] = data;
-	MEMORY_CACHE['middle'].push(d);
+	MEMORY_CACHE['middle'][name] = data;
 	console.log('[CacheManager]: save data from: %s', name);
 	callback(null, data);
 };

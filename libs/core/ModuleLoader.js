@@ -21,6 +21,7 @@ var loadModule = function(dir){
 	}
 };
 
+
 exports.load = function(config, callback){
 	var modules = [];
 	fileSystem.readdirSync(config.modules_path).forEach(function(filename){
@@ -29,7 +30,8 @@ exports.load = function(config, callback){
 			modules.push(module);
 		}
 	});
-	callback(null, modules);
+    console.info('[ModulesLoader]: load modules %s', JSON.stringify(modules));
+    callback(null, modules);
 };
 
 exports.watch = function(config){

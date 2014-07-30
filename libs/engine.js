@@ -24,7 +24,7 @@ exports.bootstrap = function(config, callback){
 					if(err)callback(err);
 					cacheManager.save(name, d, function(err ,r){
 						if(err)callback(err);
-						console.log('[AppEngine] task save :' , r);
+						console.log('[AppEngine] task save :' , JSON.stringify(r));
 					});
 				});
 
@@ -33,4 +33,3 @@ exports.bootstrap = function(config, callback){
 	});
 	callback();
 };
-
