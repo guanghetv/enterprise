@@ -1,4 +1,3 @@
-var _ = require('underscore');
 exports.create = function(key,data, originData, callback){
     console.log("--------填充用户信息--------");
     var users = originData.users;
