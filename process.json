@@ -1,14 +1,8 @@
 {
-    "apps" : [{
         "name"        : "DataServer",
         "script"      : "server.js",
         "watch"       : "true",
         "env": {
             "NODE_ENV": "production"
         }
-    },{
-        "name"       : "DataFactory",
-        "script"     : "app.js",
-        "exec_mode"  : "cluster_mode"
-    }]
 }

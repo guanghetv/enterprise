@@ -23,10 +23,10 @@ exports.bootstrap = function(config, callback){
 
 				taskManager.run(modules, res, function(err, name, d){
 					if(err)callback(err);
-					cacheManager.save(name, d, function(err ,r){
+					/*cacheManager.save(name, d, function(err ,r){
 						if(err)callback(err);
 						console.log('[AppEngine] task save :' , JSON.stringify(r));
-					});
+					});*/
 				});
 
 			});

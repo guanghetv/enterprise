@@ -1,9 +1,12 @@
+var _ = require('underscore');
+exports.create = function(data,originData,callback){
+    console.log('----------正在添加 room 信息----------');
+    var rooms = originData.rooms;
 
-exports.create = function(data, callback){
+
 	callback(null, data);
 };
 
-/*
-exports.restore = function(){
+/*exports.restore = function(){
 
 };*/

@@ -1,15 +1,15 @@
 var _ = require('underscore');
-exports.create = function(data, originData, callback){
+exports.create = function(key,data, originData, callback){
     console.log("--------填充用户信息--------");
     var users = originData.users;
-    for(var key in data){
-        data[key].forEach(function(item){
-            var user = _.find(users,function(user){
-                return user.name == key;
-            });
-            item.user['age'] = user.age;
-        })
-    }
+
+    _.each(data,function(track,index){
+        var user = _.find(users,function(user){
+            return user.name == key;
+        });
+        track.user['age'] = user.age;
+    });
+    console.log(JSON.stringify(data));
 	callback(null, data);
 };
 

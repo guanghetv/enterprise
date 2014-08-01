@@ -1,5 +1,3 @@
-var Parallel = require('paralleljs');
-
 exports.create = function(data,originData, callback){
     console.log("--------按用户分类事件--------");
     var userifyTracks = {};
@@ -10,6 +8,7 @@ exports.create = function(data,originData, callback){
         }
         userifyTracks[item.user.name].push(item);
     });
+
     callback(null, userifyTracks);
 };
 
