@@ -2,13 +2,17 @@
  * Created by solomon on 14-8-5.
  */
 
+
 module.exports = function(app) {
 
-    //--------------------API-----------------------
+    var individuals = require('./app/controllers/individuals');
 
-    app.get('/stats/individuals',function(req,res){
-        var query = req.query;
-        res.send(query);
-    });
+    //--------------------API2-----------------------
+    app.post('/stats/individuals',individuals.testPost);
+
+
+    //--------------------API3-----------------------
+
+    app.get('/stats/individuals',individuals.testGet);
 
 };
