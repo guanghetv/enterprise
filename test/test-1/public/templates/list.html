@@ -1,0 +1,10 @@
+<h1>{{ app | uppercase }}</h1>
+<div class="row"  >
+	<a ng-repeat="chapter in chapters" href="#/{{ app | lowercase }}/{{ chapter.name | lowercase }}" class="card card-chapter" >
+		<div class="card-header"></div>
+		<div class="card-content">
+			<h4>{{ chapter.name }}</h4>
+			<span>{{ chapter.describe }}</span>
+		</div>
+	</a>
+</div>

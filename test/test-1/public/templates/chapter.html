@@ -1,0 +1,29 @@
+<div class="chapter-title" >
+	<h1>{{ chapter | uppercase }}</h1>
+</div>
+<div class="chapter-layer" id="accordion">
+	<div ng-repeat="layer in layers" class="panel layer">
+		<div class="layer-header">
+		  <img class="layer-icon" src="http://placekitten.com/100/100">
+		  <h4 class="layer-title">{{ layer.name }}</h4>
+		  <div class="layer-describe">{{ layer.describe }}</div>
+		</div>
+		<div id="{{ layer.name | lowercase }}" class="layer-content panel-collapse collapse row" >
+			<ul class="col-md-7 lessons-main">
+				<li ng-repeat="lesson in layer.lessons.main" class="lesson">
+					<img class="lesson-icon" src="http://placekitten.com/100/100" ng-src="{{ lesson.img }}" />
+					<a class="lesson-title" href="#/{{ app | lowercase }}/{{ chapter | lowercase }}/{{ lesson.name | lowercase }}">{{ lesson.name }}</a>
+				</li>
+			</ul>
+			<ul class="col-md-5 lessons-extra">
+				<li ng-repeat="lesson in layer.lessons.extra" class="lesson">
+					<img class="lesson-icon" src="http://placekitten.com/100/100" ng-src="{{ lesson.img }}" />
+					<a class="lesson-title" href="#/{{ app | lowercase }}/{{ chapter | lowercase }}/{{ lesson.name | lowercase }}">{{ lesson.name }}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="layer-footer">
+			<a href data-toggle="collapse" data-parent="#accordion" data-target="#{{ layer.name | lowercase }}" >collapse</a>
+		</div>
+	</div>
+</div>
