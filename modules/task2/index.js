@@ -9,9 +9,6 @@ exports.create = function(key,data,originData,callback){
     });
     console.log(JSON.stringify(data));
     callback(null, data);
-
-
-	callback(null, data);
 };
 
 exports.restore = function(){

@@ -20,14 +20,19 @@ exports.bootstrap = function(config, callback){
 					taskManager.register(module);
 				});
 				//taskManager
+				taskManager.run(modules, res, function(msg,err, name, d){
+                    if(err)callback(err);
+                    if(msg!=undefined && msg === 'all is well'){
+                        cacheManager.load(function(err,mem){dataManager.save(mem)},'middle')
+                    }else{
+                        cacheManager.save(name, d, function(err ,r){
+                            if(err)callback(err);
+                            console.log('[AppEngine] task save :' , JSON.stringify(r));
+                        });
+                    }
 
-				taskManager.run(modules, res, function(err, name, d){
-					if(err)callback(err);
-					/*cacheManager.save(name, d, function(err ,r){
-						if(err)callback(err);
-						console.log('[AppEngine] task save :' , JSON.stringify(r));
-					});*/
 				});
+
 
 			});
 		});

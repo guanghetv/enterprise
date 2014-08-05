@@ -18,5 +18,11 @@ exports.testPost = function(req,res){
 
 exports.testGet = function(req,res){
     var query = req.query;
-    res.send(query);
+    var ret = [];
+    Individuals
+        .find({"stats.chapterId":query.chapterId})
+        .where('user.rooms.roomId').equals(query.roomId)
+        .exec(function(err,result){
+            res.send(result);
+        });
 };

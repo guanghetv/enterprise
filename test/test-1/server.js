@@ -19,8 +19,6 @@ app.use(bodyParser.json());
 
 require('./route')(app);
 
-
-
 //error handler
 app.use(function(req, res, next){
 	res.status(404).end('404 Not Found .');

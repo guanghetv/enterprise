@@ -17,9 +17,13 @@ exports.storage = function(data, callback){
 	callback(null, MEMORY_CACHE['origin']);
 };
 
-exports.save = function(name, data, callback){
-	MEMORY_CACHE['middle'][name] = data;
-	console.log('[CacheManager]: save data from: %s', name);
+exports.save = function(name,data, callback){
+    if(MEMORY_CACHE['middle'][name]==undefined){
+        MEMORY_CACHE['middle'][name] = [];
+    }
+
+    MEMORY_CACHE['middle'][name].push(data);
+    console.log('[CacheManager]: save data from: %s', name);
 	callback(null, data);
 };
 

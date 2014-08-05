@@ -18,6 +18,40 @@ exports.load = function(callback){
 };
 
 exports.save = function(data, callback){
-	console.info('[DataManager]: save data %s', data);
-	callback(null, data);
+	console.info('[DataManager]: upload data %s', JSON.stringify(data.crew_0003));
+    var finalStats = data.crew_0003;
+
+    var postStats = function(data,callback){
+        request(
+            {
+                method: 'POST',
+                uri: 'http://localhost:3002/stats/individuals',
+                headers:{'content-type': 'application/json'},
+                body:JSON.stringify(data)
+            },
+
+            function (error, response, body) {
+                if(response.statusCode == 200){
+                    console.log(body);
+                } else {
+                    console.log('error: '+ response.statusCode);
+                    console.log(body)
+                }
+                callback(error,response.statusCode);
+            }
+        );
+    };
+
+    var uploadTasks = [];
+    _.each(finalStats,function(stat){
+       uploadTasks.push(function(cb){
+           postStats(stat,function(err,statusCode){
+               cb(err,statusCode);
+           });
+       })
+    });
+
+    async.parallelLimit(uploadTasks,10,function(err,result){
+        console.log(result);
+    });
 };

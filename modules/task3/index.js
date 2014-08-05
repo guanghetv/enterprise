@@ -1,4 +1,3 @@
-
 exports.create = function(key,data,originData,callback){
     console.log('-------计算个人做题状况-------');
 
@@ -18,11 +17,9 @@ exports.create = function(key,data,originData,callback){
         }
     });
 
-    console.log(problemSituation);
-
-
-
-    callback(null, data);
+    var stats = {"user":data[0].user,"stats":[{"chapterId":"c01","problemStats":problemSituation}]};
+    console.log(stats);
+    callback(null, stats);
 };
 
 exports.restore = function(){
