@@ -1,0 +1,3 @@
+GET  /stats/individuals/  
+parameters: chapterId = c01 roomId = r01 | r02 
+return [{"user":{"name":"longchao","rooms":[{"roomId":"r02","school":"光合新知厨师挖掘机学校"}],"age":"28"},"stats":[{"chapterId":"c01","problemStats":{jsonstring}}]}]
