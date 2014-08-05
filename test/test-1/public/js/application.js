@@ -21,7 +21,17 @@
       	templateUrl: 'templates/home.html'
       });
 
-      $routeProvider
+    $routeProvider
+      .when('/analytics', {
+        controller: 'AnalyticsCtrl',
+        templateUrl: 'templates/analytics.html'
+      })
+      .when('/analytics/:page', {
+        controller: 'AnalyticsCtrl',
+        templateUrl: 'templates/analytics.html'
+      })
+
+    $routeProvider
       .when('/:app', {
         controller: 'LearnCtrl',
         templateUrl: 'templates/list.html'
@@ -37,7 +47,9 @@
       .when('/:app/:chapter/:lesson/:activity', {
         controller: 'LearnCtrl',
         templateUrl: 'templates/list.html'
-      })
+      });
+
+
 
       $routeProvider.otherwise({
         redirectTo: '/'
@@ -106,6 +118,28 @@
     $scope.makeAnswer = function(){
       $scope.dialogs.push({ role: (+new Date) % 2 == 0 ? 'student': 'teather', content: new Date });
     };
+  });
+  
+  ngApp.controller('AnalyticsCtrl', function($scope, $routeParams){
+    var currentPage = $routeParams.page;
+    console.log(currentPage);
+    $scope.isActive = function(exp){
+      var regex = new RegExp('^'+ exp + '$');
+      return regex.test(currentPage);
+    };
+
+    $scope.data =   [];
+    $scope.columns = ["#"];
+
+    for(var i=0;i<30;i++){
+      var d = { '#' : "学生" + i };
+      $scope.columns.push('三角形的高 '+i);
+      for(var j=0;j<30;j++){
+        d['三角形的高 ' + j] = j;
+      }
+      $scope.data.push(d);
+    }
+    console.log($scope.data);
   });
 
 })(window, window.angular);
