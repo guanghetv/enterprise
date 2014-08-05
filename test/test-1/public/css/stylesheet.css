@@ -237,6 +237,7 @@
 
 .chapter-switcher .abtn{
 	padding: 5px;
+	cursor: pointer;
 	border: #ccc 1px solid;
 	border-radius: 20px;
 }
@@ -258,6 +259,8 @@
 }
 
 .pie svg:hover{
-	-webkit-animation-name: fadeIn;
+	transition: all .3s ease-in-out;
 	background: rgba(255,255,255,.35);
+	border-radius: 10px;
+	cursor: pointer;
 }

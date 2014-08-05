@@ -7,12 +7,11 @@ angular.module('ngNavbar', [])
       restrict: 'AE',
       transclude: true,
       scope: {},
-      controller: function($scope, $element, $location, $http) {
+      controller: function($scope, $element, $location) {
       	$scope.isActive = function(path){
           var regex = RegExp(path);
       		return regex.test($location.path());
       	};
-
       	$scope.logout = function(){
       		$http.delete('/session')
       		.error(function(){

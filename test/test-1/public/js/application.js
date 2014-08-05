@@ -1,6 +1,6 @@
 ;(function(win, ng, undefined){
 
-  var ngApp = ng.module('project', [ 'ngRoute','ngNavbar']);
+  var ngApp = ng.module('project', [ 'ngRoute','ngNavbar', 'ngPie', 'ngTable' ]);
 
   ngApp.config(function($routeProvider){
     $routeProvider
@@ -120,26 +120,26 @@
     };
   });
   
-  ngApp.controller('AnalyticsCtrl', function($scope, $routeParams){
+  ngApp.controller('AnalyticsCtrl', function($scope, $routeParams, $location, $http){
     var currentPage = $routeParams.page;
-    console.log(currentPage);
+
+    if(!currentPage)$location.path('/analytics/overview');
+
+    $scope.chapter = "三角形的中线";
+
     $scope.isActive = function(exp){
       var regex = new RegExp('^'+ exp + '$');
       return regex.test(currentPage);
     };
 
-    $scope.data =   [];
-    $scope.columns = ["#"];
+    $scope.switchChapter = function(ori){
+      $scope.chapter = ori ? "三角形" : "三角形的中线";
+    };
 
-    for(var i=0;i<30;i++){
-      var d = { '#' : "学生" + i };
-      $scope.columns.push('三角形的高 '+i);
-      for(var j=0;j<30;j++){
-        d['三角形的高 ' + j] = j;
-      }
-      $scope.data.push(d);
-    }
-    console.log($scope.data);
+    $scope.data = { name: '' };
+
+
+
   });
 
 })(window, window.angular);
