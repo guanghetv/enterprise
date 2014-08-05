@@ -22,12 +22,20 @@ app.use(function(req, res, next){
 		next();
 	}
 });
+
+
+require('./route')(app);
+
 //error handler
 app.use(function(req, res, next){
 	res.status(404).end('404 Not Found .');
 	next();
 });
 
+
 var server = app.listen(3002, function(){
 	console.log("server is running at %s", server.address().port);
 });
+
+//expose app
+module.exports = app;
