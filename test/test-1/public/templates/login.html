@@ -1,0 +1,20 @@
+<div class="login-screen">
+  <div class="login-icon">
+  	<img src="http://designmodo.github.io/Flat-UI/images/login/icon.png" />
+    <h4>Welcome to <small>My App</small></h4>
+  </div>
+  <form class="login-form" >
+    <div class="form-group">
+      <input ng-model="username" type="text" class="form-control login-field" placeholder="Enter your name" >
+      <label class="login-field-icon fui-user" for="login-name"></label>
+    </div>
+
+    <div class="form-group">
+      <input ng-model="password" type="password" class="form-control login-field" placeholder="Password" >
+      <label class="login-field-icon fui-lock" for="login-pass"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg btn-block" ng-click="login()" >Log in</button>
+    <a class="login-link" href="#">Lost your password?</a>
+  </form>
+</div>

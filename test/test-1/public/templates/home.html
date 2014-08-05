@@ -1,0 +1,10 @@
+<h1>App</h1>
+<div class="row"  >
+	<a ng-repeat="app in apps"  href="#/{{ app.name | lowercase }}" class="card card-app" >
+		<div class="card-header"></div>
+		<div class="card-content">
+			<h4>{{ app.name }}</h4>
+			<span>{{ app.describe }}</span>
+		</div>
+	</a>
+</div>

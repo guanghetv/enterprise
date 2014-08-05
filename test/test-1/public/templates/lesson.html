@@ -1,0 +1,25 @@
+<div class="activety">
+	<div class="dialog">
+		<ul class="dialog-container">
+			<li ng-repeat="dialog in dialogs" ng-class="dialog.role" class="dialog-item">
+				<img class="dialog-avatar" ng-src="{{ dialog.avatar }}" src="http://placekitten.com/100/100" />
+				<div class="dialog-bubble" >
+					<div class="dialog-arrow"></div>
+					<div class="dialog-content">
+						{{ dialog.content }}
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="operator" >
+		<div class="operator-container row">
+			<div class="col-md-8 text-center">
+				<button ng-repeat="option in options" class="btn btn-lg btn-danger" data-toggle="button" >{{ option.text }}</button>
+			</div>
+			<div class="col-md-4 text-right">
+				<button class="btn btn-success" ng-click="makeAnswer()" >Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
