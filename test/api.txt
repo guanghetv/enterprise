@@ -1,3 +1,9 @@
 GET  /stats/individuals/  
 parameters: chapterId = c01 roomId = r01 | r02 
 return [{"user":{"name":"longchao","rooms":[{"roomId":"r02","school":"光合新知厨师挖掘机学校"}],"age":"28"},"stats":[{"chapterId":"c01","problemStats":{jsonstring}}]}]
+
+
+GET /stats/rooms/
+parameters: chapterId = c01 roomId = r01 | r02
+return {"chapter":{"chapterId":"c01","chapterTitle":"三角形"},"lessons":[{"lesson":{"lessonId":"l01","lessonTitle":"三角形的角平分线"},"stats":{"FinishCount":"25","VideoRatio":"78%","QuizRatio":"69%"}}...]}
+
