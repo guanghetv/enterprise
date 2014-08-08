@@ -216,13 +216,21 @@
 	overflow: scroll;
 }
 
-.overview-1{
-	height: 200px;
+.overview-lesson{
+	width: 100%;
+	height: 300px;
 }
-.overview-2{
-	height: 400px;
-	padding:50px;
+.overview-chart{
+
 	background: #3498DB;
+}
+
+.overview-chart-inner{
+		padding-bottom: 50px;
+	padding-left: 100px;
+}
+.overview-detail{
+	text-align: center;
 }
 
 .chapter-switcher{
@@ -243,24 +251,60 @@
 }
 
 
-.progress-meter .background {
+.pie .background {
   fill: #ccc;
 }
 
-.progress-meter .foreground {
+.pie .foreground {
   fill: #E67E22;
 }
 
-.progress-meter text {
-  color: white;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 24px;
+.pie text {
+	fill: white;
+  font-family: 'Georgia' , "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: bold;
 }
 
 .pie svg:hover{
-	transition: all .3s ease-in-out;
+	transition: all .3s;
 	background: rgba(255,255,255,.35);
 	border-radius: 10px;
 	cursor: pointer;
+}
+
+.pie-active svg{
+	background: rgba(255,255,255,.35);
+	border-radius: 10px;
+}
+
+
+.overview-chart-arrow{
+	width: 30px;
+	height: 30px;
+	background: white;
+	position: relative;
+	top: -15px;
+	left: 49%;
+	transform: rotate(45deg);
+}
+
+.overview-detail-arrow{
+	width: 30px;
+	height: 30px;
+	background: #3498DB;
+	position: relative;
+	top: -15px;
+	left: 49%;
+	transform: rotate(45deg);
+	transition: all .3s;
+}
+
+.pie-1 .overview-detail-arrow{
+	left: 17%;
+}
+.pie-2 .overview-detail-arrow{
+	left: 49%;
+}
+.pie-3 .overview-detail-arrow{
+	left: 80%;
 }

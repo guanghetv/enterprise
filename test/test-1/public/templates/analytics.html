@@ -4,13 +4,11 @@
 	  <li ng-class="{ active: isActive('overview|undefined') }" ><a href="#/analytics/overview" role="tab" >Overview</a></li>
 	  <li ng-class="{ active: isActive('student' ) }" ><a href="#/analytics/student"  role="tab" >Student</a></li>
 	  <li class="weight" >
-	  	<label>Chapter</label>
-	  	<select class="select-block">
-		    <option>三角形</option>
-		  </select>
+	  	<label>Chapter: </label>
+	  	<select class="select-block" ng-options="chapter.appId as chapter.name for chapter in chapters" ng-model="chapter" ></select>
 	  </li>
 	  <li class="weight">
-	  	<label>Class</label>
+	  	<label>Class: </label>
 	  	<select class="select-block">
 		    <option>初一1班</option>
 		  </select>
@@ -19,38 +17,35 @@
 	<!-- Tab panes -->
 	<div class="tab-content">
 	  <div class="tab-pane" ng-class="{ active: isActive('overview') }" >
-	  	<div class="overview-1"></div>
-	  	<div class="overview-2">
+	  	<div class="overview-lesson">
+	  		<d3-lesson></d3-lesson>
+	  	</div>
+	  	<div class="overview-chart">
+	  		<div class="overview-chart-arrow"></div>
 	  		<ul class="chapter-switcher">
-	  			<li ng-click="switchChapter(false)" class="abtn fui-arrow-left"  ></li>
-	  			<li class="" >{{ chapter }}</li>
-	  			<li ng-click="switchChapter(true)" class="abtn fui-arrow-right"  ></li>
+	  			<li ng-click="switchLesson(false)" class="abtn fui-arrow-left"  ></li>
+	  			<li class="" >{{ lesson.lessonTitle }}</li>
+	  			<li ng-click="switchLesson(true)" class="abtn fui-arrow-right"  ></li>
 	  		</ul>
-	  		<div class="row">
-				  <pie class="col-md-4 pie" width="250" height="280" max="100" value="48" ng-click="activePie()" ></pie>
-				  <pie class="col-md-4 pie" width="250" height="280" max="100" value="26" ng-click="activePie()" ></pie>
-				  <pie class="col-md-4 pie" width="250" height="280" max="100" value="48" ng-click="activePie()" ></pie>
+	  		<div class="row overview-chart-inner">
+				  <d3-pie id="pie-1" class="col-md-4 pie" width="250" height="280" max="100" value="{{ stats.FinishCount }}" ng-click="activePie($event)" text='完成此课的人数' ></d3-pie>
+				  <d3-pie id="pie-2" class="col-md-4 pie" width="250" height="280" max="100" value="{{ stats.VideoRatio }}" ng-click="activePie($event)" text='视频完成度' ></d3-pie>
+				  <d3-pie id="pie-3" class="col-md-4 pie" width="250" height="280" max="100" value="{{ stats.QuizRatio }}" ng-click="activePie($event)" text='巩固题正确率' ></d3-pie>
 				</div>
 	  	</div>
-	  	<div class="overview-3"></div>
+	  	<div class="overview-detail tab-content {{ pie }}"  >
+		  	<div class="overview-detail-arrow"></div>
+		  	<div class="pie-1 tab-pane" ng-class="{ active: pie == 'pie-1' }"  ></div>
+		  	<div class="pie-2 tab-pane" ng-class="{ active: pie == 'pie-2' }"  >
+		  			<div class="col-md-4">几乎没看</div>
+			  		<div class="col-md-4">看了一点</div>
+			  		<div class="col-md-4">看完了</div>
+		  	</div>
+		  	<div class="pie-3 tab-pane" ng-class="{ active: pie == 'pie-3' }"  ></div>
+	  	</div>
 	  </div>
 	  <div class="tab-pane table-scroll table-condensed" ng-class="{ active: isActive('student') }" >
 	  <table ng-table class="table table-bordered table-striped table-condensed"></table>
 	  </div>
 	</div>
-</div>
-<script type="text/javascript">
-var func = function(id){
-
-};
-
-setTimeout(function(){
-	func("#pie-1");
-},1000);
-setTimeout(function(){
-	func("#pie-2");
-},2000);
-setTimeout(function(){
-	func("#pie-3");
-},3000);
-</script>
+</div

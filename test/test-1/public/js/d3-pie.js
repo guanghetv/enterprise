@@ -1,16 +1,17 @@
 ;(function(win, ng, undefined){
-angular.module('ngPie', [])
-  .directive('pie', function() {
+angular.module('d3Pie', [])
+  .directive('d3Pie', function() {
     return {
       restrict: 'AE',
       transclude: true,
-      scope: {},
+      scope: {
+        value: '@'
+      },
       controller: function($scope, $element, $location, $http, $attrs) {
-        console.log();
         var width = +$attrs.width || 0,
           height = +$attrs.height || 0,
-          max = +$attrs.max,
-          value = +$attrs.value,
+          max = +$attrs.max || 100,
+          value = +$attrs.value || 0,
           twoPi = 2 * Math.PI,
           progress = 0,
           formatPercent = d3.format(".0%");
@@ -26,19 +27,19 @@ angular.module('ngPie', [])
 
 
         var warpper = svg.append("g")
+            .attr('fill', '#fff')
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 
         var title = svg.append("g")
             .append("text")
-            .attr("text-anchor", "middle")
             .attr('dx', "7em")
             .attr("dy", "15em")
-            .attr('class', "word")
-            .text('完成此课的人数');
+            .attr("text-anchor", "middle")
+            .text($attrs.text);
 
         var meter = warpper.append("g")
-            .attr("class", "progress-meter");
+            .attr("class", "pie-inner");
 
         meter.append("path")
             .attr("class", "background")
@@ -51,17 +52,26 @@ angular.module('ngPie', [])
             .attr("text-anchor", "middle")
             .attr("dy", ".35em");
 
-        var i = d3.interpolate(progress, value / max);
-        progress = i(1);
-        foreground.attr("d", arc.endAngle(twoPi * progress));
-        text.text(formatPercent(progress));
+        var animate = function(percentage){
+          var i = d3.interpolate(progress, percentage);
+          d3.select($element.get(0))
+            .transition()
+            .delay(300)
+            .duration(800)
+            .tween("progress", function () {
+              return function (t) {
+                  progress = i(t);
+                  foreground.attr("d", arc.endAngle(twoPi * progress));
+                  text.text(formatPercent(progress));
+              };
+          });
+        }; 
+        animate(value / max);
 
-        d3.transition().tween("progress", function() {
-          return function(t) {
-            
-          };
-        });
-
+        $attrs.$observe('value', function(v) {
+           /// do what is needed with passedId
+           animate(v / max);
+         });
       },
       template: ''
     };
