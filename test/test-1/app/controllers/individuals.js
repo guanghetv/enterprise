@@ -11,6 +11,7 @@ exports.testPost = function(req,res){
         if(!err){
             res.status(200).send({"message":"successfully created this stats"});
         }else{
+            console.log(err);
             res.status(500).send({"message":err});
         }
     })
@@ -18,10 +19,9 @@ exports.testPost = function(req,res){
 
 exports.testGet = function(req,res){
     var query = req.query;
-    var ret = [];
     Individuals
-        .find({"stats.chapterId":query.chapterId})
-        .where('user.rooms.roomId').equals(query.roomId)
+        .find({"stats.chapter.chapterId":query.chapterId})
+        .where('user.rooms._id.oid').equals(query.roomId)
         .exec(function(err,result){
             res.send(result);
         });
