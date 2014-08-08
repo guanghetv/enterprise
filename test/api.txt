@@ -7,3 +7,4 @@ GET /stats/rooms/
 parameters: chapterId = c01 roomId = r01 | r02
 return {"chapter":{"chapterId":"c01","chapterTitle":"三角形"},"lessons":[{"lesson":{"lessonId":"l01","lessonTitle":"三角形的角平分线"},"stats":{"FinishCount":"25","VideoRatio":"78%","QuizRatio":"69%"}}...]}
 
+http://localhost:3002/stats/individuals?chapterId=539fb9834353b42976e62d72&roomId=5396a9feec7e86764f00a1bb
