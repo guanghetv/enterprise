@@ -9,6 +9,7 @@ var db = mongoose.connect("mongodb://localhost/enterprise");
 //simple logger
 app.use(function(req, res, next){
 	console.log("\033[0;32m%s \033[1;33m%s", req.method, req.url);
+	res.set('Access-Control-Allow-Origin', '*');
 	next();
 });
 //serval static file
