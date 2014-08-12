@@ -5,33 +5,35 @@ exports.create = function (key, data, originData, callback) {
     var chapterSituation = {};
     _.each(data, function (track) {
         if (track.course != undefined) {
-            if (chapterSituation[track.course.ChapterId] == null) {
-                chapterSituation[track.course.ChapterId] = {};
+            var chapterId = track.course.ChapterId;
+            if (chapterSituation[chapterId] == null) {
+                chapterSituation[chapterId] = {};
+            }
+            var lessonId = track.course.LessonId;
+            if (chapterSituation[chapterId][lessonId] == null) {
+                chapterSituation[chapterId][lessonId] = {};
+                chapterSituation[chapterId][lessonId].lesson = {};
+                chapterSituation[chapterId][lessonId].stats = {};
+            }
+            chapterSituation[chapterId][lessonId].lesson['lessonId'] = lessonId;
+            chapterSituation[chapterId][lessonId].lesson['lessonTitle'] = track.course.LessonTitle;
+            chapterSituation[chapterId][lessonId].lesson['layerId'] = track.course.LayerId;
+
+            if (chapterSituation[chapterId][lessonId].stats['QuizSituation'] == null) {
+                chapterSituation[chapterId][lessonId].stats['QuizSituation'] = {};
             }
 
-            if (chapterSituation[track.course.ChapterId][track.course.LessonId] == null) {
-                chapterSituation[track.course.ChapterId][track.course.LessonId] = {};
-                chapterSituation[track.course.ChapterId][track.course.LessonId].lesson = {};
-                chapterSituation[track.course.ChapterId][track.course.LessonId].stats = {};
+            if (chapterSituation[chapterId][lessonId].stats['VideoSituation'] == null) {
+                chapterSituation[chapterId][lessonId].stats['VideoSituation'] = {};
             }
-            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['lessonId'] = track.course.LessonId;
-            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['lessonTitle'] = track.course.LessonTitle;
-            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['layerId'] = track.course.LayerId;
-
-            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'] == null) {
-                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'] = {};
-            }
-
-            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['VideoSituation'] == null) {
-                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['VideoSituation'] = {};
-            }
-
-            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId] == null) {
-                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId] = {};
-                if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time] == null) {
-                    chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time] = {};
+            var problemId = track.course.ProblemId;
+            if (chapterSituation[chapterId][lessonId].stats['QuizSituation'][problemId] == null) {
+                chapterSituation[chapterId][lessonId].stats['QuizSituation'][problemId] = {};
+                var time = new Date(track.headers.time).getTime();
+                if (chapterSituation[chapterId][lessonId].stats['QuizSituation'][problemId][time] == null) {
+                    chapterSituation[chapterId][lessonId].stats['QuizSituation'][problemId][time] = {};
                 }
-                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time]['is_correct'] = track.data.properties.Correct ;
+                chapterSituation[chapterId][lessonId].stats['QuizSituation'][problemId][time]['is_correct'] = track.data.properties.Correct ;
             }
         }
     });
