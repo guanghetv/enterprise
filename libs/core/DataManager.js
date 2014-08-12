@@ -2,19 +2,64 @@
  * Created by solomon on 14-7-29.
  */
 
-var request = require('request');
-
 exports.load = function(callback){
-    request('http://localhost:2333/origin', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            var data = JSON.parse(body);
-            console.info('[DataManager]: load data %s', data);
-            callback(null, data);
-        }else{
-            console.error("Error occur when loading origin data: "+ error);
-            callback(error);
-        }
-    });
+    if(global.mothership_cookie == undefined){
+        callback("No cookie, cannot connect to mothership!");
+    }else{
+        var j = request.jar();
+        var cookie = request.cookie(global.mothership_cookie);
+        j.setCookie(cookie, 'http://localhost:3000/login');
+
+        var getDataTasks = [];
+        var tasks = [
+            {key:'users',url:'http://localhost:3000/users'},
+            {key:'schools',url:'http://localhost:3000/schools?mode=all'},
+            {key:'courses',url:'http://localhost:3000/api/v1/courses'},
+            //{key:'tracks',url:'http://localhost:3000/tracks'},
+            {key:'tracks',url:'http://localhost:3000/tracks?query={"data.event":"AnswerProblem"}'}
+        ];
+
+        var getDataTask = function(key,url,callback){
+            request({url: url, jar: j},  function(err, httpResponse, body) {
+                if (err) {
+                    callback(err);
+                }else{
+                    if(httpResponse.statusCode == 200){
+                        console.info('[DataManager]: Load '+key +' data succeed!');
+                        var data = {};
+                        data[key] = body;
+                        callback(null,data);
+                    }else{
+                        callback(body);
+                    }
+                }
+            });
+        };
+        _.each(tasks,function(task){
+            getDataTasks.push(function(cb){
+                getDataTask(task.key,task.url,function(err,data){
+                    if(err!=null){
+                        console.error(err);
+                    }else{
+                        cb(err,data)
+                    }
+                });
+            })
+        });
+        async.parallel(getDataTasks,function(err,results){
+            if(err){
+                callback(err);
+            }else{
+                var originData = {};
+                _.each(results,function(result){
+                    for(var key in result){
+                        originData[key] = JSON.parse(result[key]);
+                    }
+                });
+                callback(null,originData);
+            }
+        });
+    }
 };
 
 exports.save = function(data, callback){
@@ -43,12 +88,14 @@ exports.save = function(data, callback){
     };
 
     var uploadTasks = [];
-    _.each(finalStats,function(stat){
-       uploadTasks.push(function(cb){
-           postStats(stat,function(err,statusCode){
-               cb(err,statusCode);
-           });
-       })
+    _.each(finalStats,function(stats){
+        _.each(stats,function(stat){
+            uploadTasks.push(function(cb){
+                postStats(stat,function(err,statusCode){
+                    cb(err,statusCode);
+                });
+            });
+        });
     });
 
     async.parallelLimit(uploadTasks,10,function(err,result){

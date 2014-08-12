@@ -51,7 +51,6 @@ exports.run = function (modules, originData, callback) {
                 );
             });
 
-
             async.parallel(userTasks,function(err,result){
                 if(!err){
                     callback('all is well');

@@ -1,93 +1,61 @@
-/*
-exports.create = function(key,data,originData,callback){
+exports.create = function (key, data, originData, callback) {
     console.log('-------计算个人做题状况-------');
-
-    var problemSituation = {};
-
-    _.each(data,function(track){
-        if(problemSituation[track.problemId] == null){
-            problemSituation[track.problemId] = {};
-            problemSituation[track.problemId]['correct_count'] = 0;
-            problemSituation[track.problemId]['wrong_count'] = 0;
-        }
-
-        if(track.correct === 'true'){
-            problemSituation[track.problemId]['correct_count'] ++;
-        }else{
-            problemSituation[track.problemId]['wrong_count'] ++;
-        }
-    });
-
-    var stats = {"user":data[0].user,"stats":[{"chapterId":"c01","problemStats":problemSituation}]};
-    console.log(stats);
-    callback(null, stats);
-};
-*/
-
-/*exports.create = function(key,data,originData,callback){
-    console.log('-------计算个人做题状况-------');
-
-    var problemSituation = {};
-
-    _.each(data,function(track){
-        if(track.course!=undefined){
-            if(problemSituation[track.course.ProblemId] == null){
-                problemSituation[track.course.ProblemId] = {};
-                problemSituation[track.course.ProblemId]['correct_count'] = 0;
-                problemSituation[track.course.ProblemId]['wrong_count'] = 0;
+    var courses = originData.courses;
+    var allStats = [];
+    var chapterSituation = {};
+    _.each(data, function (track) {
+        if (track.course != undefined) {
+            if (chapterSituation[track.course.ChapterId] == null) {
+                chapterSituation[track.course.ChapterId] = {};
             }
 
+            if (chapterSituation[track.course.ChapterId][track.course.LessonId] == null) {
+                chapterSituation[track.course.ChapterId][track.course.LessonId] = {};
+                chapterSituation[track.course.ChapterId][track.course.LessonId].lesson = {};
+                chapterSituation[track.course.ChapterId][track.course.LessonId].stats = {};
+            }
+            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['lessonId'] = track.course.LessonId;
+            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['lessonTitle'] = track.course.LessonTitle;
+            chapterSituation[track.course.ChapterId][track.course.LessonId].lesson['layerId'] = track.course.LayerId;
 
-            if(track.data.properties.Correct){
-                problemSituation[track.course.ProblemId]['correct_count'] ++;
-            }else{
-                problemSituation[track.course.ProblemId]['wrong_count'] ++;
+            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'] == null) {
+                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'] = {};
+            }
+
+            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['VideoSituation'] == null) {
+                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['VideoSituation'] = {};
+            }
+
+            if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId] == null) {
+                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId] = {};
+                if (chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time] == null) {
+                    chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time] = {};
+                }
+                chapterSituation[track.course.ChapterId][track.course.LessonId].stats['QuizSituation'][track.course.ProblemId][track.headers.time]['is_correct'] = track.data.properties.Correct ;
             }
         }
     });
 
-    var stats = {"user":data[0].user,"stats":[{"chapterId":"c01","problemStats":problemSituation}]};
-    console.log(JSON.stringify(stats));
-    callback(null, stats);
-};*/
+    _.each(chapterSituation, function (chapter, chapterId) {
+        var singleChapterData = {};
+        singleChapterData['user'] = data[0].user;
+        singleChapterData['stats'] = {};
+        singleChapterData['stats']['chapter'] = {};
+        singleChapterData['stats']['lessons'] = [];
+        singleChapterData['stats']['chapter']['chapterId'] = chapterId;
+        singleChapterData['stats']['chapter']['chapterTitle'] = _.find(courses,function(chapter){
+            return chapter._id == chapterId;
+        }).name;
 
-exports.create = function(key,data,originData,callback){
-    console.log('-------计算个人做题状况-------');
-
-    var lessons = [];
-    var lessonSituation = {};
-    _.each(data,function(track){
-        if(track.course!=undefined){
-            if(lessonSituation[track.course.LessonId] == null){
-                lessonSituation[track.course.LessonId] = {};
-            }
-
-            lessonSituation[track.course.LessonId].lesson = {};
-            lessonSituation[track.course.LessonId].stats = {};
-            lessonSituation[track.course.LessonId].lesson['lessonId'] = track.course.LessonId;
-            lessonSituation[track.course.LessonId].lesson['lessonTitle'] = track.course.LessonTitle;
-            if(lessonSituation[track.course.LessonId].stats[track.course.ProblemId] == null){
-                lessonSituation[track.course.LessonId].stats[track.course.ProblemId] = {};
-                lessonSituation[track.course.LessonId].stats[track.course.ProblemId]['correct_count'] = 0;
-                lessonSituation[track.course.LessonId].stats[track.course.ProblemId]['wrong_count'] = 0;
-            }
-            if(track.data.properties.Correct){
-                lessonSituation[track.course.LessonId].stats[track.course.ProblemId]['correct_count'] ++;
-            }else{
-                lessonSituation[track.course.LessonId].stats[track.course.ProblemId]['wrong_count'] ++;
-            }
-        }
+        _.each(chapter, function (lesson, lessonId) {
+            singleChapterData['stats']['lessons'].push(lesson);
+        });
+        allStats.push(singleChapterData);
     });
-    
-    for (var key in lessonSituation){
-        lessons.push(lessonSituation[key]);
-    }
-
-    var stats = {"user":data[0].user,"stats":{"chapter":{"chapterId":data[1].course.ChapterId,"chapterTitle":data[1].course.ChapterTitle},lessons:lessons}};
-    console.log(JSON.stringify(stats));
-    callback(null, stats);
+    console.log(JSON.stringify(allStats));
+    callback(null, allStats);
 };
 
-exports.restore = function(){
+exports.restore = function () {
 
 };

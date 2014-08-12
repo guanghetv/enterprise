@@ -21,7 +21,7 @@ exports.testGet = function(req,res){
     var query = req.query;
     Individuals
         .find({"stats.chapter.chapterId":query.chapterId})
-        .where('user.rooms._id.oid').equals(query.roomId)
+        .where('user.rooms._id').equals(query.roomId)
         .exec(function(err,result){
             res.send(result);
         });

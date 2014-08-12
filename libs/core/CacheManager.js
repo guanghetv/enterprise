@@ -8,12 +8,11 @@ var MEMORY_CACHE = {
 };
 
 exports.storage = function(data, callback){
-    MEMORY_CACHE.origin['tracks'] = data['tracks'];
-    MEMORY_CACHE.origin['users'] = data['users'];
-    MEMORY_CACHE.origin['rooms'] = data['rooms'];
-    MEMORY_CACHE.origin['courses'] = data['courses'];
+    _.each(Object.keys(data),function(key){
+        MEMORY_CACHE.origin[key] = data[key];
+    });
 
-    console.log('[CacheManager]: storage data',data);
+    //console.log('[CacheManager]: storage data',data);
 	callback(null, MEMORY_CACHE['origin']);
 };
 
