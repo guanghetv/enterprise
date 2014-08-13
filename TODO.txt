@@ -1,10 +1,11 @@
 // TODO:
-1. 文件格式化
+1. 文件格式化(code format) command+alt+L
 2. Cron Loader，不同task可能频率不一样
-3. CacheManager
+3. CacheManager, 后续reddis或者memcache实现
 4. task0中对于后续task基于用户的处理已读懂，但非常不认同。用某个task去执行其他task"完全破坏"了dependency机制。从现有逻辑上，有两种选择
 第一种：
 只有一个task，task中有多个js，平列执行
 第二种：
 多个task，每个task依赖于上一个，依次执行
 5. 数据验证缺失
+6. 重试机制
