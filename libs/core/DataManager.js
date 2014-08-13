@@ -126,10 +126,8 @@ exports.save = function(data, callback){
                 if(response.statusCode == 200){
                     console.log(body);
                 } else {
-                    // TODO: ->console.error
-                    // TODO: 以及必要的重试机制
-                    console.log('error: '+ response.statusCode);
-                    console.log(body)
+                    // TODO: 必要的重试机制
+                    console.error(response.statusCode+":"+body);
                 }
                 callback(error,response.statusCode);
             }
