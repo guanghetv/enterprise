@@ -9,3 +9,4 @@
 多个task，每个task依赖于上一个，依次执行
 5. 数据验证缺失
 6. 重试机制
+7. Individual使用express-restify-mongoose
