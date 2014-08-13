@@ -2,6 +2,7 @@ exports.create = function(data,originData, callback){
     console.log("--------按用户分类事件--------");
     var userifyTracks = {};
     var tracks = originData.tracks;
+    // TODO: 这么大数据打log不大好吧...
     console.log(tracks);
     for(var key in tracks){
         tracks[key].forEach(function(item){

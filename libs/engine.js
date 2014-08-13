@@ -30,6 +30,7 @@ exports.bootstrap = function (config, callback) {
                         taskManager.run(modules, res, function (msg, err, name, d) {
                             if (err)callback(err);
                             if (msg != undefined && msg === 'all is well') {
+                                //TODO: -> cacheManager.loadIntermediate();
                                 cacheManager.load(function (err, mem) {
                                     dataManager.save(mem)
                                 }, 'middle')
