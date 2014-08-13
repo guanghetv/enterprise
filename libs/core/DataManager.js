@@ -12,22 +12,27 @@ exports.load = function(callback){
 
         var getDataTasks = [];
         var tasks = [
-            {key:'users',url:'http://localhost:3000/users'},
-            {key:'schools',url:'http://localhost:3000/schools?mode=all'},
-            {key:'courses',url:'http://localhost:3000/api/v1/courses'},
-            //{key:'tracks',url:'http://localhost:3000/tracks'},
-            {key:'tracks',url:'http://localhost:3000/tracks?query={"data.event":"AnswerProblem"}'}
+            {key:'users',urls:[{sub_key:'all',url:'http://localhost:3000/users'}]},
+            {key:'schools',urls:[{sub_key:'all',url:'http://localhost:3000/schools?mode=all'}]},
+            {key:'courses',urls:[{sub_key:'all',url:'http://localhost:3000/api/v1/courses'}]},
+            {key:'tracks',urls:[
+                {sub_key:'tracks_finishLesson',url:'http://localhost:3000/tracks?query={"data.event":"FinishLesson"}'},
+                {sub_key:'tracks_finishVideo',url:'http://localhost:3000/tracks?query={"data.event":"FinishVideo"}'},
+                {sub_key:'tracks_answerProblem',url:'http://localhost:3000/tracks?query={"data.event":"AnswerProblem"}'},
+                {sub_key:'tracks_finishProblemSet',url:'http://localhost:3000/tracks?query={"data.event":"FinishProblemSet"}'}
+            ]}
         ];
 
-        var getDataTask = function(key,url,callback){
+        var getDataTask = function(key,sub_key,url,callback){
             request({url: url, jar: j},  function(err, httpResponse, body) {
                 if (err) {
                     callback(err);
                 }else{
                     if(httpResponse.statusCode == 200){
-                        console.info('[DataManager]: Load '+key +' data succeed!');
+                        console.info('[DataManager]: Load '+key+'|'+sub_key +' data succeed!');
                         var data = {};
-                        data[key] = body;
+                        data[key] = {};
+                        data[key][sub_key] = body;
                         callback(null,data);
                     }else{
                         callback(body);
@@ -36,15 +41,18 @@ exports.load = function(callback){
             });
         };
         _.each(tasks,function(task){
-            getDataTasks.push(function(cb){
-                getDataTask(task.key,task.url,function(err,data){
-                    if(err!=null){
-                        console.error(err);
-                    }else{
-                        cb(err,data)
-                    }
-                });
-            })
+            _.each(task.urls,function(urlObject){
+                getDataTasks.push(function(cb){
+                    getDataTask(task.key,urlObject.sub_key,urlObject.url,function(err,data){
+                        if(err!=null){
+                            console.error(err);
+                        }else{
+                            cb(err,data)
+                        }
+                    });
+                })
+            });
+
         });
         async.parallel(getDataTasks,function(err,results){
             if(err){
@@ -53,9 +61,18 @@ exports.load = function(callback){
                 var originData = {};
                 _.each(results,function(result){
                     for(var key in result){
-                        originData[key] = JSON.parse(result[key]);
+                        if(originData[key]==undefined){
+                            originData[key] = {};
+                        }
+                        for(var sub_key in result[key]){
+                            if(originData[key][sub_key]==undefined){
+                                originData[key][sub_key] = {};
+                            }
+                            originData[key][sub_key] = JSON.parse(result[key][sub_key]);
+                        }
                     }
                 });
+                console.log("-----------------------------",originData);
                 callback(null,originData);
             }
         });
