@@ -66,6 +66,8 @@ exports.create = function (key, data, originData, callback) {
     console.log(JSON.stringify(allStats));
     callback(null, allStats);
 };
+/*
 exports.restore = function () {
 
 };
+*/

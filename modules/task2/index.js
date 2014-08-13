@@ -60,7 +60,7 @@ exports.create = function(key,data,originData,callback){
             }
         })
     });
-    console.log(data);
+    console.log(JSON.stringify(data));
     callback(null, data);
 };
 

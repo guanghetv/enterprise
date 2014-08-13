@@ -72,7 +72,6 @@ exports.load = function(callback){
                         }
                     }
                 });
-                console.log("-----------------------------",originData);
                 callback(null,originData);
             }
         });
