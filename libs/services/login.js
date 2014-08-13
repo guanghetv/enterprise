@@ -2,6 +2,8 @@
  * Created by solomon on 14-8-12.
  */
 
+
+// TODO: 需要定期refresh功能，保证cookie不会失效
 exports.loginMothership = function(callback){
     var j = request.jar();
     var r = request({method:'POST',url:'http://localhost:3000/login',jar:j}, function(err, httpResponse, body) {

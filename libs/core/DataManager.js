@@ -2,15 +2,39 @@
  * Created by solomon on 14-7-29.
  */
 
+// TODO: http://localhost:3000/ 这个URL头需要放入config/config.js [development]，变为可配置 \
+// TODO: 重新设计TASK的schema，如下:
+// taskSchema = [
+//      {
+//          "name":"tracks",
+//          "domain":config.domain, // 从config/config.js[env]里面取
+//          "path":"/tracks"
+//          "collection":[
+//              {
+//                  "name":"finish_lesson" // 不要到带tracks_前缀
+//                  "qs": {
+//                      "data.event" : "FinishLesson"
+//                      }"
+//              }
+//          ]
+//      }
+// ]
+
 exports.load = function(callback){
     if(global.mothership_cookie == undefined){
         callback("No cookie, cannot connect to mothership!");
     }else{
+        // TODO: 以下代码应挪入login.js, mothership_cookie应为login本地变量，cookie应作为全局变量。
         var j = request.jar();
         var cookie = request.cookie(global.mothership_cookie);
         j.setCookie(cookie, 'http://localhost:3000/login');
+        // TODO: 以上
 
+
+        // TODO: getDataTask -> dataTasks
         var getDataTasks = [];
+
+        // TODO: 此task应该单独设立文件并放入config文件夹，具体修改格式请参看上方schema
         var tasks = [
             {key:'users',urls:[{sub_key:'all',url:'http://localhost:3000/users'}]},
             {key:'schools',urls:[{sub_key:'all',url:'http://localhost:3000/schools?mode=all'}]},
@@ -23,9 +47,11 @@ exports.load = function(callback){
             ]}
         ];
 
+        // getDataTask -> downloadData
         var getDataTask = function(key,sub_key,url,callback){
             request({url: url, jar: j},  function(err, httpResponse, body) {
                 if (err) {
+                    // TODO: 重试机制在这里非常必要！
                     callback(err);
                 }else{
                     if(httpResponse.statusCode == 200){
@@ -42,6 +68,7 @@ exports.load = function(callback){
         };
         _.each(tasks,function(task){
             _.each(task.urls,function(urlObject){
+                // TODO: dataTasks[]
                 getDataTasks.push(function(cb){
                     getDataTask(task.key,urlObject.sub_key,urlObject.url,function(err,data){
                         if(err!=null){
@@ -68,10 +95,13 @@ exports.load = function(callback){
                             if(originData[key][sub_key]==undefined){
                                 originData[key][sub_key] = {};
                             }
+                            // TODO: 此举非常危险，当数据量足够大时，速度以及内存空间都值得考虑
+                            // TODO: 建议直接存入Cache, CacheManager需要提供足够细致的API提供对于collection级别的单独存储
                             originData[key][sub_key] = JSON.parse(result[key][sub_key]);
                         }
                     }
                 });
+                // TODO: 危险！！！确定真的打出来么！！！
                 console.log("-----------------------------",originData);
                 callback(null,originData);
             }
@@ -80,12 +110,14 @@ exports.load = function(callback){
 };
 
 exports.save = function(data, callback){
+    // TODO: 此处硬代码需要调整为统一task的输出
 	console.info('[DataManager]: upload data %s', JSON.stringify(data.crew_0003));
     var finalStats = data.crew_0003;
 
     var postStats = function(data,callback){
         request(
             {
+                // TODO: 此对象中个参数应该调整至config文件夹
                 method: 'POST',
                 uri: 'http://localhost:3002/stats/individuals',
                 headers:{'content-type': 'application/json'},
@@ -96,6 +128,8 @@ exports.save = function(data, callback){
                 if(response.statusCode == 200){
                     console.log(body);
                 } else {
+                    // TODO: ->console.error
+                    // TODO: 以及必要的重试机制
                     console.log('error: '+ response.statusCode);
                     console.log(body)
                 }
@@ -116,6 +150,7 @@ exports.save = function(data, callback){
     });
 
     async.parallelLimit(uploadTasks,10,function(err,result){
+        // TODO: 对于err的异常处理
         console.log(result);
     });
 };
