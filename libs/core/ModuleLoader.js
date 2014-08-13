@@ -31,7 +31,6 @@ exports.load = function(config, callback){
 	});
     console.info('[ModulesLoader]: load modules %s', JSON.stringify(modules));
     callback(null, modules);
-
 };
 
 exports.watch = function(config){
