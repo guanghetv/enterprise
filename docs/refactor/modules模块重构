@@ -12,12 +12,14 @@ Modules
 |    |---Manifest.json:{
 |                            is_async: true | false,
 |                            index_function: function(){console.log("hello world")},
-|                            ...
+|                            final_output: 'crew_0003',
+|                            output_url: '/stats/individuals'
+                             input_schema:''  // 这是为了检测上一个 module输出并输入到改 module的数据是否合乎规范
 |                       }
 |
 |---room
-|    |
-|    |---task1
-|    |---task2
-|    |
-|    |—--Manifest.json
+     |
+     |---task1
+     |---task2
+     |
+     |—--Manifest.json

@@ -1,8 +1,11 @@
+var cacheManager = require('./CacheManager');
 exports.run = function (modules, originData, callback) {
 
     // TODO: 规定TaskManager"只"执行对于task的操作，每个task内部"只"做数据操作，两者职责要划清
     // TODO: Module[0]目前包含两部分操作，track的数据操作和对于其他模块的任务分配
     // TODO: 所以请把Module[0]中对于其他module的操作移入TaskManager，而对于数据处理的部分请保持在Module[0]里面
+    console.log("==========================> INDIVIDUAL DIMENSION <=======================");
+
     modules[0].create(originData, originData, function (err, data) {
         if (err) {
             modules[0].restore();
@@ -62,27 +65,85 @@ exports.run = function (modules, originData, callback) {
                 );
             });
 
-            async.parallel(userTasks,function(err,result){
+            async.parallelLimit(userTasks,10,function(err,result){
                 if(!err){
-                    callback('all is well');
+                    callback('individual is well');
+                    //-----------------------
+                    (function(){
+                        console.log("==========================> ROOM DIMENSION <==============================");
+                        var task  = require('../../modules/room/task/index.js');
+                        var task0 = require('../../modules/room/task0/index.js');
+                        var task1 = require('../../modules/room/task1/index.js');
+                        var modules = [task,task0,task1];
+                        cacheManager.load(function (err, mem) {
+                            var originStats = mem.crew_0003;
+                            modules[0].create(originStats,function(err,data){
+                                if(err){
+                                    callback(undefined,err);
+                                }else{
+                                    callback(undefined,err,"crew_room",data);
+                                    console.log(_.keys(data));
+                                    modules.splice(0, 1);
+                                    var childModules = modules;
+
+                                    var taskGroups = [];
+                                    _.each(data,function(value,key){
+                                        var params = {
+                                            modules: childModules,
+                                            key: key,
+                                            data: data
+                                        };
+
+                                        var roomDistinguishTask = function (obj,cb) {
+                                            var error = null;
+                                            //console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+                                            console.log("【" +obj.key + "】is running");
+                                            var d = obj.data[obj.key];
+                                            for(var i = 0;i<obj.modules.length;i++){
+                                                sync(obj.modules[i],'create');
+                                                sync.fiber(function(){
+                                                    obj.modules[i].create(obj.key,d,function(err,newData){
+                                                        if(!err){
+                                                            d = newData;
+                                                            callback(undefined,err,'crew_room_000'+i, newData);
+                                                        }else{
+                                                            error = err;
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                            cb(error,obj.key)
+                                        };
+
+                                        taskGroups.push(
+                                            function(callback){
+                                                roomDistinguishTask(params,function(err,key){
+                                                    if(!err){
+                                                        console.log(key+" is done!");
+                                                        callback(err,key);
+                                                        //console.log("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+                                                    }
+                                                });
+                                            }
+                                        );
+                                    });
+
+                                    async.parallelLimit(taskGroups,10,function(err,result) {
+                                        if (!err) {
+                                            callback('room is well');
+                                        }else{
+                                            callback(undefined,err);
+                                        }
+                                    });
+                                }
+                            });
+                        }, 'middle');
+                    })();
+                    //--------------------------
                 }else{
                     callback(undefined,err);
-                    //取所有班级的每个个人的统计数据
-
-                    //fenban
-                    //【】
-                    // 异步
-                    //for()
-                    //ayncparllel{
-
-
-                    // }
-
                 }
             });
-
-
-
         }
     });
 };

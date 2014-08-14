@@ -107,17 +107,26 @@ exports.load = function(callback){
     }
 };
 
-exports.save = function(data, callback){
+exports.save = function(dimension,data, callback){
     // TODO: 此处硬代码需要调整为统一task的输出
-	console.info('[DataManager]: upload data %s', JSON.stringify(data.crew_0003));
-    var finalStats = data.crew_0003;
+    var finalStats;
+    switch (dimension){
+        case 'individuals':
+            //console.info('[DataManager]: upload data %s', JSON.stringify(data.crew_0003));
+            finalStats = data.crew_0003;
+            break;
+        case 'rooms':
+            finalStats = data.crew_0003;
+            break;
+        default :
+    }
 
     var postStats = function(data,callback){
         request(
             {
                 // TODO: 此对象中个参数应该调整至config文件夹
                 method: 'POST',
-                uri: 'http://localhost:3002/stats/individuals',
+                uri: 'http://localhost:3002/stats/'+dimension,
                 headers:{'content-type': 'application/json'},
                 body:JSON.stringify(data)
             },

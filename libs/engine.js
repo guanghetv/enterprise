@@ -29,12 +29,22 @@ exports.bootstrap = function (config, callback) {
                         //taskManager
                         taskManager.run(modules, res, function (msg, err, name, d) {
                             if (err)callback(err);
-                            if (msg != undefined && msg === 'all is well') {
-                                //TODO: -> cacheManager.loadIntermediate();
-                                cacheManager.load(function (err, mem) {
-                                    dataManager.save(mem)
-                                }, 'middle')
-                            } else {
+                            if (msg != undefined){
+                                switch(msg) {
+                                    case 'individual is well':
+                                        //TODO: -> cacheManager.loadIntermediate();
+                                        cacheManager.load(function (err, mem) {
+                                            dataManager.save('individuals',mem)
+                                        }, 'middle');
+                                        break;
+                                    case 'room is well':
+                                        /*cacheManager.load(function (err, mem) {
+                                            dataManager.save('rooms',mem)
+                                        }, 'middle');*/
+                                        break;
+                                    default:
+                                }
+                            }else {
                                 cacheManager.save(name, d, function (err, r) {
                                     if (err)callback(err);
                                     //console.log('[AppEngine] task save :', JSON.stringify(r));

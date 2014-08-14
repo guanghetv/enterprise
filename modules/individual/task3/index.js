@@ -158,7 +158,7 @@ exports.create = function (key, data, originData, callback) {
         });
         allStats.push(singleChapterData);
     });
-    console.log(JSON.stringify(allStats));
+    //console.log(JSON.stringify(allStats));
     callback(null, allStats);
 };
  exports.restore = function () {
