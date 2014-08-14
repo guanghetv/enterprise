@@ -8,9 +8,7 @@ var parseFolder = function(dir){
 		var module = require(path.join(dir, manifestJSON['entrance']));
 		if(module['create'] && module['restore']){
 			for(var key in module){
-                // TODO: manifestJSON[key] = module[key]
-				var val = module[key];
-				manifestJSON[key] = val;
+                manifestJSON[key] = module[key];
 			}
 			module = manifestJSON;
 			return module;
@@ -22,7 +20,6 @@ var parseFolder = function(dir){
 	}
 };
 
-// TODO: 直接传参config.modules_path
 exports.load = function(config, callback){
 	var modules = [];
 	fileSystem.readdirSync(config.modules_path).forEach(function(filename){
@@ -35,7 +32,6 @@ exports.load = function(config, callback){
     callback(null, modules);
 };
 
-// TODO: 直接传参config.modules_path
 exports.watch = function(config){
 	fileSystem.watch(config.modules_path, function(ev, filename){
 		filename = path.join(config.modules_path, filename);

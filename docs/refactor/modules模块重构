@@ -1,0 +1,23 @@
+Modules
+|
+|---individual
+|    |
+|    |---task1
+|    |    |---index.js
+|    |    |---manifest.json
+|    |
+|    |---task2
+|    |---task3
+|    |
+|    |---Manifest.json:{
+|                            is_async: true | false,
+|                            index_function: function(){console.log("hello world")},
+|                            ...
+|                       }
+|
+|---room
+|    |
+|    |---task1
+|    |---task2
+|    |
+|    |—--Manifest.json

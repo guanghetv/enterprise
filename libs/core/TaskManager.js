@@ -43,6 +43,8 @@ exports.run = function (modules, originData, callback) {
                                 }
                             });
                         });
+
+
                     }
                     cb(error,obj.key)
                 };
@@ -65,8 +67,21 @@ exports.run = function (modules, originData, callback) {
                     callback('all is well');
                 }else{
                     callback(undefined,err);
+                    //取所有班级的每个个人的统计数据
+
+                    //fenban
+                    //【】
+                    // 异步
+                    //for()
+                    //ayncparllel{
+
+
+                    // }
+
                 }
             });
+
+
 
         }
     });
