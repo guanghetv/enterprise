@@ -1,8 +1,7 @@
 var fileSystem = require('fs');
 var path = require('path');
 
-// TODO: loadModule->parseFolder
-var loadModule = function(dir){
+var parseFolder = function(dir){
 	var manifest = path.join(dir, 'manifest.json');
 	if(fileSystem.existsSync(manifest)){
 		var manifestJSON = JSON.parse(fileSystem.readFileSync(manifest, 'utf8'));
@@ -27,7 +26,7 @@ var loadModule = function(dir){
 exports.load = function(config, callback){
 	var modules = [];
 	fileSystem.readdirSync(config.modules_path).forEach(function(filename){
-		var module = loadModule(path.join(config.modules_path, filename));
+		var module = parseFolder(path.join(config.modules_path, filename));
 		if(module){
 			modules.push(module);
 		}
@@ -42,7 +41,7 @@ exports.watch = function(config){
 		filename = path.join(config.modules_path, filename);
 		if(ev == 'rename') ev = fileSystem.existsSync(filename) ? 'create' : 'remove';
 		if(ev == 'create'){
-			var module = loadModule(filename);
+			var module = parseFolder(filename);
             // TODO: where is this callback?
 			if(module)callback(err, module);
 		}

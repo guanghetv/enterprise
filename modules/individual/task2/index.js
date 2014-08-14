@@ -1,8 +1,27 @@
-exports.create = function(key,data,originData,callback){
+exports.create = function (key, data, originData, callback) {
     console.log('-------添加 course 信息-------');
     var courses = originData.courses.all;
-    _.each(data,function(trackSet){
-        _.each(trackSet,function(track) {
+    var statusInfo = [
+        "isReview",
+        "Rate",
+        "CurrentTime",
+        "VideoDuration",
+        "SkipOrNot",
+        "Correct",
+        "Thinktime",
+        "Answer",
+        "WrongCount",
+        "AnswerOrNot",
+        "CheckExplanationOrNot",
+        "CorrectCount",
+        "CorrectPercent",
+        "AnswerTime",
+        "Pass",
+        "PassOrNot"
+    ];
+
+    _.each(data, function (trackSet) {
+        _.each(trackSet, function (track) {
             if (track.data.properties.ChapterId != undefined) {
                 track['course'] = {};
                 var courseObject = _.find(courses, function (course) {
@@ -40,6 +59,7 @@ exports.create = function(key,data,originData,callback){
                                         if (activityObject != undefined) {
                                             track['course']['ActivityId'] = activityObject._id;
                                             track['course']['ActivityTitle'] = activityObject.title;
+                                            track['course']['ActivityType'] = activityObject.type;
 
                                             if (track.data.properties.ProblemId != undefined) {
                                                 var problemObject = _.find(activityObject.problems, function (problem) {
@@ -58,11 +78,17 @@ exports.create = function(key,data,originData,callback){
                     }
                 }
             }
+            track['status'] = {};
+            _.each(statusInfo,function(status){
+                if(_.contains(_.keys(track.data.properties),status)){
+                    track['status'][status] = track.data.properties[status];
+                }
+            })
         })
     });
     callback(null, data);
 };
 
-exports.restore = function(){
+exports.restore = function () {
 
 };
