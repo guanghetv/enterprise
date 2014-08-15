@@ -20,14 +20,17 @@
 //      }
 // ]
 
-exports.load = function(callback){
+var config;
+
+exports.load = function(_config, callback){
+    config = _config;
     if(global.mothership_cookie == undefined){
         callback("No cookie, cannot connect to mothership!");
     }else{
         // TODO: 以下代码应挪入login.js, mothership_cookie应为login本地变量，cookie应作为全局变量。
         var j = request.jar();
         var cookie = request.cookie(global.mothership_cookie);
-        j.setCookie(cookie, 'http://localhost:3000/login');
+        j.setCookie(cookie,  config.mothership_url + '/login');
         // TODO: 以上
 
 
@@ -36,14 +39,14 @@ exports.load = function(callback){
 
         // TODO: 此task应该单独设立文件并放入config文件夹，具体修改格式请参看上方schema
         var tasks = [
-            {key:'users',urls:[{sub_key:'all',url:'http://localhost:3000/users'}]},
-            {key:'schools',urls:[{sub_key:'all',url:'http://localhost:3000/schools?mode=all'}]},
-            {key:'courses',urls:[{sub_key:'all',url:'http://localhost:3000/api/v1/courses'}]},
+            {key:'users',urls:[{sub_key:'all',url: config.mothership_url + '/users'}]},
+            {key:'schools',urls:[{sub_key:'all',url: config.mothership_url + '/schools?mode=all'}]},
+            {key:'courses',urls:[{sub_key:'all',url: config.mothership_url + '/api/v1/courses'}]},
             {key:'tracks',urls:[
-                {sub_key:'tracks_finishLesson',url:'http://localhost:3000/tracks?query={"data.event":"FinishLesson"}'},
-                {sub_key:'tracks_finishVideo',url:'http://localhost:3000/tracks?query={"data.event":"FinishVideo"}'},
-                {sub_key:'tracks_answerProblem',url:'http://localhost:3000/tracks?query={"data.event":"AnswerProblem"}'},
-                {sub_key:'tracks_finishProblemSet',url:'http://localhost:3000/tracks?query={"data.event":"FinishProblemSet"}'}
+                {sub_key:'tracks_finishLesson',url: config.mothership_url + '/tracks?query={"data.event":"FinishLesson"}'},
+                {sub_key:'tracks_finishVideo',url: config.mothership_url + '/tracks?query={"data.event":"FinishVideo"}'},
+                {sub_key:'tracks_answerProblem',url: config.mothership_url + '/tracks?query={"data.event":"AnswerProblem"}'},
+                {sub_key:'tracks_finishProblemSet',url: config.mothership_url + '/tracks?query={"data.event":"FinishProblemSet"}'}
             ]}
         ];
 
@@ -127,7 +130,7 @@ exports.save = function(dimension,data, callback){
             {
                 // TODO: 此对象中个参数应该调整至config文件夹
                 method: 'POST',
-                uri: 'http://localhost:3002/stats/'+dimension,
+                uri:  config.datapipe_url + '/stats/'+dimension,
                 headers:{'content-type': 'application/json'},
                 body:JSON.stringify(data)
             },

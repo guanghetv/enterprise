@@ -11,6 +11,8 @@ module.exports = {
 
 	},
 	development: {
-		'modules_path': modules_path
+		'modules_path': modules_path,
+		'mothership_url': 'http://localhost:3000',
+		'datapipe_url': 'http://localhost:3002'
 	}
 };

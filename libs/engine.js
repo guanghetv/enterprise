@@ -13,7 +13,7 @@ exports.bootstrap = function (config, callback) {
             return console.error('Login error:',err);
         }else{
             //dataManager
-            dataManager.load(function (err, data) {
+            dataManager.load(config, function (err, data) {
                 if (err)callback(err);
                 //cacheManager
                 cacheManager.storage(data, function (err, res) {
