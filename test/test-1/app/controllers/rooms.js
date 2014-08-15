@@ -6,7 +6,7 @@ var mongoose = require('mongoose');
 require('../models/rooms');
 var Rooms = mongoose.model('Rooms');
 
-exports.testPost = function(req,res){
+exports.addRoomChapterStats = function(req,res){
     console.log(req.body);
     Rooms.create(req.body,function(err,result){
         if(!err){
@@ -18,11 +18,11 @@ exports.testPost = function(req,res){
     })
 };
 
-exports.testGet = function(req,res){
+exports.getRoomChapterStats = function(req,res){
     var query = req.query;
     Rooms
         .find({"stats.chapter.chapterId":query.chapterId})
-        .where('rooms._id').equals(query.roomId)
+        .where('room._id').equals(query.roomId)
         .exec(function(err,result){
             res.send(result);
         });

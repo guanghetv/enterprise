@@ -14,7 +14,6 @@ exports.create = function(data,callback){
             roomifyStats[room._id].push(userifyStatsArray);
         });
     });
-    console.log("=========================",roomifyStats);
     callback(null, roomifyStats);
 };
 

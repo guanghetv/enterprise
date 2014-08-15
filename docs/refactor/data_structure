@@ -1,0 +1,29 @@
+数据结构重构：
+
+    1、所有数据存储应该拆分成最小单元，后端数据分析系统没有必要按照 chapter 来组织统计数据，而是应该拆分成 lesson,因为每个 lesson 属于哪个 chapter
+       是可以通过 course 查出来的，前端的 API 请求过来时，带着 chapterId,此时可以查找出属于本chapter的所有 lesson 的统计数据。
+
+    2、后端数据存储，按照“每 user lesson” 和 “每 room lesson” 这样的单元来存储。(目前是“每 user chapter”、“每 room chapter”)
+
+    3、部分使用 某类ID（课程 ID，user ID 等）做 object 的 key 的数据结构，尽可能重构为用语义化的描述作key, 然后将ID 包含在 value 里，例如
+
+      "53ec74105aa0b049d25fb261":{
+          "1408005204016":{
+              "is_review":"false",
+              "pass_or_not":true
+          }
+      }
+
+      应该改为：
+
+      {
+          userId: "53ec74105aa0b049d25fb261",
+          history: {
+              "1408005204016":{
+                  "is_review":"false",
+                  "pass_or_not":true
+              }
+          }
+      }
+
+    4、

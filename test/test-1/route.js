@@ -8,12 +8,12 @@ module.exports = function(app) {
     var rooms = require('./app/controllers/rooms');
 
     //--------------------API2-----------------------
-    app.post('/stats/individuals',individuals.testPost);
-    app.post('/stats/rooms',rooms.testPost);
+    app.post('/stats/individuals',individuals.addIndividualChapterStats);
+    app.post('/stats/rooms',rooms.addRoomChapterStats);
 
     //--------------------API3-----------------------
 
-    app.get('/stats/individuals',individuals.testGet);
-    app.get('/stats/rooms',rooms.testGet);
+    app.get('/stats/individuals',individuals.getIndividualChapterStats);
+    app.get('/stats/rooms',rooms.getRoomChapterStats);
 
 };

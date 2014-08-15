@@ -1,0 +1,7 @@
+{
+    "name": "crew_0000",
+    "description": "This is a task for classify rooms",
+    "type":"room",
+    "entrance": "index.js",
+    "dependencies":[]
+}

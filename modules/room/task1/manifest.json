@@ -1,0 +1,7 @@
+{
+    "name": "crew_0001",
+    "description": "This is a task for calculating each chapter's average ratio of this specific room",
+    "type":"room",
+    "entrance": "index.js",
+    "dependencies":[]
+}

@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 require('../models/individuals');
 var Individuals = mongoose.model('Individuals');
 
-exports.testPost = function(req,res){
+exports.addIndividualChapterStats = function(req,res){
     console.log(req.body);
     Individuals.create(req.body,function(err,result){
         if(!err){
@@ -17,7 +17,7 @@ exports.testPost = function(req,res){
     })
 };
 
-exports.testGet = function(req,res){
+exports.getIndividualChapterStats = function(req,res){
     var query = req.query;
     Individuals
         .find({"stats.chapter.chapterId":query.chapterId})

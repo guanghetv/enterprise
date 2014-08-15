@@ -38,9 +38,9 @@ exports.bootstrap = function (config, callback) {
                                         }, 'middle');
                                         break;
                                     case 'room is well':
-                                        /*cacheManager.load(function (err, mem) {
+                                        cacheManager.load(function (err, mem) {
                                             dataManager.save('rooms',mem)
-                                        }, 'middle');*/
+                                        }, 'middle');
                                         break;
                                     default:
                                 }

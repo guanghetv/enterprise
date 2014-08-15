@@ -116,7 +116,8 @@ exports.save = function(dimension,data, callback){
             finalStats = data.crew_0003;
             break;
         case 'rooms':
-            finalStats = data.crew_0003;
+            finalStats = data.crew_room_0001;
+
             break;
         default :
     }
