@@ -4,7 +4,7 @@
 
 module.exports = function(app) {
 
-    var individuals = require('./app/controllers/individuals');
+    var individuals = require('../app/controllers/individuals');
 
     //--------------------API2-----------------------
     app.post('/stats/individuals',individuals.testPost);
