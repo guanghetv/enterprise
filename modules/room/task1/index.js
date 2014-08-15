@@ -54,7 +54,15 @@ exports.create = function (key, data, callback) {
         var lessonsStats = {};
         _.each(lessonifyStats,function(eachLessonStats,lessonId){
             lessonsStats[lessonId] = {};
-            _.each(eachLessonStats,function(eachUserLessonStat){
+            lessonsStats[lessonId]['lesson'] = {};
+            lessonsStats[lessonId]['stats'] = {};
+
+            if(eachLessonStats[0].lesson.lesson.lessonType === 'learn'){
+                lessonsStats[lessonId]['video_compute_helper'] = []; // 用来协助内部进行视频观看平均率的计算
+            }
+
+            _.each(eachLessonStats,function(eachUserLessonStat,userIndexOfLessonStats){
+
                 /**
                 * eachUserLessonStat => 每个 user 关于这个 lesson 的统计详情
                 *
@@ -69,8 +77,14 @@ exports.create = function (key, data, callback) {
                 *                   "time2":{"is_review": "false", "pass_or_not": true}
                 *               }
                 *           },
+                *
                 *           VideoSituation:{
+                *               "watchVideo": {
+                *                    "time1": {"watching_ratio": "72.57314724607865%", "watched_time": 121.027125,"video_duration": 166.765711,"is_review":false},
+                *                    "time2": {"watching_ratio": "72.57314724607865%", "watched_time": 121.027125,"video_duration": 166.765711,"is_review":false}
+                *                }
                 *           },
+                *
                 *           QuizSituation:{
                 *           }
                 *       }
@@ -84,7 +98,6 @@ exports.create = function (key, data, callback) {
                 var user = eachUserLessonStat.user;
 
                 lessonsStats[lessonId]['lesson'] = lessonObject;
-                lessonsStats[lessonId]['stats'] = {};
 
                 //------------------计算LessonSituation 中的 finishLesson-----------------------
                 if(lessonsStats[lessonId]['stats']['LessonSituation']==undefined){
@@ -104,25 +117,74 @@ exports.create = function (key, data, callback) {
                 lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'][user._id] =
                     userStatsAboutThisLesson.LessonSituation.finishLesson;
 
+
                 //------------------计算VideoSituation 中的 watchVideo--------------------------
-                /*if(lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']==undefined){
-                    lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] = {};
-                    lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = '';
-                    lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['details'] = {};
-                }*/
+                if(lessonObject.lessonType === 'learn' && _.keys(userStatsAboutThisLesson.VideoSituation).length>0){
+                    if(lessonsStats[lessonId]['stats']['VideoSituation']==undefined){
+                        lessonsStats[lessonId]['stats']['VideoSituation'] = {};
+                    }
+
+                    if(_.keys(userStatsAboutThisLesson.VideoSituation.watchVideo).length>0) {
+                        if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的视频观看率 -- From PRD
+
+                            if(lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']==undefined){
+                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] = {};
+                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = "";
+                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['details'] = {};
+                            }
+
+                            var timeTableArray = _.map(userStatsAboutThisLesson.VideoSituation.watchVideo,function(value,timeKey){
+                                return parseInt(timeKey);
+                            });
+
+                            var firstWatchingTime = _.min(timeTableArray); // 统计每个人首次观看该视频的观看率
+
+                            lessonsStats[lessonId]['video_compute_helper'].push(_.find(userStatsAboutThisLesson.VideoSituation.watchVideo,function(value,timeKey){
+                                return timeKey == firstWatchingTime.toString();
+                            }).watching_ratio);
+
+                            lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['details'][user._id] =
+                                userStatsAboutThisLesson.VideoSituation.watchVideo;
+
+                            if(userIndexOfLessonStats  == (eachLessonStats.length-1)){ //循环的最后一个,开始计算平均率
+                                var ratiosArray = _.map(lessonsStats[lessonId]['video_compute_helper'],function(ratio){
+                                    return parseInt(ratio);
+                                });
+                                var averageWatchingRatio = (_.reduce(ratiosArray, function(memo, num){ return memo + num; }, 0))/ratiosArray.length;
+                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = averageWatchingRatio+'%';
+                            }
+
+                        }
+                    }
+                }
+
+
                 //------------------计算Quiz Situation 中的 finishProblemSet---------------------
+                if(_.keys(userStatsAboutThisLesson.QuizSituation).length>0){
+
+                    if(_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length>0){
+
+                    }
+                }
+
 
                 //------------------计算Quiz Situation 中的 answerProblem------------------------
+                if(_.keys(userStatsAboutThisLesson.QuizSituation).length>0){
+
+                    if(_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length>0){
+
+                    }
+
+                }
 
             });
-           // console.log("------------------------|||||||||||||||||||||||||||||||-----------------------",JSON.stringify(lessonsStats));
-
+            delete lessonsStats[lessonId]['video_compute_helper'];
         });
 
         _.each(lessonsStats,function(eachLessonStats){
             ret.stats.lessons.push({lesson:eachLessonStats.lesson,stats:eachLessonStats.stats});
         });
-        //console.log("------------------------|||||||||||||||||||||||||||||||-----------------------",JSON.stringify(ret));
+       // console.log("------------------------|||||||||||||||||||||||||||||||-----------------------",JSON.stringify(ret));
         cb(null,chapterId,ret);
     };
 

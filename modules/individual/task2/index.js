@@ -46,6 +46,7 @@ exports.create = function (key, data, originData, callback) {
                                 if (lessonObject != undefined) {
                                     track['course']['LessonId'] = lessonObject._id;
                                     track['course']['LessonTitle'] = lessonObject.title;
+                                    track['course']['LessonType'] = lessonObject.type;
 
                                     if (track.data.properties.VideoId != undefined) {
                                         track['course']['VideoId'] = track.data.properties.VideoId;

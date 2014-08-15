@@ -22,6 +22,7 @@ exports.create = function (key, data, originData, callback) {
         }
         chapterSituation[chapterId][lessonId].lesson['lessonId'] = lessonId;
         chapterSituation[chapterId][lessonId].lesson['lessonTitle'] = track.course.LessonTitle;
+        chapterSituation[chapterId][lessonId].lesson['lessonType'] = track.course.LessonType;
         chapterSituation[chapterId][lessonId].lesson['layerId'] = track.course.LayerId;
         return {chapterId:chapterId,lessonId:lessonId};
     };
