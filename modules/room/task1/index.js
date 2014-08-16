@@ -113,12 +113,12 @@ exports.create = function (key, data, callback) {
                     lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'] = {};
                 }
 
-                if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) {
+                if (userStatsAboutThisLesson.LessonSituation!=undefined &&
+                    _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) {
                     lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['finish_count']++
+                    lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'][user._id] =
+                        userStatsAboutThisLesson.LessonSituation.finishLesson;
                 }
-
-                lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'][user._id] =
-                    userStatsAboutThisLesson.LessonSituation.finishLesson;
 
                 //------------------计算VideoSituation 中的 watchVideo--------------------------
                 if (lessonObject.lessonType === 'learn' && _.keys(userStatsAboutThisLesson.VideoSituation).length > 0) {
@@ -127,7 +127,7 @@ exports.create = function (key, data, callback) {
                     }
 
                     if (_.keys(userStatsAboutThisLesson.VideoSituation.watchVideo).length > 0) {
-                        if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的视频观看率 -- From PRD
+                        if (userStatsAboutThisLesson.LessonSituation!=undefined && _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的视频观看率 -- From PRD
 
                             if (lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] == undefined) {
                                 lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] = {};

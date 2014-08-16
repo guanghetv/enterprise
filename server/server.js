@@ -17,8 +17,6 @@ app.use(function(req, res, next){
 	//res.set('Access-Control-Allow-Origin', '*');
 	next();
 });
-//serval static file
-app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
