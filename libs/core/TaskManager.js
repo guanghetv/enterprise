@@ -65,7 +65,7 @@ exports.run = function (modules, originData, callback) {
                 );
             });
 
-            async.parallelLimit(userTasks,10,function(err,result){
+            async.parallelLimit(userTasks,3,function(err,result){
                 if(!err){
                     callback('individual is well');
                     //-----------------------
@@ -128,7 +128,7 @@ exports.run = function (modules, originData, callback) {
                                         );
                                     });
 
-                                    async.parallelLimit(taskGroups,10,function(err,result) {
+                                    async.parallelLimit(taskGroups,3,function(err,result) {
                                         if (!err) {
                                             callback('room is well');
                                         }else{
