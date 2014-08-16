@@ -1,8 +1,8 @@
-exports.create = function(key,data,originData,callback){
+exports.create = function (key, data, originData, callback) {
     console.log('-------添加 room 信息-------');
     var schools = originData.schools.all;
-    _.each(data,function(trackSet){
-        _.each(trackSet,function(track) {
+    _.each(data, function (trackSet) {
+        _.each(trackSet, function (track, index) {
             var userRooms = [];
             _.each(schools, function (school) {
                 _.each(school.rooms, function (room) {
@@ -20,6 +20,6 @@ exports.create = function(key,data,originData,callback){
     callback(null, data);
 };
 
-exports.restore = function(){
+exports.restore = function () {
 
 };

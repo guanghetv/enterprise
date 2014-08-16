@@ -6,6 +6,7 @@ exports.create = function(data,callback){
     console.log(data);
     var roomifyStats = {};
     _.each(data,function(userifyStatsArray){
+        console.log(userifyStatsArray[0]);
         var userRooms = userifyStatsArray[0].user.rooms;
         _.each(userRooms,function(room){
             if(roomifyStats[room._id] == undefined){

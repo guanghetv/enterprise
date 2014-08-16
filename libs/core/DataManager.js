@@ -43,10 +43,10 @@ exports.load = function(_config, callback){
             {key:'schools',urls:[{sub_key:'all',url: config.mothership_url + '/schools?mode=all'}]},
             {key:'courses',urls:[{sub_key:'all',url: config.mothership_url + '/api/v1/courses'}]},
             {key:'tracks',urls:[
-                {sub_key:'tracks_finishLesson',url: config.mothership_url + '/tracks?query={"data.event":"FinishLesson"}'},
-                {sub_key:'tracks_finishVideo',url: config.mothership_url + '/tracks?query={"data.event":"FinishVideo"}'},
-                {sub_key:'tracks_answerProblem',url: config.mothership_url + '/tracks?query={"data.event":"AnswerProblem"}'},
-                {sub_key:'tracks_finishProblemSet',url: config.mothership_url + '/tracks?query={"data.event":"FinishProblemSet"}'}
+                {sub_key:'tracks_finishLesson',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishLesson"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
+                {sub_key:'tracks_finishVideo',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishVideo"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
+                {sub_key:'tracks_answerProblem',url: config.mothership_url + '/tracks?$and=[{"data.event":"AnswerProblem"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
+                {sub_key:'tracks_finishProblemSet',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishProblemSet"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'}
             ]}
         ];
 
