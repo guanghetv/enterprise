@@ -5,6 +5,9 @@ exports.create = function (key, data, originData, callback) {
     var statusInfo = [
         "isReview", //
         "Rate",
+        "Random",
+        "Blood",
+        "Size",
         "CurrentTime",//
         "VideoDuration",//
         "SkipOrNot",//
@@ -92,7 +95,7 @@ exports.create = function (key, data, originData, callback) {
                                 }
                             }
 
-                            if (_.contains(['tracks_finishVideo', 'tracks_finishProblemSet', 'answerProblem'], trackSetKey)) {
+                            if (_.contains(['tracks_finishVideo', 'tracks_startProblemSet', 'tracks_answerProblem','tracks_finishProblemSet'], trackSetKey)) {
 
                                 if (Utils.haveEssentialVariables([track.data.properties.ActivityId, track.data.properties.isReview])) {
                                     var activityObject = _.find(lessonObject.activities, function (activity) {
@@ -128,6 +131,19 @@ exports.create = function (key, data, originData, callback) {
                                             }
                                         }
 
+                                        if (trackSetKey === 'tracks_startProblemSet') {
+                                            var StatusesForStartProblemSet = [
+                                                track.data.properties.Random,
+                                                track.data.properties.Blood,
+                                                track.data.properties.Size
+                                            ];
+                                            if (Utils.haveEssentialVariables(StatusesForStartProblemSet)) {
+                                                fulfillStatusInfo();
+                                            } else {
+                                                addToNoUseTrack(index, track, "Lack of information for StartProblemSet event, delete it:");
+                                            }
+                                        }
+
                                         if (trackSetKey === 'tracks_finishProblemSet') {
                                             var StatusesForFinishProblemSet = [
                                                 track.data.properties.CorrectCount,
@@ -142,7 +158,7 @@ exports.create = function (key, data, originData, callback) {
                                             }
                                         }
 
-                                        if (trackSetKey === 'answerProblem') {
+                                        if (trackSetKey === 'tracks_answerProblem') {
                                             var StatusesForAnswerProblem = [
                                                 track.data.properties.ProblemId,
                                                 track.data.properties.Correct,

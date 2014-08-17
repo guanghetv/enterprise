@@ -45,6 +45,7 @@ exports.load = function(_config, callback){
             {key:'tracks',urls:[
                 {sub_key:'tracks_finishLesson',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishLesson"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
                 {sub_key:'tracks_finishVideo',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishVideo"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
+                {sub_key:'tracks_startProblemSet',url: config.mothership_url + '/tracks?$and=[{"data.event":"StartProblemSet"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
                 {sub_key:'tracks_answerProblem',url: config.mothership_url + '/tracks?$and=[{"data.event":"AnswerProblem"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'},
                 {sub_key:'tracks_finishProblemSet',url: config.mothership_url + '/tracks?$and=[{"data.event":"FinishProblemSet"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]'}
             ]}

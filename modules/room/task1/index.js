@@ -89,6 +89,16 @@ exports.create = function (key, data, callback) {
                 *           },
                 *
                 *           QuizSituation:{
+                *               "answerProblem": {
+                *                    "538fe48f76cb8a0068b1403b": {
+                *                        "1407988724150": {
+                *                            "is_review": "false",
+                *                            "is_correct": false,
+                *                            "answer": "$3$",
+                *                            "check_explanation_or_not": false
+                *                        }
+                *                    }
+                *                }
                 *           }
                 *       }
                 *   }
@@ -204,9 +214,17 @@ exports.create = function (key, data, callback) {
                 if (_.keys(userStatsAboutThisLesson.QuizSituation).length > 0) {
 
                     if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) {
+                        if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
+                            /*if (lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] == undefined) {
+                                lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] = {};
+                            }
 
+                            _.each(userIndexOfLessonStats.QuizSituation.answerProblem,function(value,key){
+
+                            })*/
+
+                        }
                     }
-
                 }
 
             });

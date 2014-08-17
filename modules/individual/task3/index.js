@@ -82,9 +82,39 @@ exports.create = function (key, data, originData, callback) {
             });
         }
 
+        if(trackSetKey === 'tracks_startProblemSet'){
+            _.each(trackSet, function (track) {
+                if (track.course != undefined &&  _.contains(['gonggu', 'lianxi'], track.course.ActivityType)) {
+                    console.log(important,"here");
+                    var basicInfo = fulfillBasicInfo(track, chapterSituation);
+                    var chapterId = basicInfo.chapterId;
+                    var lessonId = basicInfo.lessonId;
+                    if (chapterId != undefined && lessonId != undefined) {
+                        if (chapterSituation[chapterId][lessonId].stats['QuizSituation'] == undefined) {
+                            chapterSituation[chapterId][lessonId].stats['QuizSituation'] = {};
+                        }
+                        if (chapterSituation[chapterId][lessonId].stats['QuizSituation']['startProblemSet'] == undefined) {
+                            chapterSituation[chapterId][lessonId].stats['QuizSituation']['startProblemSet'] = {};
+                        }
+                        var time = new Date(track.headers.time).getTime();
+                        if (chapterSituation[chapterId][lessonId].stats['QuizSituation']['startProblemSet'][time] == undefined) {
+                            chapterSituation[chapterId][lessonId].stats['QuizSituation']['startProblemSet'][time] = {};
+                        }
+
+                        chapterSituation[chapterId][lessonId].stats['QuizSituation']['startProblemSet'][time] = {
+                            "is_random": track.status.Random,
+                            "blood": track.status.Blood,
+                            "size": track.status.Size,
+                            "is_review": track.status.isReview
+                        };
+                    }
+                }
+            });
+        }
+
         if (trackSetKey === 'tracks_finishProblemSet') {
             _.each(trackSet, function (track) {
-                if (track.course != undefined && (track.course.ActivityType === 'gonggu' || track.course.ActivityType === 'lianxi')) {
+                if (track.course != undefined &&  _.contains(['gonggu', 'lianxi'], track.course.ActivityType)) {
                     var basicInfo = fulfillBasicInfo(track, chapterSituation);
                     var chapterId = basicInfo.chapterId;
                     var lessonId = basicInfo.lessonId;
@@ -129,7 +159,6 @@ exports.create = function (key, data, originData, callback) {
                             chapterSituation[chapterId][lessonId].stats['QuizSituation']['answerProblem'] = {};
                         }
                         var problemId = track.course.ProblemId;
-
                         if (problemId != undefined) {
                             if (chapterSituation[chapterId][lessonId].stats['QuizSituation']['answerProblem'][problemId] == undefined) {
                                 chapterSituation[chapterId][lessonId].stats['QuizSituation']['answerProblem'][problemId] = {};
@@ -178,7 +207,7 @@ exports.create = function (key, data, originData, callback) {
         });
         allStats.push(singleChapterData);
     });
-    //console.log(JSON.stringify(allStats));
+    console.log(JSON.stringify(allStats));
     callback(null, allStats);
 };
 exports.restore = function () {
