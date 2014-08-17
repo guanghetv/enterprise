@@ -179,7 +179,7 @@ exports.create = function (key, data, callback) {
                                 var averageWatchingRatio = (_.reduce(watchingRatiosArray, function (memo, num) {
                                     return memo + num;
                                 }, 0)) / watchingRatiosArray.length;
-                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = averageWatchingRatio + '%';
+                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = Math.round(averageWatchingRatio).toString() + '%';
                             }
 
                         }
@@ -221,7 +221,7 @@ exports.create = function (key, data, callback) {
                                 var averageCorrectRatio = (_.reduce(correctRatiosArray, function (memo, num) {
                                     return memo + num;
                                 }, 0)) / correctRatiosArray.length;
-                                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = averageCorrectRatio + '%';
+                                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = Math.round(averageCorrectRatio).toString() + '%';
                             }
                         }
                     }
@@ -231,9 +231,9 @@ exports.create = function (key, data, callback) {
                 //------------------计算Quiz Situation 中的 answerProblem------------------------
                 if (_.keys(userStatsAboutThisLesson.QuizSituation).length > 0) {
                     if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
-                        if (_.keys(userStatsAboutThisLesson.QuizSituation.startProblemSet).length > 0) { // 可能冗余判断
-                            if (_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length > 0) {  // 可能冗余判断
-                                if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) { // 可能冗余判断
+                        if (_.keys(userStatsAboutThisLesson.QuizSituation.startProblemSet).length > 0) { //TODO: 可能冗余判断
+                            if (_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length > 0) {  //TODO: 可能冗余判断
+                                if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) { //TODO: 可能冗余判断
 
                                     if (lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] == undefined) {
                                         lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] = {};
@@ -252,8 +252,8 @@ exports.create = function (key, data, callback) {
                                             return parseInt(time);
                                         });
 
-                                        console.log(important + 'start:', sortedStartProblemSetTimeArray);
-                                        console.log(important + 'finish:', sortedFinishProblemSetTimeArray);
+                                        //console.log(important + 'start:', sortedStartProblemSetTimeArray);
+                                        //console.log(important + 'finish:', sortedFinishProblemSetTimeArray);
 
                                         var lastStartProblemSetTime = _.last(sortedStartProblemSetTimeArray);
                                         var lastFinishProblemSetTime = _.last(sortedFinishProblemSetTimeArray);
@@ -372,7 +372,7 @@ exports.create = function (key, data, callback) {
                                     });
 
                                     if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
-                                        console.log(important, lessonsStats[lessonId]['compute_helper']['problem_compute_helper']);
+                                        //console.log(important, lessonsStats[lessonId]['compute_helper']['problem_compute_helper']);
                                         /**
                                          *
                                          *   {
@@ -393,12 +393,15 @@ exports.create = function (key, data, callback) {
 
 
                                         _.each(lessonsStats[lessonId]['compute_helper']['problem_compute_helper'], function (problemDetail, problemId) {
+                                            var averageCorrectRatio = problemDetail.correct_count / problemDetail.user_count * 100;
+
                                             lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_correct_ratio'] =
-                                                (problemDetail.correct_count / problemDetail.user_count * 100).toString() + '%';
+                                                Math.round(averageCorrectRatio).toString() + '%';
 
                                             _.each(problemDetail.answer_situation,function(countOfChoose,answerId){
+                                                var averageAnswerRatio = countOfChoose/problemDetail.user_count * 100;
                                                 lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'][answerId]=
-                                                    (countOfChoose/problemDetail.user_count * 100).toString()+'%';
+                                                    Math.round(averageAnswerRatio).toString()+'%';
                                             });
                                         });
                                         //console.log(important,lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem']);
