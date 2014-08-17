@@ -63,6 +63,7 @@ exports.create = function (key, data, callback) {
             }
 
             lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'] = [];
+            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'] = {};
 
             _.each(eachLessonStats, function (eachUserLessonStat, userIndexOfLessonStats) {
 
@@ -89,6 +90,15 @@ exports.create = function (key, data, callback) {
                 *           },
                 *
                 *           QuizSituation:{
+                *               "startProblemSet" : {
+                *                    "1408267302796" : {
+                *                        "is_review" : "false",
+                *                        "size" : "7",
+                *                        "blood" : "1",
+                *                        "is_random" : "undefined"
+                *                    }
+                *                }
+                *
                 *               "answerProblem": {
                 *                    "538fe48f76cb8a0068b1403b": {
                 *                        "1407988724150": {
@@ -99,6 +109,14 @@ exports.create = function (key, data, callback) {
                 *                        }
                 *                    }
                 *                }
+                *
+                *                "finishProblemSet" : {
+                *                    "1408267338459" : {
+                *                        "is_review" : "false",
+                *                        "correct_ratio" : "7/7",
+                *                        "wrong_ratio" : "0/7"
+                *                    }
+                *                },
                 *           }
                 *       }
                 *   }
@@ -123,9 +141,9 @@ exports.create = function (key, data, callback) {
                     lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'] = {};
                 }
 
-                if (userStatsAboutThisLesson.LessonSituation!=undefined &&
+                if (userStatsAboutThisLesson.LessonSituation != undefined &&
                     _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) {
-                    lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['finish_count']++
+                    lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['finish_count']++;
                     lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'][user._id] =
                         userStatsAboutThisLesson.LessonSituation.finishLesson;
                 }
@@ -137,7 +155,7 @@ exports.create = function (key, data, callback) {
                     }
 
                     if (_.keys(userStatsAboutThisLesson.VideoSituation.watchVideo).length > 0) {
-                        if (userStatsAboutThisLesson.LessonSituation!=undefined && _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的视频观看率 -- From PRD
+                        if (userStatsAboutThisLesson.LessonSituation != undefined && _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的视频观看率 -- From PRD
 
                             if (lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] == undefined) {
                                 lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] = {};
@@ -160,7 +178,7 @@ exports.create = function (key, data, callback) {
                                 });
                                 var averageWatchingRatio = (_.reduce(watchingRatiosArray, function (memo, num) {
                                     return memo + num;
-                                }, 0)) /watchingRatiosArray.length;
+                                }, 0)) / watchingRatiosArray.length;
                                 lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = averageWatchingRatio + '%';
                             }
 
@@ -194,16 +212,16 @@ exports.create = function (key, data, callback) {
 
                             if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
                                 var correctRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'], function (ratio) {
-                                    return (function(ratio){
-                                        console.log(important,ratio);
+                                    return (function (ratio) {
+                                        //console.log(important,ratio);
                                         var fractionArray = ratio.split('/'); // 分数数组：index-0 : 分子 ； index-1 : 分母
-                                        return (parseInt(fractionArray[0])/parseInt(fractionArray[1]))*100;
+                                        return (parseInt(fractionArray[0]) / parseInt(fractionArray[1])) * 100;
                                     })(ratio);
                                 });
                                 var averageCorrectRatio = (_.reduce(correctRatiosArray, function (memo, num) {
                                     return memo + num;
                                 }, 0)) / correctRatiosArray.length;
-                                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = averageCorrectRatio+ '%';
+                                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = averageCorrectRatio + '%';
                             }
                         }
                     }
@@ -212,16 +230,182 @@ exports.create = function (key, data, callback) {
 
                 //------------------计算Quiz Situation 中的 answerProblem------------------------
                 if (_.keys(userStatsAboutThisLesson.QuizSituation).length > 0) {
+                    if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
+                        if (_.keys(userStatsAboutThisLesson.QuizSituation.startProblemSet).length > 0) { // 可能冗余判断
+                            if (_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length > 0) {  // 可能冗余判断
+                                if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) { // 可能冗余判断
 
-                    if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) {
-                        if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
-                            /*if (lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] == undefined) {
-                                lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] = {};
+                                    if (lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] == undefined) {
+                                        lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'] = {};
+                                    }
+
+                                    var computeRecentDoProblemSetTime = function () {
+                                        var recentDoProblemSetTime = {};
+
+                                        var startProblemSetTimeArray = _.keys(userStatsAboutThisLesson.QuizSituation.startProblemSet);
+                                        var finishProblemSetTimeArray = _.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet);
+
+                                        var sortedStartProblemSetTimeArray = _.sortBy(startProblemSetTimeArray, function (time) {
+                                            return parseInt(time);
+                                        });
+                                        var sortedFinishProblemSetTimeArray = _.sortBy(finishProblemSetTimeArray, function (time) {
+                                            return parseInt(time);
+                                        });
+
+                                        console.log(important + 'start:', sortedStartProblemSetTimeArray);
+                                        console.log(important + 'finish:', sortedFinishProblemSetTimeArray);
+
+                                        var lastStartProblemSetTime = _.last(sortedStartProblemSetTimeArray);
+                                        var lastFinishProblemSetTime = _.last(sortedFinishProblemSetTimeArray);
+                                        var sortedStartTimeCount = sortedStartProblemSetTimeArray.length;
+                                        var sortedFinishTimeCount = sortedFinishProblemSetTimeArray.length;
+
+                                        /**
+                                         * 事件流末尾可能出现的情况模型
+                                         *
+                                         * start - finish （正常记录）
+                                         * finish - start （正常记录）
+                                         * finish - finish （非正常记录）
+                                         * start - start （非正常记录）
+                                         *
+                                         * */
+
+                                        if (lastStartProblemSetTime < lastFinishProblemSetTime) { // start - finish
+                                            if (sortedFinishTimeCount >= 2) {
+                                                if (lastStartProblemSetTime > sortedFinishProblemSetTimeArray[sortedFinishTimeCount - 2]) {  // finish - start - finish
+                                                    // 最后一段计为一次有效做题区间
+                                                    recentDoProblemSetTime.startTime = lastStartProblemSetTime;
+                                                    recentDoProblemSetTime.finishTime = lastFinishProblemSetTime;
+
+                                                } else if (lastStartProblemSetTime < sortedFinishProblemSetTimeArray[sortedFinishTimeCount - 2]) { //  start - finish - finish
+                                                    // 最后两个 finish 间计为有效区间
+                                                    recentDoProblemSetTime.startTime = sortedFinishProblemSetTimeArray[sortedFinishTimeCount - 2]; // 从上次结束算开始
+                                                    recentDoProblemSetTime.finishTime = lastFinishProblemSetTime;
+                                                } else {
+                                                    console.error("1.请找 tracks 管理员，为什么总是出现同一题集完成时间跟开始时间相等的问题！！");
+                                                }
+                                            } else {
+                                                recentDoProblemSetTime.startTime = lastStartProblemSetTime;
+                                                recentDoProblemSetTime.finishTime = lastFinishProblemSetTime;
+                                            }
+
+                                        } else if (lastStartProblemSetTime > lastFinishProblemSetTime) {  // finish - start
+                                            if (sortedStartTimeCount >= 2) {
+                                                if (sortedStartProblemSetTimeArray[sortedStartTimeCount - 2] < lastFinishProblemSetTime) { // start - finish - start
+
+                                                    recentDoProblemSetTime.startTime = sortedStartProblemSetTimeArray[sortedStartTimeCount - 2];
+                                                    recentDoProblemSetTime.finishTime = lastFinishProblemSetTime;
+
+                                                } else if (sortedStartProblemSetTimeArray[sortedStartTimeCount - 2] > lastFinishProblemSetTime) { //finish - start - start ...
+                                                    var newArray = sortedStartProblemSetTimeArray;
+                                                    var isError = false;
+                                                    do {
+                                                        if (newArray.length >= 2) {
+                                                            newArray.splice(1)
+                                                        } else {
+                                                            console.error("统计题集的过程中发现源数据严重错误");
+                                                            isError = true;
+                                                            break;
+                                                        }
+                                                    } while (_.last(newArray) > lastFinishProblemSetTime);
+                                                    if (!isError) {
+                                                        // start - finish - start - start....
+                                                        recentDoProblemSetTime.startTime = _.last(newArray);
+                                                        recentDoProblemSetTime.finishTime = lastFinishProblemSetTime;
+                                                    }
+                                                } else {
+                                                    console.error("2.请找 tracks 管理员，为什么总是出现同一题集完成时间跟开始时间相等的问题！！");
+                                                }
+                                            } else {
+                                                console.error("统计题集的过程中发现源数据严重错误");
+                                            }
+                                        } else {
+                                            console.error("3.请找 tracks 管理员，为什么总是出现同一题集完成时间跟开始时间相等的问题！！");
+                                        }
+                                        return recentDoProblemSetTime;
+                                    };
+
+                                    var recentDoProblemSetTime = computeRecentDoProblemSetTime(); // 最近一次做该题集且完成的时间区间
+
+                                    _.each(userStatsAboutThisLesson.QuizSituation.answerProblem, function (problemDetails, problemId) {
+                                        if (lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId] == undefined) {
+                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId] = {};
+                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_correct_ratio'] = {};
+                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'] = {};
+                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['details'] = {};
+
+                                            // 因为题库 pool_count 的缘故，每个人可能做过不同的题，所以平均率需要考虑做过这道题的人数的统计;
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId] = {};
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['user_count'] = 0;
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['correct_count'] = 0;
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['answer_situation'] = {};
+
+                                        }
+
+                                        var answerProblemTimeArray = _.map(_.keys(problemDetails), function (time) {
+                                            return parseInt(time);
+                                        });
+
+                                        var recentAnswerProblemTimeArray = _.filter(answerProblemTimeArray, function (time) {
+                                            return time > recentDoProblemSetTime.startTime && time < recentDoProblemSetTime.finishTime;
+                                        });  // 最近一次做该题集时，本题的所有作答
+
+                                        var recentFirstAnswerTime = _.min(recentAnswerProblemTimeArray); // “其中”的首次作答的时间
+                                        var recentFirstAnswerSituation = problemDetails[recentFirstAnswerTime];
+
+
+                                        _.each(recentFirstAnswerSituation.answers_ids, function (answerId) {
+                                            if (lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['answer_situation'][answerId] == undefined) {
+                                                lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['answer_situation'][answerId] = 0;
+                                            }
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['answer_situation'][answerId]++; //选过该选项的人数
+                                        });
+
+                                        lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['user_count']++; // 做过该题的人数
+                                        if (recentFirstAnswerSituation.is_correct) {
+                                            lessonsStats[lessonId]['compute_helper']['problem_compute_helper'][problemId]['correct_count']++;
+                                        }
+
+                                        lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['details'][user._id] = problemDetails;
+                                        //console.log(important,problemId);
+                                        //console.log(important,recentFirstAnswerProblemTime);
+                                    });
+
+                                    if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
+                                        console.log(important, lessonsStats[lessonId]['compute_helper']['problem_compute_helper']);
+                                        /**
+                                         *
+                                         *   {
+                                         *     '538fe48f76cb8a0068b1403b': { user_count: 1, correct_count: 1 },
+                                         *     '538ff83076cb8a0068b14071': { user_count: 1, correct_count: 1 },
+                                         *     '5398173e7c92662841b021f7': { user_count: 1, correct_count: 1 },
+                                         *     '538feaea76cb8a0068b14043': { user_count: 1, correct_count: 1 },
+                                         *     '538fed5f76cb8a0068b14068': { user_count: 1, correct_count: 1 },
+                                         *     '538fed5f76cb8a0068b14067': { user_count: 1, correct_count: 1,answer_situation:
+                                                                                                                  { '538ff83076cb8a0068b14074': {user},
+                                                                                                                    '538ff83076cb8a0068b14072': [Object],
+                                                                                                                    '538ff83076cb8a0068b14075': [Object] }
+                                         *     },
+                                         *     '539159da81d531b15a4b7b5b': { user_count: 1, correct_count: 1 }
+                                         *   }
+                                         *
+                                         * */
+
+
+                                        _.each(lessonsStats[lessonId]['compute_helper']['problem_compute_helper'], function (problemDetail, problemId) {
+                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_correct_ratio'] =
+                                                (problemDetail.correct_count / problemDetail.user_count * 100).toString() + '%';
+
+                                            _.each(problemDetail.answer_situation,function(countOfChoose,answerId){
+                                                lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'][answerId]=
+                                                    (countOfChoose/problemDetail.user_count * 100).toString()+'%';
+                                            });
+                                        });
+                                        //console.log(important,lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem']);
+                                    }
+                                }
                             }
 
-                            _.each(userIndexOfLessonStats.QuizSituation.answerProblem,function(value,key){
-
-                            })*/
 
                         }
                     }
@@ -256,7 +440,7 @@ exports.create = function (key, data, callback) {
         );
     });
 
-    async.parallelLimit(taskGroups, 10, function (err, result) {
+    async.parallelLimit(taskGroups, 3, function (err, result) {
         if (!err) {
             callback(null, result);
 

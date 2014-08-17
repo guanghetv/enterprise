@@ -85,7 +85,6 @@ exports.create = function (key, data, originData, callback) {
         if(trackSetKey === 'tracks_startProblemSet'){
             _.each(trackSet, function (track) {
                 if (track.course != undefined &&  _.contains(['gonggu', 'lianxi'], track.course.ActivityType)) {
-                    console.log(important,"here");
                     var basicInfo = fulfillBasicInfo(track, chapterSituation);
                     var chapterId = basicInfo.chapterId;
                     var lessonId = basicInfo.lessonId;
