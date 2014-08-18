@@ -8,7 +8,7 @@ var dataManager = require('./core/DataManager');
 var loginService = require('./services/login');
 
 exports.bootstrap = function (config, callback) {
-    loginService.loginMothership(function (err) {
+    loginService.loginMothership(config,function (err) {
         if(err){
             return console.error('Login error:',err);
         }else{
