@@ -5,7 +5,7 @@ var CronJob = require('cron').CronJob;
 var shell = require('shelljs');
 
 exports.start = function () {
-    new CronJob('0 */5 * * * *', function(){
+    new CronJob('* */5 * * * *', function(){
         console.log('[CronTab]: Arousing Data Factory.');
         shell.exec('npm run app');
     }, null, true);
