@@ -32,14 +32,14 @@ exports.load = function(config, callback){
     callback(null, modules);
 };
 
-exports.watch = function(config){
+exports.watch = function(config,callback){
 	fileSystem.watch(config.modules_path, function(ev, filename){
 		filename = path.join(config.modules_path, filename);
 		if(ev == 'rename') ev = fileSystem.existsSync(filename) ? 'create' : 'remove';
 		if(ev == 'create'){
 			var module = parseFolder(filename);
             // TODO: where is this callback?
-			if(module)callback(err, module);
+			if(module)callback(null, module);
 		}
 	});
 	console.info('[ModulesLoader]: watch has started.');
