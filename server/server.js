@@ -9,6 +9,7 @@ var config = require('./config/config')[env];
 console.log(config);
 
 var mongoose = require('mongoose');
+var dataFactoryCron = require('./app/services/data_factory');
 
 //simple logger
 app.use(function(req, res, next){
@@ -24,6 +25,8 @@ app.use(bodyParser.json());
 mongoose.connect(config.db_uri, function(){
 	console.log('mongodb is connected .');
 	require('./config/route')(app);
+
+    dataFactoryCron.start();
 });
 
 //error handler
