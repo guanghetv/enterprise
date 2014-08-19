@@ -162,7 +162,7 @@ exports.save = function(dimension,data, callback){
         // TODO: 对于err的异常处理
         console.log(result);
         if(dimension === 'rooms'){
-            process.exit;
+            process.exit(0);
         }
     });
 };
