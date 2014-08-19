@@ -19,7 +19,11 @@ app.use(function(req, res, next){
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 //
-mongoose.connect(config.db_uri, function(){
+mongoose.connect(config.db_url, function(err){
+    if(err){
+        console.log(err);
+        process.exit(-1);
+    }
 	console.log('mongodb is connected .');
 	require('./config/route')(app);
 });

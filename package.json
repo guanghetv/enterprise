@@ -4,6 +4,7 @@
   "description": "Enterprise is a spacecraft(DataFactory) carring serveral crews(tasks).",
   "main": "app.js",
   "scripts": {
+    "factory": "node enterprise.js",
     "app": "node app.js",
     "test": "node test/test.js",
     "server": "node server.js"

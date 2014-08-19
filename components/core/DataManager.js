@@ -162,6 +162,7 @@ exports.save = function(dimension,data, callback){
         // TODO: 对于err的异常处理
         console.log(result);
         if(dimension === 'rooms'){
+            console.log("data analysis done");
             process.exit(0);
         }
     });
