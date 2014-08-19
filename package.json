@@ -4,7 +4,7 @@
   "description": "Enterprise is a spacecraft(DataFactory) carring serveral crews(tasks).",
   "main": "app.js",
   "scripts": {
-    "app": "node app.js",
+    "app": "node app/app.js",
     "test": "node test/test.js",
     "server": "node server/server.js"
   },
@@ -31,6 +31,8 @@
     "underscore": "~1.6.0",
     "async": "~0.9.0",
     "mongoose": "~3.8.14",
-    "body-parser": "~1.5.2"
+    "body-parser": "~1.5.2",
+    "cron": "~1.0.4",
+    "shelljs": "~0.3.0"
   }
 }

@@ -194,7 +194,7 @@ exports.create = function (key, data, callback) {
                     }
 
                     if (_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length > 0) {
-                        if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的习题正确率 -- From PRD
+                        if (userStatsAboutThisLesson.LessonSituation!=undefined && _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的习题正确率 -- From PRD
 
                             if (lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet'] == undefined) {
                                 lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet'] = {};
@@ -230,7 +230,7 @@ exports.create = function (key, data, callback) {
 
                 //------------------计算Quiz Situation 中的 answerProblem------------------------
                 if (_.keys(userStatsAboutThisLesson.QuizSituation).length > 0) {
-                    if (_.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
+                    if (userStatsAboutThisLesson.LessonSituation!=undefined && _.keys(userStatsAboutThisLesson.LessonSituation.finishLesson).length > 0) { // 只统计完成过本课的学生的题目正确率 -- From PRD
                         if (_.keys(userStatsAboutThisLesson.QuizSituation.startProblemSet).length > 0) { //TODO: 可能冗余判断
                             if (_.keys(userStatsAboutThisLesson.QuizSituation.finishProblemSet).length > 0) {  //TODO: 可能冗余判断
                                 if (_.keys(userStatsAboutThisLesson.QuizSituation.answerProblem).length > 0) { //TODO: 可能冗余判断

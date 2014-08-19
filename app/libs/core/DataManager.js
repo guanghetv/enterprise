@@ -121,7 +121,6 @@ exports.save = function(dimension,data, callback){
             break;
         case 'rooms':
             finalStats = data.crew_room_0001;
-
             break;
         default :
     }
@@ -162,5 +161,8 @@ exports.save = function(dimension,data, callback){
     async.parallelLimit(uploadTasks,10,function(err,result){
         // TODO: 对于err的异常处理
         console.log(result);
+        if(dimension === 'rooms'){
+            process.exit;
+        }
     });
 };
