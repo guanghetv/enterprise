@@ -59,5 +59,3 @@ exports.bootstrap = function (config, callback) {
 
     callback();
 };
-
-
