@@ -1,4 +1,4 @@
-var engine = require('./libs/engine');
+var engine = require('./components/engine');
 var CronJob = require('cron').CronJob;
 var shell = require('shelljs');
 
