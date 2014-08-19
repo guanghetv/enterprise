@@ -24,15 +24,15 @@
   },
   "homepage": "https://github.com/guanghetv/enterprise",
   "dependencies": {
+    "async": "~0.9.0",
+    "body-parser": "~1.5.2",
+    "cron": "^1.0.4",
+    "express": "~4.7.2",
+    "mongoose": "~3.8.14",
     "promise": "^5.0.0",
     "request": "~2.39.0",
-    "express": "~4.7.2",
+    "shelljs": "^0.3.0",
     "synchronize": "~0.9.8",
-    "underscore": "~1.6.0",
-    "async": "~0.9.0",
-    "mongoose": "~3.8.14",
-    "body-parser": "~1.5.2",
-    "cron": "~1.0.4",
-    "shelljs": "~0.3.0"
+    "underscore": "~1.6.0"
   }
 }
