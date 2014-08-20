@@ -26,7 +26,7 @@ CacheManager.prototype.set = function(key, value, callback){
 };
 
 
-module.exports.CacheManager = CacheManager;
+module.exports = CacheManager;
 
 
 
@@ -47,7 +47,7 @@ var MEMORY_CACHE = {
 	middle: {}
 };
 
-
+/*
 // TODO: storage是名词, data太宽泛了，saveRaw = function(object, callback)
 // TODO: 如果确认origin只读，需要加判断禁止重复save
 exports.storage = function(data, callback){
@@ -75,3 +75,5 @@ exports.save = function(name,data, callback){
 exports.load = function(callback, source){
 	callback(null, MEMORY_CACHE[ source ]);
 };
+
+*/

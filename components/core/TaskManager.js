@@ -4,6 +4,8 @@ var TaskManager = function(config, dataManager){
     this.config = config;
     this.dataManager = dataManager;
 
+    this.status = {};
+
     this.eventQueue = {};
 };
 
@@ -29,8 +31,30 @@ TaskManager.prototype.unRegister = function(modules_name, callback) {
     callback();
 };
 
+TaskManager.prototype.setTaskStatus = function(name, status){
+    this.status[ name ] = status;
+    this.tigger('task_end', name);
+};
+
 TaskManager.prototype.run = function() {
+    var that = this;
     // body...
+    for(var name in this.modules){
+        console.log('execute: %s' ,name);
+        var module = this.modules[ name ];
+        try{
+            module.create(this.dataManager, function(err){ // task done callback
+                (function(name){
+                    var STATUS_DONE = 0x01;
+                    that.setTaskStatus(name, STATUS_DONE);
+                    console.info('[TASKMANAGER] %s is done .', name);
+                })(name);
+            });
+        }catch(e){
+            console.error('%s : %s', name ,e);
+            module.restore(this.dataManager);
+        }
+    }
 };
 //event handler
 TaskManager.prototype.on = function(event, callback) {
@@ -38,7 +62,12 @@ TaskManager.prototype.on = function(event, callback) {
     this.eventQueue[event].push(callback);
 };
 
-module.exports.TaskManager = TaskManager;
+TaskManager.prototype.tigger = function(event, args){
+    var callback = this.eventQueue[event];
+    if(callback) callback(args);
+};
+
+module.exports = TaskManager;
 
 
 /*

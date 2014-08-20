@@ -1,10 +1,17 @@
 var fileSystem = require('fs');
 var path = require('path');
-
+/**
+ * [ModuleLoader description]
+ * @param {[type]} config [description]
+ */
 var ModuleLoader = function(config){
 	this.config = config;
 };
-
+/**
+ * [parseFolder description]
+ * @param  {[type]} dir [description]
+ * @return {[type]}     [description]
+ */
 ModuleLoader.parseFolder = function(dir){
 	var manifest = path.join(dir, 'manifest.json');
 	if(fileSystem.existsSync(manifest)){
@@ -23,18 +30,27 @@ ModuleLoader.parseFolder = function(dir){
 		console.warn(' "%s" have not manifest.json .', dir);
 	}
 };
-
+/**
+ * [loadModules from modules .]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 ModuleLoader.prototype.loadModules = function(callback) {
 	var that = this;
 	var modules = [];
 	fileSystem.readdirSync(that.config.modules_path).forEach(function(filename){
 		var module = ModuleLoader.parseFolder(path.join(that.config.modules_path, filename));
-		if(module) modules.push(module);
+		//disabled is avaliable now .
+		if(module && !module.disabled) modules.push(module);
 	});
     console.log('[ModulesLoader]: load %s modules', modules.length);
     callback(null, modules);
 };
-
+/**
+ * [watch fileSystem]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 ModuleLoader.prototype.watch = function(callback) {
 	var that = this;
 	fileSystem.watch(this.config.modules_path, function(ev, filename){
@@ -48,5 +64,8 @@ ModuleLoader.prototype.watch = function(callback) {
 	});
 	console.info('[ModulesLoader]: watch has started.');
 };
-
+/**
+ * [exports]
+ * @type {[type]}
+ */
 module.exports = ModuleLoader;

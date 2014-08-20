@@ -1,24 +1,33 @@
 //core
-var TaskManager     = require('./core/TaskManager').TaskManager;
-var DataManager     = require('./core/DataManager').DataManager;
+var TaskManager     = require('./core/TaskManager');
+var DataManager     = require('./core/DataManager');
 var ModuleLoader    = require('./core/ModuleLoader');
-var CacheManager    = require('./core/CacheManager').CacheManager;
+var CacheManager    = require('./core/CacheManager');
 
 //service
 var loginService = require('./services/login');
 
 exports.bootstrap = function (config, callback) {
-
+    //
     var cacheManager = new CacheManager(config);
-
+    //
     var moduleLoader = new ModuleLoader(config);
-
+    //
     var dataManager = new DataManager(config, cacheManager);
-
+    //
     var taskManager = new TaskManager(config, dataManager);
-
+    //
     taskManager.on('error', function(err){
         callback(err);
+    });
+    //
+    taskManager.on('task_end', function(name){
+        console.log('task %s ended.', name);
+    });
+
+    taskManager.on('all_task_end', function(name){
+        console.log('all tasks are ended .');
+        process.exit(0);
     });
 
     var moduleLoaderReady = function(){

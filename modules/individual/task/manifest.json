@@ -3,5 +3,6 @@
     "description": "This is a task for classify users",
     "type":"individual",
     "entrance": "index.js",
-    "dependencies":[]
+    "dependencies":[],
+    "disabled" : true
 }

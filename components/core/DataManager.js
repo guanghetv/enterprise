@@ -21,22 +21,18 @@ DataManager.prototype.getCache = function(key, success, error){
 };
 
 
-// ----------------- 零拉 -------------------
 
-DataManager.prototype.pullChapterById = function(chapterId, callback){
-    this.request('/courses/+chapterId',saveChapterById(chapterId,callback(data)))
-}
-
-
-
-
-
-DataManager.prototype.request = function(url, callback){
-    request({
-        methods : 'POST',
+DataManager.prototype.request = function(options, callback){
+    var defaults = {
+        methods : 'GET',
         uri     : config.datapipe_url + url,
         headers : { 'content-type': 'application/json' }
-    },function (err, response, body){
+    };
+    for(var key in options){
+        defaults[key] = options[key];
+    }
+    options = defaults;
+    request(options, function(err, response, body){
         if(err) return callback(err);
         if(response.statusCode == 200){
             callback(null, body);
@@ -46,31 +42,30 @@ DataManager.prototype.request = function(url, callback){
     });
 };
 
-//------------- 整存 ——---------------
-DataManager.prototype.saveChapterById = function(chapterId,callback){
-    return function(data){
-        this.cache.set('course_'+chapterId,callback);
-    }
-}
+DataManager.prototype.getUserifyTracks = function(callback){
+    this.getCache('users', callback, request('/users'));
+};
 
 
+DataManager.prototype.getCourses = function(callback){
+    
+    this.getCache('courses', callback, function(){
+        //http://0:3000/enterprise
+        this.request('/enterprise', function(data){
+            var keys = data.course;
 
-
-// ------------ 零取 -----------------
-/**
- * example
- * @param  {[type]}   key      [description]
- * @param  {Function} callback [description]
- * @return {[type]}            [description]
- */
-DataManager.prototype.getEventsBy = function(key, callback){
-    var that = this;
-    this.getCache(key, callback, function(err, key){
-        that.request('/url', callback);
+            keys.forEach(function(key){
+                http://0:3000/api/v1/courses/538fe05c76cb8a0068b14031
+                this.cache.set('course_' + key);
+            });
+            callback();
+           
+        });
     });
 };
 
-module.exports.DataManager = DataManager;
+
+module.exports = DataManager;
 
 /**
  * Created by solomon on 14-7-29.
