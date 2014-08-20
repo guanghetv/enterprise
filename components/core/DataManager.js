@@ -1,4 +1,54 @@
 /**
+ * [DataManager description]
+ * @param {[type]} config [description]
+ */
+var DataManager = function(config){
+    this.config = config;
+};
+
+DataManager.prototype.setCacheProvider = function(cache){
+    //CacheProvider must be impl* 'set' and 'get' methods .
+    this.cache = cache;
+};
+
+DataManager.prototype.getCache = function(key, success, error){
+    this.cache.get(key, function(err, data){
+        if(err) error(err, key);
+        else success(err, data);
+    });
+};
+
+DataManager.prototype.request = function(url, callback){
+    request({
+        methods : 'POST',
+        uri     : config.datapipe_url + url
+        headers : { 'content-type': 'application/json' }
+    },function (err, response, body){
+        if(err) return callback(err);
+        if(response.statusCode == 200){
+            callback(null, body);
+        } else {
+            callback(err, response.statusCode);
+        }
+    });
+
+};
+/**
+ * example
+ * @param  {[type]}   key      [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+DataManager.prototype.getEventsBy = function(key, callback){
+    var that = this;
+    this.getCache(key, callback, function(err, key){
+        that.request('/url', callback);
+    });
+};
+
+module.exports.DataManager = DataManager;
+
+/**
  * Created by solomon on 14-7-29.
  */
 

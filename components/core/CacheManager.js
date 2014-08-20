@@ -1,6 +1,42 @@
+var redis = require("redis");
+
+/**
+ * [CacheManager description]
+ * var cacheManager = new CacheManager({
+ *     some_config_key: 'value'
+ * });
+ *
+ * cacheManager.set('key', 'value', function(err, obj){
+ *     console.log(obj); // { key: value }
+ * });
+ */
+var CacheManager = function(config){
+    this.client = redis.createClient();
+    this.client.on('connect', function(){
+        console.log('redis is connected to server .');
+    });
+};
+
+CacheManager.prototype.get = function(key, value, callback){
+    this.client.get(key, value);
+};
+
+CacheManager.prototype.set = function(key, value, callback){
+    this.client.set(key, value);
+};
+
+
+module.exports.CacheManager = CacheManager;
+
+//end by lsong , CacheManager class .
+
+
+
 /**
  * Created by solomon on 14-7-29.
  */
+
+
 
 
 // TODO: origin改为raw或者readonly， middle改为intermediate

@@ -31,6 +31,7 @@
     "express": "~4.7.2",
     "mongoose": "~3.8.14",
     "promise": "^5.0.0",
+    "redis": "^0.12.1",
     "request": "~2.39.0",
     "shelljs": "^0.3.0",
     "synchronize": "~0.9.8",
