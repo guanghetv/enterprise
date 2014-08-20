@@ -355,13 +355,12 @@ exports.create = function (key, data, callback) {
 
 
             //----------  循环的末尾，以下是用来计算各种平均率 ---------------------
-
             /**
              *
              * 主视频首次平均视频观看时长率 = 所有完成过本课的人第一次观看该视频的播放率之和 / 这个群体的人数 * 100%
              *
              * */
-            if (eachLessonStats[0].lesson.lesson.lessonType === 'learn') {
+            if (eachLessonStats[0].lesson.lesson.lessonType === 'learn' && lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo'] !=undefined) {
                 var watchingRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['video_compute_helper'], function (ratio) {
                     return parseFloat(ratio);
                 });
@@ -376,7 +375,7 @@ exports.create = function (key, data, callback) {
              * 习题集最近一次平均正确率 = 所有完成过本课的人最近一次做本题集的正确率之和 / 这个群体的人数  * 100%
              *
              * */
-            if(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'].length > 0){
+            if(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'].length > 0 && lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet'] !=undefined){
                 var correctRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'], function (ratio) {
                     return (function (ratio) {
                         //console.log(important,ratio);
@@ -414,12 +413,15 @@ exports.create = function (key, data, callback) {
              *
              * 某道题最近一次做题（最近一次做题集且题集finish）首次作答的平均正确率 =
              *
-             *                      所有完成过本课的人最近一次做本题首次作答的正确率之和 / 这个群体的人数  * 100%
+             *                      所有完成过本课的人最近一次做本题首次作答且做对的人数总和 / 做过这道题的人数总和  * 100%
              *
-             * 某个选项在这次作答中的平均被选择率 = 选择该选项的人数 / 这个群体中做过该题的群体的总人数 * 100%
+             *
+             * 某个选项在这次作答中的平均被选择率 =
+             *
+             *                      选择该选项的人数 / 这个群体中做过该题的群体的总人数 * 100%
              *
              * */
-            if(_.keys(lessonsStats[lessonId]['compute_helper']['problem_compute_helper']).length >0){
+            if(_.keys(lessonsStats[lessonId]['compute_helper']['problem_compute_helper']).length >0 && lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem']!=undefined){
                 _.each(lessonsStats[lessonId]['compute_helper']['problem_compute_helper'], function (problemDetail, problemId) {
                     var averageCorrectRatio = problemDetail.correct_count / problemDetail.user_count * 100;
 
