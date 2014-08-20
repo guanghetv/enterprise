@@ -1,6 +1,25 @@
 var fileSystem = require('fs');
 var path = require('path');
 
+var ModuleLoader = function(config){
+
+};
+
+ModuleLoader.prototype.loadModules = function(callback) {
+	// body...
+};
+
+ModuleLoader.prototype.watch = function(callback) {
+	// body...
+};
+
+module.exports.ModuleLoader = ModuleLoader;
+
+
+
+
+//=============================
+
 var parseFolder = function(dir){
 	var manifest = path.join(dir, 'manifest.json');
 	if(fileSystem.existsSync(manifest)){

@@ -1,3 +1,41 @@
+
+var TaskManager = function(config, dataManager){
+    this.modules = {};
+    this.config = config;
+    this.dataManager = dataManager;
+};
+
+TaskManager.prototype.register = function(modules, callback) {
+    if(!modules)callback(new Error('modules is undefined .'));
+    var that = this;
+    modules.forEach(function(module){
+        that.modules[ module.name ] = module;
+    });
+    callback();
+};
+
+TaskManager.prototype.unRegister = function(modules_name, callback) {
+    if(!modules)callback(new Error('modules is undefined .'));
+    var that = this;
+    modules_name.forEach(function(name){
+        if(!that.modules[name]){
+            delete that.modules[name];
+        }else{
+            callback(new Error('not found module %s', name));
+        }
+    });
+    callback();
+};
+
+TaskManager.prototype.run = function(first_argument) {
+    // body...
+};
+
+module.exports.TaskManager = TaskManager;
+
+//
+
+
 var cacheManager = require('./CacheManager');
 exports.run = function (modules, originData, callback) {
 

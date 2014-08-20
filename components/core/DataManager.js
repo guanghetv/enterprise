@@ -2,8 +2,10 @@
  * [DataManager description]
  * @param {[type]} config [description]
  */
-var DataManager = function(config){
+var DataManager = function(config, cache){
     this.config = config;
+    //
+    if(cache) this.cache = cache;
 };
 
 DataManager.prototype.setCacheProvider = function(cache){
@@ -21,7 +23,7 @@ DataManager.prototype.getCache = function(key, success, error){
 DataManager.prototype.request = function(url, callback){
     request({
         methods : 'POST',
-        uri     : config.datapipe_url + url
+        uri     : config.datapipe_url + url,
         headers : { 'content-type': 'application/json' }
     },function (err, response, body){
         if(err) return callback(err);
@@ -31,7 +33,6 @@ DataManager.prototype.request = function(url, callback){
             callback(err, response.statusCode);
         }
     });
-
 };
 /**
  * example
