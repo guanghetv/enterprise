@@ -21,15 +21,22 @@ var DataManager = function(config, cache){
         });
         
     });
-
-
 };
-
+/**
+ * [setCacheProvider description]
+ * @param {[type]} cache [description]
+ */
 DataManager.prototype.setCacheProvider = function(cache){
     //CacheProvider must be impl* 'set' and 'get' methods .
     this.cache = cache;
 };
-
+/**
+ * [getCache description]
+ * @param  {[type]} key            [description]
+ * @param  {[type]} cachedHandler  [description]
+ * @param  {[type]} requestHandler [description]
+ * @return {[type]}                [description]
+ */
 DataManager.prototype.getCache = function(key, cachedHandler, requestHandler){
     this.cache.get(key, function(err, data){
         if(data) cachedHandler(err, data);
@@ -61,7 +68,10 @@ DataManager.prototype.login = function(callback){
     form.append('username', this.config.username || 'admin1');
     form.append('password', this.config.password || 'xiaoshu815');
 };
-
+/**
+ * [getJar description]
+ * @return {[type]} [description]
+ */
 DataManager.prototype.getJar = function(){
     var jar = request.jar();
     var cookie = request.cookie(this.cookieString);
@@ -69,7 +79,12 @@ DataManager.prototype.getJar = function(){
     return jar;
 };
 
-
+/**
+ * [request description]
+ * @param  {[type]}   options  [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 DataManager.prototype.request = function(options, callback){
     var defaults = {
         methods : 'GET',
@@ -90,12 +105,20 @@ DataManager.prototype.request = function(options, callback){
         }
     });
 };
-
+/**
+ * [getUserifyTracks description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 DataManager.prototype.getUserifyTracks = function(callback){
     this.getCache('users', callback, request('/users'));
 };
 
-
+/**
+ * [getCourses description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 DataManager.prototype.getCourses = function(callback){
     var that = this;
     this.getCache('courses', callback, function(){
@@ -112,19 +135,28 @@ DataManager.prototype.getCourses = function(callback){
         });
     });
 };
-
+/**
+ * [getChapterById description]
+ * @param  {[type]}   chapterId [description]
+ * @param  {Function} callback  [description]
+ * @return {[type]}             [description]
+ */
 DataManager.prototype.getChapterById = function(chapterId, callback){
     var that = this;
-    this.getCache('course_' + chapterId, callback, function(){
+    var prefix = 'course_';
+    this.getCache(prefix + chapterId, callback, function(){
         that.request({ uri: that.config.mothership_url + '/api/v1/courses/' + chapterId }, function(err, data){
-            that.cache.set('course_' + chapterId, JSON.parse(data), function(){
+            that.cache.set(prefix + chapterId, JSON.parse(data), function(){
                 callback(null, data);
             });
         });
     })
 };
 
-
+/**
+ * [exports description]
+ * @type {[type]}
+ */
 module.exports = DataManager;
 
 /**
