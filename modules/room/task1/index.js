@@ -171,17 +171,6 @@ exports.create = function (key, data, callback) {
 
                             lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['details'][user._id] =
                                 userStatsAboutThisLesson.VideoSituation.watchVideo;
-
-                            if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
-                                var watchingRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['video_compute_helper'], function (ratio) {
-                                    return parseFloat(ratio);
-                                });
-                                var averageWatchingRatio = (_.reduce(watchingRatiosArray, function (memo, num) {
-                                    return memo + num;
-                                }, 0)) / watchingRatiosArray.length;
-                                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = Math.round(averageWatchingRatio).toString() + '%';
-                            }
-
                         }
                     }
                 }
@@ -209,24 +198,9 @@ exports.create = function (key, data, callback) {
 
                             lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['details'][user._id] =
                                 userStatsAboutThisLesson.QuizSituation.finishProblemSet;
-
-                            if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
-                                var correctRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'], function (ratio) {
-                                    return (function (ratio) {
-                                        //console.log(important,ratio);
-                                        var fractionArray = ratio.split('/'); // 分数数组：index-0 : 分子 ； index-1 : 分母
-                                        return (parseInt(fractionArray[0]) / parseInt(fractionArray[1])) * 100;
-                                    })(ratio);
-                                });
-                                var averageCorrectRatio = (_.reduce(correctRatiosArray, function (memo, num) {
-                                    return memo + num;
-                                }, 0)) / correctRatiosArray.length;
-                                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = Math.round(averageCorrectRatio).toString() + '%';
-                            }
                         }
                     }
                 }
-
 
                 //------------------计算Quiz Situation 中的 answerProblem------------------------
                 if (_.keys(userStatsAboutThisLesson.QuizSituation).length > 0) {
@@ -367,45 +341,7 @@ exports.create = function (key, data, callback) {
                                         }
 
                                         lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['details'][user._id] = problemDetails;
-                                        //console.log(important,problemId);
-                                        //console.log(important,recentFirstAnswerProblemTime);
                                     });
-
-                                    if (userIndexOfLessonStats == (eachLessonStats.length - 1)) { //循环的最后一个,开始计算平均率
-                                        //console.log(important, lessonsStats[lessonId]['compute_helper']['problem_compute_helper']);
-                                        /**
-                                         *
-                                         *   {
-                                         *     '538fe48f76cb8a0068b1403b': { user_count: 1, correct_count: 1 },
-                                         *     '538ff83076cb8a0068b14071': { user_count: 1, correct_count: 1 },
-                                         *     '5398173e7c92662841b021f7': { user_count: 1, correct_count: 1 },
-                                         *     '538feaea76cb8a0068b14043': { user_count: 1, correct_count: 1 },
-                                         *     '538fed5f76cb8a0068b14068': { user_count: 1, correct_count: 1 },
-                                         *     '538fed5f76cb8a0068b14067': { user_count: 1, correct_count: 1,answer_situation:
-                                                                                                                  { '538ff83076cb8a0068b14074': {user},
-                                                                                                                    '538ff83076cb8a0068b14072': [Object],
-                                                                                                                    '538ff83076cb8a0068b14075': [Object] }
-                                         *     },
-                                         *     '539159da81d531b15a4b7b5b': { user_count: 1, correct_count: 1 }
-                                         *   }
-                                         *
-                                         * */
-
-
-                                        _.each(lessonsStats[lessonId]['compute_helper']['problem_compute_helper'], function (problemDetail, problemId) {
-                                            var averageCorrectRatio = problemDetail.correct_count / problemDetail.user_count * 100;
-
-                                            lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_correct_ratio'] =
-                                                Math.round(averageCorrectRatio).toString() + '%';
-
-                                            _.each(problemDetail.answer_situation,function(countOfChoose,answerId){
-                                                var averageAnswerRatio = countOfChoose/problemDetail.user_count * 100;
-                                                lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'][answerId]=
-                                                    Math.round(averageAnswerRatio).toString()+'%';
-                                            });
-                                        });
-                                        //console.log(important,lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem']);
-                                    }
                                 }
                             }
 
@@ -415,6 +351,90 @@ exports.create = function (key, data, callback) {
                 }
 
             });
+
+
+
+            //----------  循环的末尾，以下是用来计算各种平均率 ---------------------
+
+            /**
+             *
+             * 主视频首次平均视频观看时长率 = 所有完成过本课的人第一次观看该视频的播放率之和 / 这个群体的人数 * 100%
+             *
+             * */
+            if (eachLessonStats[0].lesson.lesson.lessonType === 'learn') {
+                var watchingRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['video_compute_helper'], function (ratio) {
+                    return parseFloat(ratio);
+                });
+                var averageWatchingRatio = (_.reduce(watchingRatiosArray, function (memo, num) {
+                    return memo + num;
+                }, 0)) / watchingRatiosArray.length;
+                lessonsStats[lessonId]['stats']['VideoSituation']['watchVideo']['average_watching_ratio'] = Math.round(averageWatchingRatio).toString() + '%';
+            }
+
+            /**
+             *
+             * 习题集最近一次平均正确率 = 所有完成过本课的人最近一次做本题集的正确率之和 / 这个群体的人数  * 100%
+             *
+             * */
+            if(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'].length > 0){
+                var correctRatiosArray = _.map(lessonsStats[lessonId]['compute_helper']['quiz_compute_helper'], function (ratio) {
+                    return (function (ratio) {
+                        //console.log(important,ratio);
+                        var fractionArray = ratio.split('/'); // 分数数组：index-0 : 分子 ； index-1 : 分母
+                        return (parseInt(fractionArray[0]) / parseInt(fractionArray[1])) * 100;
+                    })(ratio);
+                });
+                var averageCorrectRatio = (_.reduce(correctRatiosArray, function (memo, num) {
+                    return memo + num;
+                }, 0)) / correctRatiosArray.length;
+                lessonsStats[lessonId]['stats']['QuizSituation']['finishProblemSet']['average_correct_ratio'] = Math.round(averageCorrectRatio).toString() + '%';
+
+            }
+
+            /**
+             *
+             *   {
+                     *     '538fe48f76cb8a0068b1403b': { user_count: 1, correct_count: 1 },
+                     *     '538ff83076cb8a0068b14071': { user_count: 1, correct_count: 1 },
+                     *     '5398173e7c92662841b021f7': { user_count: 1, correct_count: 1 },
+                     *     '538feaea76cb8a0068b14043': { user_count: 1, correct_count: 1 },
+                     *     '538fed5f76cb8a0068b14068': { user_count: 1, correct_count: 1 },
+                     *     '538fed5f76cb8a0068b14067': { user_count: 1, correct_count: 1,answer_situation:
+                                                                                              { '538ff83076cb8a0068b14074': {user},
+                                                                                                '538ff83076cb8a0068b14072': [Object],
+                                                                                                '538ff83076cb8a0068b14075': [Object] }
+                     *     },
+                     *     '539159da81d531b15a4b7b5b': { user_count: 1, correct_count: 1 }
+                     *   }
+             *
+             * */
+
+
+            /**
+             *
+             * 某道题最近一次做题（最近一次做题集且题集finish）首次作答的平均正确率 =
+             *
+             *                      所有完成过本课的人最近一次做本题首次作答的正确率之和 / 这个群体的人数  * 100%
+             *
+             * 某个选项在这次作答中的平均被选择率 = 选择该选项的人数 / 这个群体中做过该题的群体的总人数 * 100%
+             *
+             * */
+            if(_.keys(lessonsStats[lessonId]['compute_helper']['problem_compute_helper']).length >0){
+                _.each(lessonsStats[lessonId]['compute_helper']['problem_compute_helper'], function (problemDetail, problemId) {
+                    var averageCorrectRatio = problemDetail.correct_count / problemDetail.user_count * 100;
+
+                    lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_correct_ratio'] =
+                        Math.round(averageCorrectRatio).toString() + '%';
+
+                    _.each(problemDetail.answer_situation,function(countOfChoose,answerId){
+                        var averageAnswerRatio = countOfChoose/problemDetail.user_count * 100;
+                        lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'][answerId]=
+                            Math.round(averageAnswerRatio).toString()+'%';
+                    });
+                });
+            }
+
+            //---------------------- 计算结束，删除 compute_helper -----------------------
             delete lessonsStats[lessonId]['compute_helper'];
         });
 
