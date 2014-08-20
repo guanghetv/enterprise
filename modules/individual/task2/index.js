@@ -1,6 +1,7 @@
 exports.create = function (key, data, originData, callback) {
     console.log('-------添加 course 信息-------');
     var courses = originData.courses.all;
+    var repairedData = {};
 
     var statusInfo = [
         "isReview", //
@@ -238,10 +239,14 @@ exports.create = function (key, data, originData, callback) {
                 addToNoUseTrack(index, track, "Lack of basic course info, delete it:");
             }
         });
-        Utils.deleteMultiElementsFromArrayAtOnce(trackSet, shouldBeRemovedIndexArray);
+        if(shouldBeRemovedIndexArray.length!=0){
+            repairedData[trackSetKey] = Utils.deleteMultiElementsFromArrayAtOnce(trackSet, shouldBeRemovedIndexArray);
+        }else{
+            repairedData[trackSetKey] = trackSet;
+        }
     });
 
-    callback(null, data);
+    callback(null, repairedData);
 };
 
 exports.restore = function () {
