@@ -18,10 +18,27 @@ DataManager.prototype.getCache = function(key, success, error){
     });
 };
 
+
+// chapterIdArray = ["123","321"];
+
+_.each(chapterIdArray,function(chapterId){
+    this.pullChapterById(chapterId);
+})
+
+// ----------------- 零拉 -------------------
+
+DataManager.prototype.pullChapterById = function(chapterId, callback){
+    this.request('/courses/+chapterId',saveChapterById(chapterId,callback(data)))
+}
+
+
+
+
+
 DataManager.prototype.request = function(url, callback){
     request({
         methods : 'POST',
-        uri     : config.datapipe_url + url
+        uri     : config.datapipe_url + url,
         headers : { 'content-type': 'application/json' }
     },function (err, response, body){
         if(err) return callback(err);
@@ -33,6 +50,18 @@ DataManager.prototype.request = function(url, callback){
     });
 
 };
+
+//------------- 整存 ——---------------
+DataManager.prototype.saveChapterById = function(chapterId,callback){
+    return function(data){
+        this.cache.set('course_'+chapterId,callback);
+    }
+}
+
+
+
+
+// ------------ 零取 -----------------
 /**
  * example
  * @param  {[type]}   key      [description]
