@@ -28,6 +28,8 @@ CacheManager.prototype.set = function(key, value, callback){
 
 module.exports.CacheManager = CacheManager;
 
+
+
 //end by lsong , CacheManager class .
 
 

@@ -21,12 +21,6 @@ DataManager.prototype.getCache = function(key, success, error){
 };
 
 
-// chapterIdArray = ["123","321"];
-
-_.each(chapterIdArray,function(chapterId){
-    this.pullChapterById(chapterId);
-})
-
 // ----------------- 零拉 -------------------
 
 DataManager.prototype.pullChapterById = function(chapterId, callback){
@@ -99,7 +93,7 @@ module.exports.DataManager = DataManager;
 //          ]
 //      }
 // ]
-
+/*
 var config;
 
 exports.load = function(_config, callback){
@@ -247,3 +241,4 @@ exports.save = function(dimension,data, callback){
         }
     });
 };
+*/

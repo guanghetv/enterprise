@@ -2,25 +2,10 @@ var fileSystem = require('fs');
 var path = require('path');
 
 var ModuleLoader = function(config){
-
+	this.config = config;
 };
 
-ModuleLoader.prototype.loadModules = function(callback) {
-	// body...
-};
-
-ModuleLoader.prototype.watch = function(callback) {
-	// body...
-};
-
-module.exports.ModuleLoader = ModuleLoader;
-
-
-
-
-//=============================
-
-var parseFolder = function(dir){
+ModuleLoader.parseFolder = function(dir){
 	var manifest = path.join(dir, 'manifest.json');
 	if(fileSystem.existsSync(manifest)){
 		var manifestJSON = JSON.parse(fileSystem.readFileSync(manifest, 'utf8'));
@@ -39,27 +24,29 @@ var parseFolder = function(dir){
 	}
 };
 
-exports.load = function(config, callback){
+ModuleLoader.prototype.loadModules = function(callback) {
+	var that = this;
 	var modules = [];
-	fileSystem.readdirSync(config.modules_path).forEach(function(filename){
-		var module = parseFolder(path.join(config.modules_path, filename));
-		if(module){
-			modules.push(module);
-		}
+	fileSystem.readdirSync(that.config.modules_path).forEach(function(filename){
+		var module = ModuleLoader.parseFolder(path.join(that.config.modules_path, filename));
+		if(module) modules.push(module);
 	});
-    console.info('[ModulesLoader]: load modules %s', JSON.stringify(modules));
+    console.log('[ModulesLoader]: load %s modules', modules.length);
     callback(null, modules);
 };
 
-exports.watch = function(config,callback){
-	fileSystem.watch(config.modules_path, function(ev, filename){
-		filename = path.join(config.modules_path, filename);
+ModuleLoader.prototype.watch = function(callback) {
+	var that = this;
+	fileSystem.watch(this.config.modules_path, function(ev, filename){
+		filename = path.join(that.config.modules_path, filename);
 		if(ev == 'rename') ev = fileSystem.existsSync(filename) ? 'create' : 'remove';
 		if(ev == 'create'){
-			var module = parseFolder(filename);
+			var module = ModuleLoader.parseFolder(filename);
             // TODO: where is this callback?
-			if(module)callback(null, module);
+			if(module) callback(null, module);
 		}
 	});
 	console.info('[ModulesLoader]: watch has started.');
 };
+
+module.exports = ModuleLoader;

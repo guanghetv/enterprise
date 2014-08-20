@@ -1,4 +1,5 @@
 var engine = require('./components/engine');
+//env
 var env = process.env.NODE_ENV || 'development';
 var config = require('./config/config')[env];
 

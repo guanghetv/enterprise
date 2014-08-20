@@ -3,6 +3,8 @@ var TaskManager = function(config, dataManager){
     this.modules = {};
     this.config = config;
     this.dataManager = dataManager;
+
+    this.eventQueue = {};
 };
 
 TaskManager.prototype.register = function(modules, callback) {
@@ -27,16 +29,19 @@ TaskManager.prototype.unRegister = function(modules_name, callback) {
     callback();
 };
 
-TaskManager.prototype.run = function(first_argument) {
+TaskManager.prototype.run = function() {
     // body...
+};
+//event handler
+TaskManager.prototype.on = function(event, callback) {
+    if(!(event in this.eventQueue)) this.eventQueue[event] = [];
+    this.eventQueue[event].push(callback);
 };
 
 module.exports.TaskManager = TaskManager;
 
-//
 
-
-var cacheManager = require('./CacheManager');
+/*
 exports.run = function (modules, originData, callback) {
 
     // TODO: 规定TaskManager"只"执行对于task的操作，每个task内部"只"做数据操作，两者职责要划清
@@ -185,3 +190,5 @@ exports.run = function (modules, originData, callback) {
         }
     });
 };
+
+*/
