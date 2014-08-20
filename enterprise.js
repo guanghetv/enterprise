@@ -3,7 +3,7 @@ var CronJob = require('cron').CronJob;
 
 console.log("> %s", 'waiting for cron job start .');
 
-new CronJob('*/10 * * * * *', function(){
+new CronJob('0 */5 * * * *', function(){
 	console.log('[CronTab]: Arousing Data Factory.');
 	var ps = process.exec('npm run app');
 	ps.stdout.on('data', function(logs){
