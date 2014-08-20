@@ -1,3 +1,5 @@
+var _ = require('underscore');
+var request = require('request');
 /**
  * [DataManager description]
  * @param {[type]} config [description]
@@ -6,6 +8,21 @@ var DataManager = function(config, cache){
     this.config = config;
     //
     if(cache) this.cache = cache;
+    var that = this;
+    this.login(function(err){
+        if(err) return console.error(err);
+        console.log('[LoginService]: Login mothership server succeed!');
+
+        //test case .
+        ['538fe05c76cb8a0068b14031', '539fb9834353b42976e62d72', '539fb9834353b42976e62d72'].forEach(function(chapterId){
+            that.getChapterById(chapterId, function(err, chapter){
+                console.log('++++', JSON.parse(chapter).name);
+            });
+        });
+        
+    });
+
+
 };
 
 DataManager.prototype.setCacheProvider = function(cache){
@@ -13,25 +30,57 @@ DataManager.prototype.setCacheProvider = function(cache){
     this.cache = cache;
 };
 
-DataManager.prototype.getCache = function(key, success, error){
+DataManager.prototype.getCache = function(key, cachedHandler, requestHandler){
     this.cache.get(key, function(err, data){
-        if(err) error(err, key);
-        else success(err, data);
+        if(data) cachedHandler(err, data);
+        else requestHandler(err);
     });
 };
+/**
+ * [login Created by solomon on 14-8-12.]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+DataManager.prototype.login = function(callback){
+    var that = this;
+    var loginUrl = this.config.mothership_url + '/login';
+    var jar = request.jar();
+    var form = request({
+        jar     : jar,
+        method  : 'POST',
+        url     : loginUrl
+    }, function(err, httpResponse, body) {
+        if (httpResponse.statusCode != 200 || !body)
+            return callback(new Error('login error'));
 
+        that.cookieString = jar.getCookieString(loginUrl);
+        var cookies = jar.getCookies(loginUrl);
+        callback(null, cookies);
+    }).form();
+    //
+    form.append('username', this.config.username || 'admin1');
+    form.append('password', this.config.password || 'xiaoshu815');
+};
+
+DataManager.prototype.getJar = function(){
+    var jar = request.jar();
+    var cookie = request.cookie(this.cookieString);
+    jar.setCookie(cookie,  this.config.mothership_url + '/login');
+    return jar;
+};
 
 
 DataManager.prototype.request = function(options, callback){
     var defaults = {
         methods : 'GET',
-        uri     : config.datapipe_url + url,
-        headers : { 'content-type': 'application/json' }
     };
     for(var key in options){
         defaults[key] = options[key];
     }
     options = defaults;
+    options.jar = this.getJar();
+    //options.uri = this.config.mo_url + options.url;
+    console.log('request %s', options.uri);
     request(options, function(err, response, body){
         if(err) return callback(err);
         if(response.statusCode == 200){
@@ -48,20 +97,31 @@ DataManager.prototype.getUserifyTracks = function(callback){
 
 
 DataManager.prototype.getCourses = function(callback){
-    
+    var that = this;
     this.getCache('courses', callback, function(){
         //http://0:3000/enterprise
-        this.request('/enterprise', function(data){
+        var results = [];
+        that.request({ uri: that.config.mothership_url + '/enterprise' }, function(err, data){
+            if(err)return console.error(err);
             var keys = data.course;
-
+            that.cache.set('courses', keys);
             keys.forEach(function(key){
-                http://0:3000/api/v1/courses/538fe05c76cb8a0068b14031
-                this.cache.set('course_' + key);
+                //http://0:3000//538fe05c76cb8a0068b14031
+
             });
-            callback();
-           
         });
     });
+};
+
+DataManager.prototype.getChapterById = function(chapterId, callback){
+    var that = this;
+    this.getCache('course_' + chapterId, callback, function(){
+        that.request({ uri: that.config.mothership_url + '/api/v1/courses/' + chapterId }, function(err, data){
+            that.cache.set('course_' + chapterId, JSON.parse(data), function(){
+                callback(null, data);
+            });
+        });
+    })
 };
 
 

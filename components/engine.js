@@ -4,9 +4,6 @@ var DataManager     = require('./core/DataManager');
 var ModuleLoader    = require('./core/ModuleLoader');
 var CacheManager    = require('./core/CacheManager');
 
-//service
-var loginService = require('./services/login');
-
 exports.bootstrap = function (config, callback) {
     //
     var cacheManager = new CacheManager(config);

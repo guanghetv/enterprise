@@ -36,26 +36,38 @@ TaskManager.prototype.setTaskStatus = function(name, status){
     this.tigger('task_end', name);
 };
 
-TaskManager.prototype.run = function() {
-    var that = this;
-    // body...
-    for(var name in this.modules){
-        console.log('execute: %s' ,name);
-        var module = this.modules[ name ];
-        try{
-            module.create(this.dataManager, function(err){ // task done callback
-                (function(name){
-                    var STATUS_DONE = 0x01;
-                    that.setTaskStatus(name, STATUS_DONE);
-                    console.info('[TASKMANAGER] %s is done .', name);
-                })(name);
-            });
-        }catch(e){
-            console.error('%s : %s', name ,e);
-            module.restore(this.dataManager);
-        }
-    }
+// TaskManager.prototype.run = function() {
+//     var that = this;
+//     // body...
+//     for(var name in this.modules){
+//         console.log('execute: %s' ,name);
+//         var module = this.modules[ name ];
+//         sync(module,'create');
+//         sync(module,'restore');
+//         sync.fiber(function(){
+//             try{
+//                 module.create(this.dataManager, function(err){ // task done callback
+//                     (function(name){
+//                         var STATUS_DONE = 0x01;
+//                         that.setTaskStatus(name, STATUS_DONE);
+//                         console.info('[TASKMANAGER] %s is done .', name);
+//                     })(name);
+//                 });
+//             }catch(e){
+//                 console.error('%s : %s', name ,e);
+//                 module.restore(this.dataManager);
+//             }
+//         });
+        
+//     }
+// };
+// 
+
+TaskManager.prototype.run = function(){
+    //TODO: 
 };
+
+
 //event handler
 TaskManager.prototype.on = function(event, callback) {
     if(!(event in this.eventQueue)) this.eventQueue[event] = [];
@@ -70,8 +82,8 @@ TaskManager.prototype.tigger = function(event, args){
 module.exports = TaskManager;
 
 
-/*
-exports.run = function (modules, originData, callback) {
+
+var run = function (modules, originData, callback) {
 
     // TODO: 规定TaskManager"只"执行对于task的操作，每个task内部"只"做数据操作，两者职责要划清
     // TODO: Module[0]目前包含两部分操作，track的数据操作和对于其他模块的任务分配
@@ -220,4 +232,3 @@ exports.run = function (modules, originData, callback) {
     });
 };
 
-*/

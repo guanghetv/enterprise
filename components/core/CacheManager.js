@@ -17,12 +17,19 @@ var CacheManager = function(config){
     });
 };
 
-CacheManager.prototype.get = function(key, value, callback){
-    this.client.get(key, value);
+CacheManager.prototype.get = function(key, callback){
+    this.client.get(key, function(err, reply){
+        if(err) return callback(err);
+        if(!reply)return callback(new Error(key + ' is not found .'));
+        else callback(null, reply);
+    });
 };
 
 CacheManager.prototype.set = function(key, value, callback){
-    this.client.set(key, value);
+    var that = this;
+    this.client.set(key, JSON.stringify(value), function(){
+        that.get(key, callback);
+    });
 };
 
 
