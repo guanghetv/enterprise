@@ -2,6 +2,7 @@ var path = require('path');
 
 var app_path 		= path.dirname(__dirname);
 var modules_path 	= path.join(app_path, 'modules');
+require('./global');
 
 module.exports = {
 	development: {

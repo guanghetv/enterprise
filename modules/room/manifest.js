@@ -1,6 +1,6 @@
 module.exports = {
     "name":"room",
-    "seq":1,
+    "seq":2,
     "async":function(mDataManager){
         return ['classA','classB','classC'];
     },

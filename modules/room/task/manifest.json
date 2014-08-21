@@ -3,5 +3,6 @@
     "description": "This is a task for classify rooms",
     "type":"room",
     "entrance": "index.js",
-    "dependencies":[]
+    "dependencies":[],
+    "seq": 0
 }

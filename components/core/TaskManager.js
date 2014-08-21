@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var TaskManager = function(config, dataManager){
     this.modules = {};
     this.config = config;
@@ -12,7 +14,15 @@ TaskManager.prototype.register = function(modules, callback) {
     modules.forEach(function(module){
         that.modules[ module.name ] = module;
     });
-    //console.dir(this.modules);
+
+    this.currentModuleKey = _.first(_.keys(this.modules));
+
+    this.currentTaskKey = _.first(this.getCurrentModule().tasks).name;
+
+    console.log("---------",this.currentModuleKey);
+
+    console.log("---------",this.currentTaskKey);
+
     callback();
 };
 
@@ -31,12 +41,62 @@ TaskManager.prototype.unRegister = function(modules_name, callback) {
 
 TaskManager.prototype.setTaskStatus = function(name, status){
     this.status[ name ] = status;
-    this.tigger('task_end', name);
+   // this.tigger('task_end', name);
+
+};
+
+TaskManager.prototype.hasNextTaskKey = function(){
+    var ret = false;
+    var that = this;
+    var taskNameArray = _.pluck(this.getCurrentModule().tasks,'name');
+    var index = taskNameArray.indexOf(this.currentTaskKey);
+    return index < taskNameArray.length -1;
+}
+
+TaskManager.prototype.hasNextModuleKey = function(){
+    var that = this;
+    var moduleNameArray = _.pluck(this.modules,'name');
+    var index = moduleNameArray.indexOf(this.currentModuleKey);
+    return index < moduleNameArray.length -1;
+}
+
+
+TaskManager.prototype.runNext = function(err){
+    if(this.hasNextTaskKey()){
+        this.currentTaskKey = ;
+    }else{
+        if(this.hasNextModulekey()){
+            this.currentModuleKey = this.getNextModuleKey();
+        }else{
+            this.tigger('all_task_end');
+        }
+    }
+    this.run();
+};
+
+TaskManager.prototype.getCurrentModule = function(){
+    return this.modules[ this.currentModuleKey ];
+};
+
+TaskManager.prototype.getCurrentTask = function(module){
+    var that = this;
+    return _.find(module.tasks,function(task){
+        return task.name == that.currentTaskKey;
+    })
 };
 
 
 TaskManager.prototype.run = function(){
-    //TODO: 
+    var that = this;
+    var currentModule = this.getCurrentModule();
+    var currentTask = this.getCurrentTask(currentModule);
+    try{
+        currentTask.create(this.dataManager, function(err){
+            that.runNext(err);
+        });
+    }catch(e){
+        currentTask.restore(this.dataManager);
+    } 
     console.log('[TaskManager] TaskManager is running .');
 };
 
@@ -48,7 +108,9 @@ TaskManager.prototype.on = function(event, callback) {
 
 TaskManager.prototype.tigger = function(event, args){
     var callback = this.eventQueue[event];
-    if(callback) callback(args);
+    callback.forEach(function(cb){
+        cb(args);
+    }); 
 };
 
 module.exports = TaskManager;

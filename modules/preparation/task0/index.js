@@ -3,7 +3,7 @@
  */
 
 exports.create = function (mDataManager, callback) {
-    console.log(important, 'hello mothership');
+    console.log('hello mothership');
     var getBasicInfoFromEnterprise = function (callback) {
         mDataManager.request({"url": mDataManager.config.mothership_url + '/enterprise'}, function (err, response) {
             if (err) {

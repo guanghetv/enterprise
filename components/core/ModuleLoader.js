@@ -45,8 +45,7 @@ ModuleLoader.parseModule = function(dir){
 			var task = ModuleLoader.parseTask(path.join(dir, filename));
 			if(task) module.tasks.push(task);
 		});
-		module.tasks = _.sortBy(module.tasks, 'seq').reverse();
-		console.log(module.tasks);
+		module.tasks = _.sortBy(module.tasks, 'seq')
 		return module;
 	}else{
 		console.warn('module "%s" have not manifest.json .', dir);
@@ -68,6 +67,7 @@ ModuleLoader.prototype.loadModules = function(callback) {
 			console.log('[ModulesLoader]: load %s %s tasks .', module.name, module.tasks.length);
 		}
 	});
+	modules = _.sortBy(modules, 'seq')
     console.log('[ModuleLoader]: load %s modules', modules.length);
 
     callback(null, modules);
