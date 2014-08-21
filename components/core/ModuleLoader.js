@@ -27,7 +27,7 @@ ModuleLoader.parseFolder = function(dir){
 			console.warn('module must be have "create" and "restore" methods .', module.name);
 		}
 	}else{
-		console.warn(' "%s" have no manifest.json .', dir);
+		console.warn('[ModuleLoader] "%s" have no manifest.json .', dir);
 	}
 };
 /**
@@ -43,7 +43,7 @@ ModuleLoader.prototype.loadModules = function(callback) {
 		//disabled is avaliable now .
 		if(module && !module.disabled) modules.push(module);
 	});
-    console.log('[ModulesLoader]: load %s modules', modules.length);
+    console.log('[ModuleLoader]: load %s modules', modules.length);
     callback(null, modules);
 };
 /**
@@ -62,7 +62,7 @@ ModuleLoader.prototype.watch = function(callback) {
 			if(module) callback(null, module);
 		}
 	});
-	console.info('[ModulesLoader]: watch has started.');
+	console.info('[ModuleLoader]: watch has started.');
 };
 /**
  * [exports]

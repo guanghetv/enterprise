@@ -5,6 +5,7 @@ var ModuleLoader    = require('./core/ModuleLoader');
 var CacheManager    = require('./core/CacheManager');
 
 exports.bootstrap = function (config, callback) {
+    console.log('[ENGINE] enterprise is running');
     //
     var cacheManager = new CacheManager(config);
     //

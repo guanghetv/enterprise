@@ -7,7 +7,6 @@ var config = require('./config/config')[env];
 engine.bootstrap(config, function(err){
 	if(err){
         console.error(err);
-    }else{
-        console.log('enterprise is running .');
+        process.exit(-1);
     }
 });

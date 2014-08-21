@@ -13,7 +13,7 @@ var redis = require("redis");
 var CacheManager = function(config){
     this.client = redis.createClient();
     this.client.on('connect', function(){
-        console.log('redis is connected to server .');
+        console.log('[CacheManager] redis is connected to server .');
     });
 };
 
