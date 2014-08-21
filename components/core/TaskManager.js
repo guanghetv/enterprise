@@ -10,23 +10,22 @@ var TaskManager = function (config, dataManager) {
 };
 
 TaskManager.prototype.register = function (modules, callback) {
-    if (!modules)callback(new Error('modules is undefined .'));
-    var that = this;
+    if (!modules)callback(new Error('[TaskManager] modules is undefined .'));
+    var mTaskManager = this;
     modules.forEach(function (module) {
-        that.modules[ module.name ] = module;
+        mTaskManager.modules[ module.name ] = module;
     });
-    this.currentModuleKey = _.first(_.keys(this.modules));
     callback();
 };
 
 TaskManager.prototype.unRegister = function (modules_name, callback) {
-    if (!modules)callback(new Error('modules is undefined .'));
-    var that = this;
+    if (!modules)callback(new Error('[TaskManager] modules is undefined .'));
+    var mTaskManager = this;
     modules_name.forEach(function (name) {
-        if (!that.modules[name]) {
-            delete that.modules[name];
+        if (!mTaskManager.modules[name]) {
+            delete mTaskManager.modules[name];
         } else {
-            callback(new Error('not found module %s', name));
+            callback(new Error('[TaskManager] not found module %s', name));
         }
     });
     callback();
@@ -37,23 +36,22 @@ TaskManager.prototype.setTaskStatus = function (name, status) {
     this.trigger('task_end', name);
 };
 
-TaskManager.prototype.getCurrentModule = function () {
-    return this.modules[ this.currentModuleKey ];
-};
-
 TaskManager.prototype.run = function () {
     var mTaskManager = this;
+    mTaskManager.trigger('mission_start');
+
     var moduleGroups = [];
     _.each(mTaskManager.modules, function (module) {
         moduleGroups.push(function (callback) {
             mTaskManager.runForEachModule(module,function(err,results){
+                mTaskManager.trigger('module_end',module.name);
                 callback(err,results);
             })
         })
     });
 
     async.series(moduleGroups, function (err, results) {       // console.log(results);
-        mTaskManager.trigger('all_task_end');
+        mTaskManager.trigger('mission_end');
     });
 
 };
@@ -61,6 +59,7 @@ TaskManager.prototype.run = function () {
 
 TaskManager.prototype.runForEachModule = function (module, callback) {
     var mTaskManager = this;
+    mTaskManager.trigger('module_start',module.name);
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {

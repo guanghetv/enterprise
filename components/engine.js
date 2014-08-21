@@ -17,18 +17,35 @@ exports.bootstrap = function (config, callback) {
     //
     var taskManager = new TaskManager(config, dataManager);
     //
-    taskManager.on('error', function(err){
-        callback(err);
-    });
-    //
-    taskManager.on('task_end', function(name){
-        console.log('task %s ended.', name);
+    taskManager.on('error', function(err,info){
+        callback(err,info);
     });
 
-    taskManager.on('all_task_end', function(name){
-        console.log('all tasks are ended .');
+    taskManager.on('mission_start', function(){
+        console.log('mission start.',new Date());
+    });
+
+    taskManager.on('module_start', function(name){
+        console.log('module %s start.',name);
+    });
+
+    taskManager.on('task_start', function(name){
+        console.log('task %s start.',name);
+    });
+
+    taskManager.on('task_end', function(name){
+        console.log('task %s end.', name);
+    });
+
+    taskManager.on('module_end', function(name){
+        console.log('module %s end.',name);
+    });
+
+    taskManager.on('mission_end', function(){
+        console.log('mission end.',Date.now);
         process.exit(0);
     });
+
 
     var moduleLoaderReady = function(){
         console.log('[ENGINE] moduleLoader is ready .');
