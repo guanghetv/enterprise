@@ -34,7 +34,6 @@ exports.bootstrap = function (config, callback) {
     };
 
     moduleLoader.loadModules(function(err, modules){
-        console.dir(modules);
         taskManager.register(modules, function(err){
             if(err) return console.error(err);
             setTimeout(moduleLoaderReady, 100);

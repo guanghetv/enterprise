@@ -44,8 +44,6 @@ ModuleLoader.parseModule = function(dir){
 			var task = ModuleLoader.parseTask(path.join(dir, filename));
 			if(task) module.tasks.push(task);
 		});
-		console.log(module);
-
 		return module;
 	}else{
 		console.warn('module "%s" have not manifest.json .', dir);
