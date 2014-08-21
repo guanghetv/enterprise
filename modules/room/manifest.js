@@ -1,8 +1,8 @@
-{
+module.exports = {
     "name":"room",
     "seq":1,
     "async":function(mDataManager){
         return ['classA','classB','classC'];
     },
     "limit": 2
-}
+};
