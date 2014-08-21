@@ -128,6 +128,7 @@ DataManager.prototype.getCourses = function (callback) {
         });
     });
 };
+
 /**
  * [getChapterById description]
  * @param  {[type]}   chapterId [description]

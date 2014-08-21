@@ -3,6 +3,7 @@ var TaskManager     = require('./core/TaskManager');
 var DataManager     = require('./core/DataManager');
 var ModuleLoader    = require('./core/ModuleLoader');
 var CacheManager    = require('./core/CacheManager');
+var MissionManager   = require('./core/MissionManager');
 
 exports.bootstrap = function (config, callback) {
     console.log('[ENGINE] enterprise is running');
@@ -10,6 +11,7 @@ exports.bootstrap = function (config, callback) {
     var cacheManager = new CacheManager(config);
     //
     var moduleLoader = new ModuleLoader(config);
+
     //
     var dataManager = new DataManager(config, cacheManager);
     //

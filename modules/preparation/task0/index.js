@@ -2,34 +2,25 @@
  * Created by solomon on 14-8-21.
  */
 
+
 exports.create = function (mDataManager, callback) {
-    console.log('hello mothership');
-    var getBasicInfoFromEnterprise = function (callback) {
+   /* var getBasicInfoFromEnterprise = function (callback) {
+        var prefix = 'basic_';
         mDataManager.request({"url": mDataManager.config.mothership_url + '/enterprise'}, function (err, response) {
             if (err) {
                 console.error(err);
             } else {
-                callback(JSON.parse(response));
+                var data = JSON.parse(response);
+                _.each(data,function(vaule,key){
+                    mDataManager.cache.set(prefix + key, data, function () {
+                        callback(null, data);
+                        console.log(data);
+                    });
+                });
             }
         });
-    };
-
-    getBasicInfoFromEnterprise(function (enterpriseInfo) {
-        var courseInfo = enterpriseInfo.course;
-        var taskGroups = [];
-        _.each(courseInfo, function (chapterId) {
-            taskGroups.push(function (cb) {
-                mDataManager.getChapterById(chapterId, function (err, chapter) {
-                    cb(err, JSON.parse(chapter).name);
-                });
-            })
-        });
-        async.parallel(taskGroups, function (err, results) {
-            console.log(results);
-            callback(err);
-        })
-    });
-
+    };*/
+    callback(null,"hello")
 };
 
 exports.restore = function () {

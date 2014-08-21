@@ -3,11 +3,25 @@
  */
 
 exports.create = function(mDataManager,callback){
-	console.log('hello world');
-    mDataManager.getChapterById('538fe05c76cb8a0068b14031',function(err,response){
-        console.log(JSON.parse(response).name);
-        callback(null);
-    })
+	//console.log('hello world');
+
+/*    getBasicInfoFromEnterprise(function (enterpriseInfo) {
+        var courseInfo = enterpriseInfo.course;
+        var taskGroups = [];
+        _.each(courseInfo, function (chapterId) {
+            taskGroups.push(function (cb) {
+                mDataManager.getChapterById(chapterId, function (err, chapter) {
+                    cb(err, JSON.parse(chapter).name);
+                });
+            })
+        });
+        async.parallel(taskGroups, function (err, results) {
+            console.log(results);
+            callback(err);
+        })
+    });*/
+    callback(null,"world");
+
 };
 
 exports.restore = function(){
