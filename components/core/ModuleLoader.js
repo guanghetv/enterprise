@@ -1,5 +1,6 @@
 var fileSystem = require('fs');
 var path = require('path');
+var _ = require('underscore');
 /**
  * [ModuleLoader description]
  * @param {[type]} config [description]
@@ -19,7 +20,7 @@ ModuleLoader.parseTask = function(dir){
 		var task = require(path.join(dir, manifestJSON['entrance']));
 		if(task['create'] && task['restore']){
 			for(var key in manifestJSON){
-                task[key] = task[key];
+                task[key] = manifestJSON[key];
 			}
 			return task;
 		}else{
@@ -34,9 +35,9 @@ ModuleLoader.parseModule = function(dir){
 	var module = {
 		tasks: []
 	};
-	var manifest = path.join(dir, 'manifest.json');
+	var manifest = path.join(dir, 'manifest.js');
 	if(fileSystem.existsSync(manifest)){
-		var manifestJSON = JSON.parse(fileSystem.readFileSync(manifest, 'utf8'));
+		var manifestJSON = require(manifest);
 		for(var key in manifestJSON){
 			module[key] = manifestJSON[key];
 		}
@@ -44,6 +45,8 @@ ModuleLoader.parseModule = function(dir){
 			var task = ModuleLoader.parseTask(path.join(dir, filename));
 			if(task) module.tasks.push(task);
 		});
+		module.tasks = _.sortBy(module.tasks, 'seq').reverse();
+		console.log(module.tasks);
 		return module;
 	}else{
 		console.warn('module "%s" have not manifest.json .', dir);
@@ -66,6 +69,7 @@ ModuleLoader.prototype.loadModules = function(callback) {
 		}
 	});
     console.log('[ModuleLoader]: load %s modules', modules.length);
+
     callback(null, modules);
 };
 /**

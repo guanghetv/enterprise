@@ -12,6 +12,7 @@ TaskManager.prototype.register = function(modules, callback) {
     modules.forEach(function(module){
         that.modules[ module.name ] = module;
     });
+    //console.dir(this.modules);
     callback();
 };
 
