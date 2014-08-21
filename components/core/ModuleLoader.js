@@ -12,22 +12,43 @@ var ModuleLoader = function(config){
  * @param  {[type]} dir [description]
  * @return {[type]}     [description]
  */
-ModuleLoader.parseFolder = function(dir){
+ModuleLoader.parseTask = function(dir){
 	var manifest = path.join(dir, 'manifest.json');
 	if(fileSystem.existsSync(manifest)){
 		var manifestJSON = JSON.parse(fileSystem.readFileSync(manifest, 'utf8'));
-		var module = require(path.join(dir, manifestJSON['entrance']));
-		if(module['create'] && module['restore']){
-			for(var key in module){
-                manifestJSON[key] = module[key];
+		var task = require(path.join(dir, manifestJSON['entrance']));
+		if(task['create'] && task['restore']){
+			for(var key in manifestJSON){
+                task[key] = task[key];
 			}
-			module = manifestJSON;
-			return module;
+			return task;
 		}else{
-			console.warn('module must be have "create" and "restore" methods .', module.name);
+			console.warn('task must be have "create" and "restore" methods .', task.name);
 		}
 	}else{
-		console.warn(' "%s" have not manifest.json .', dir);
+		console.warn('task "%s" have not manifest.json .', dir);
+	}
+};
+
+ModuleLoader.parseModule = function(dir){
+	var module = {
+		tasks: []
+	};
+	var manifest = path.join(dir, 'manifest.json');
+	if(fileSystem.existsSync(manifest)){
+		var manifestJSON = JSON.parse(fileSystem.readFileSync(manifest, 'utf8'));
+		for(var key in manifestJSON){
+			module[key] = manifestJSON[key];
+		}
+		fileSystem.readdirSync(dir).forEach(function(filename){
+			var task = ModuleLoader.parseTask(path.join(dir, filename));
+			if(task) module.tasks.push(task);
+		});
+		console.log(module);
+
+		return module;
+	}else{
+		console.warn('module "%s" have not manifest.json .', dir);
 	}
 };
 /**
@@ -39,11 +60,14 @@ ModuleLoader.prototype.loadModules = function(callback) {
 	var that = this;
 	var modules = [];
 	fileSystem.readdirSync(that.config.modules_path).forEach(function(filename){
-		var module = ModuleLoader.parseFolder(path.join(that.config.modules_path, filename));
+		var module = ModuleLoader.parseModule(path.join(that.config.modules_path, filename));
 		//disabled is avaliable now .
-		if(module && !module.disabled) modules.push(module);
+		if(module && !module.disabled){
+			modules.push(module)
+			console.log('[ModulesLoader]: load %s %s tasks .', module.name, module.tasks.length);
+		}
 	});
-    console.log('[ModulesLoader]: load %s modules', modules.length);
+    
     callback(null, modules);
 };
 /**
@@ -58,7 +82,7 @@ ModuleLoader.prototype.watch = function(callback) {
 		if(ev == 'rename') ev = fileSystem.existsSync(filename) ? 'create' : 'remove';
 		if(ev == 'create'){
 			var module = ModuleLoader.parseFolder(filename);
-            // TODO: where is this callback?
+            // TODO: where is this callback? //see arguments .
 			if(module) callback(null, module);
 		}
 	});

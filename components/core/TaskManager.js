@@ -65,6 +65,7 @@ TaskManager.prototype.setTaskStatus = function(name, status){
 
 TaskManager.prototype.run = function(){
     //TODO: 
+    console.log('[TaskManager] TaskManager is running .');
 };
 
 
