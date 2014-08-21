@@ -27,10 +27,14 @@ ModuleLoader.parseTask = function(dir){
 			console.warn('task must be have "create" and "restore" methods .', task.name);
 		}
 	}else{
-        console.warn('[ModuleLoader] "%s" have no manifest.json .', dir);
+        //console.warn('[ModuleLoader] "%s" have no manifest.json .', dir);
 	}
 };
-
+/**
+ * [parseModule description]
+ * @param  {[type]} dir [description]
+ * @return {[type]}     [description]
+ */
 ModuleLoader.parseModule = function(dir){
 	var module = {
 		tasks: []
@@ -43,7 +47,7 @@ ModuleLoader.parseModule = function(dir){
 		}
 		fileSystem.readdirSync(dir).forEach(function(filename){
 			var task = ModuleLoader.parseTask(path.join(dir, filename));
-			if(task) module.tasks.push(task);
+			if(task && !task.disabled) module.tasks.push(task);
 		});
 		module.tasks = _.sortBy(module.tasks, 'seq')
 		return module;

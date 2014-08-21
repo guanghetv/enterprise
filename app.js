@@ -10,4 +10,5 @@ engine.bootstrap(config, function(err,info){
         console.info(info);
         process.exit(-1);
     }
+    console.log('[APP] enterprise is running');
 });

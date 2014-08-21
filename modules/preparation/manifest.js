@@ -1,4 +1,5 @@
 module.exports = {
     "name":"preparation",
-    "seq": 0
+    "seq": 0,
+    "disabled": true
 };

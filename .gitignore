@@ -28,4 +28,4 @@ build/Release
 node_modules
 .DS_Store
 # redis database file .
-.rdb
+*.rdb
