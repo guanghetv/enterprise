@@ -33,29 +33,10 @@ TaskManager.prototype.setTaskStatus = function(name, status){
     this.tigger('task_end', name);
 };
 
-TaskManager.prototype.run = function() {
-     var that = this;
-     for(var name in this.modules){
-         console.log('execute: %s' ,name);
-         var module = this.modules[ name ];
-         sync(module,'create');
-         sync(module,'restore');
-         sync.fiber(function(){
-             //try{
-                 module.create(that.dataManager, function(err){ // task done callback
-                     (function(name){
-                         var STATUS_DONE = 0x01;
-                         that.setTaskStatus(name, STATUS_DONE);
-                         console.info('[TASKMANAGER] %s is done .', name);
-                     })(name);
-                 });
-//             }catch(e){
-//                 console.error('%s : %s', name ,e);
-//                 module.restore(this.dataManager);
-//             }
-         });
-        
-     }
+
+TaskManager.prototype.run = function(){
+    //TODO: 
+    console.log('[TaskManager] TaskManager is running .');
 };
 
 //event handler

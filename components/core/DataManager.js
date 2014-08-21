@@ -7,11 +7,29 @@ var request = require('request');
  * @param {[type]} cache [description]
  */
 var DataManager = function (config, cache) {
+    var that = this;
     this.config = config;
     if (cache) this.cache = cache;
     this.login(function (err) {
         if (err) return console.error(err);
         console.log('[LoginService]: Login mothership server succeed!');
+       var getBasicInfoFromEnterprise = function(){
+           that.request({"url":that.config.mothership_url+'/enterprise'},function(err,response){
+               if(err) {
+                   console.error(err);
+               }else{
+                   console.log(response);
+               }
+           });
+       };
+
+       getBasicInfoFromEnterprise();
+        //test case .
+        ['538fe05c76cb8a0068b14031', '539fb9834353b42976e62d72', '539fb9834353b42976e62d72'].forEach(function(chapterId){
+            that.getChapterById(chapterId, function(err, chapter){
+                console.log('++++', JSON.parse(chapter).name);
+            });
+        });
     });
 };
 
