@@ -33,7 +33,11 @@ TaskManager.prototype.unRegister = function (modules_name, callback) {
 
 TaskManager.prototype.setTaskStatus = function (name, status) {
     this.status[ name ] = status;
-    this.trigger('task_end', name);
+    var STATUS_CHANGE = 0x12;
+    this.trigger(STATUS_CHANGE, {
+        name    : name, 
+        status  : status 
+    });
 };
 
 TaskManager.prototype.run = function () {
@@ -60,12 +64,17 @@ TaskManager.prototype.run = function () {
 TaskManager.prototype.runForEachModule = function (module, callback) {
     var mTaskManager = this;
     mTaskManager.trigger('module_start',module.name);
+    if(module.async){
+        module.async(mTaskManager.dataManager, function(keys){
+            console.log(keys);
+        });
+    }
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {
             try {
                 task.create(mTaskManager.dataManager, function (err, data) {
-                    var STATUS_SUCCESS = 0X11;
+                    var STATUS_SUCCESS = 0x11;
                     mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
                     callback(err, data);
                 });

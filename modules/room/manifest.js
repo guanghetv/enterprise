@@ -4,5 +4,6 @@ module.exports = {
     "async":function(mDataManager){
         return ['classA','classB','classC'];
     },
-    "limit": 2
+    "limit": 2,
+    "disabled": true
 };

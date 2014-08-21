@@ -9,13 +9,28 @@ var request = require('request');
 var DataManager = function (config, cache) {
     var that = this;
     this.config = config;
+    this.eventQueue = {};
     if (cache) this.cache = cache;
     this.login(function (err) {
         if (err) return console.error(err);
-        console.log('[LoginService]: Login mothership server succeed!');
+        that.trigger('login_succeed', {});
     });
 };
 
+
+DataManager.prototype.trigger = function(event, args){
+    if(event in this.eventQueue) {
+        this.eventQueue[event].forEach(function(handler){
+            handler(args);
+        });
+    }
+}; 
+
+
+DataManager.prototype.on = function(event, handler){
+    if(!(event in this.eventQueue)) this.eventQueue[event] = [];
+    this.eventQueue[ event ].push(handler);
+}; 
 /**
  * [setCacheProvider description]
  * @param {[type]} cache [description]
@@ -88,7 +103,7 @@ DataManager.prototype.request = function (options, callback) {
     }
     options = defaults;
     options.jar = this.getJar();
-    console.log('request %s', options.url);
+    console.log('request %s', options.uri || options.url);
     request(options, function (err, response, body) {
         if (err) return callback(err);
         if (response.statusCode == 200) {
@@ -112,19 +127,16 @@ DataManager.prototype.getUserifyTracks = function (callback) {
  * @param  {Function} callback [description]
  * @return {[type]}            [description]
  */
-DataManager.prototype.getCourses = function (callback) {
+DataManager.prototype.getEnterprise = function (callback) {
     var that = this;
-    this.getCache('courses', callback, function () {
+    this.getCache('enterprise', callback, function () {
         //http://0:3000/enterprise
-        var results = [];
         that.request({ uri: that.config.mothership_url + '/enterprise' }, function (err, data) {
             if (err)return console.error(err);
-            var keys = data.course;
-            that.cache.set('courses', keys);
-            keys.forEach(function (key) {
-                //http://0:3000//538fe05c76cb8a0068b14031
-
+            that.cache.set('enterprise', data, function(err, data){
+                callback(err, data);
             });
+
         });
     });
 };
@@ -136,8 +148,7 @@ DataManager.prototype.getCourses = function (callback) {
  * @return {[type]}             [description]
  */
 DataManager.prototype.getChapterById = function (chapterId, callback) {
-    var that = this;
-    var prefix = 'course_';
+    var that = this, prefix = 'course_';
     this.getCache(prefix + chapterId, callback, function () {
         that.request({ uri: that.config.mothership_url + '/api/v1/courses/' + chapterId }, function (err, data) {
             that.cache.set(prefix + chapterId, JSON.parse(data), function () {
@@ -145,6 +156,25 @@ DataManager.prototype.getChapterById = function (chapterId, callback) {
             });
         });
     })
+};
+
+DataManager.prototype.getAllTracks = function(callback){
+    var that = this, prefix = 'tracks';
+    var url = that.config.mothership_url + '/tracks?$and=[{"data.event":"$event_key"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]';
+    this.getCache(prefix, callback, function(){
+        that.getEnterprise(function(err, data){
+            var json = JSON.parse(JSON.parse(data));
+            var results = [];
+            json.track.forEach(function(event_key){
+                 that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
+                    results.push(data);
+                    if(results.length == json.track.length){
+                        callback(err, results);
+                    }
+                });
+            });
+        });
+    });
 };
 
 /**

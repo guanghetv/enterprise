@@ -1,5 +1,9 @@
-exports.create = function (key, data, originData, callback) {
+exports.create = function (dataManager, callback) {
     console.log("--------填充用户信息--------");
+    callback(null, 'OK');
+    /*
+    
+
     var users = originData.users.all;
     var repairedData = {};
     _.each(data, function (trackSet,trackSetKey) {
@@ -29,6 +33,7 @@ exports.create = function (key, data, originData, callback) {
     });
 
     callback(null, repairedData);
+     */
 };
 
 exports.restore = function () {

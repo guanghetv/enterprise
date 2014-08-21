@@ -3,10 +3,8 @@ var TaskManager     = require('./core/TaskManager');
 var DataManager     = require('./core/DataManager');
 var ModuleLoader    = require('./core/ModuleLoader');
 var CacheManager    = require('./core/CacheManager');
-var MissionManager   = require('./core/MissionManager');
 
 exports.bootstrap = function (config, callback) {
-    console.log('[ENGINE] enterprise is running');
     //
     var cacheManager = new CacheManager(config);
     //
@@ -46,17 +44,24 @@ exports.bootstrap = function (config, callback) {
         process.exit(0);
     });
 
+    dataManager.on('login_succeed', function(){
+        console.log('[LoginService]: Login mothership server succeed!');
+        moduleLoaderReady('login');
+    });
 
-    var moduleLoaderReady = function(){
-        console.log('[ENGINE] moduleLoader is ready .');
-        taskManager.run();
-        callback();
+    var status = [];
+    var moduleLoaderReady = function(from){
+        status.push(from);
+        if(status.length >= 2){
+           taskManager.run();
+           setTimeout(callback, 0);
+        }
     };
 
     moduleLoader.loadModules(function(err, modules){
         taskManager.register(modules, function(err){
             if(err) return console.error(err);
-            setTimeout(moduleLoaderReady, 100);
+            moduleLoaderReady('modules')
             console.info('[ENGINE] %s modules is register .', modules.length);
         });
     });
