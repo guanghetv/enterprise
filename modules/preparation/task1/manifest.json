@@ -1,0 +1,8 @@
+{
+    "name": "crew_0001",
+    "description": "This is a task for test",
+    "type":"preparation",
+    "entrance": "index.js",
+    "dependencies":[],
+    "disabled" : false
+}

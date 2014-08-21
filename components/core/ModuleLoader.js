@@ -27,7 +27,7 @@ ModuleLoader.parseFolder = function(dir){
 			console.warn('module must be have "create" and "restore" methods .', module.name);
 		}
 	}else{
-		console.warn(' "%s" have not manifest.json .', dir);
+		console.warn(' "%s" have no manifest.json .', dir);
 	}
 };
 /**
