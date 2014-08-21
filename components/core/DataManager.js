@@ -3,6 +3,7 @@ var request = require('request');
 /**
  * [DataManager description]
  * @param {[type]} config [description]
+ * @param {[type]} cache [description]
  */
 var DataManager = function(config, cache){
     this.config = config;
@@ -13,12 +14,26 @@ var DataManager = function(config, cache){
         if(err) return console.error(err);
         console.log('[LoginService]: Login mothership server succeed!');
 
-        //test case .
+       var getBasicInfoFromEnterprise = function(){
+           that.request({"url":that.config.mothership_url+'/enterprise'},function(err,response){
+               if(err) {
+                   console.error(err);
+               }else{
+                   console.log(response);
+               }
+           });
+       };
+
+       getBasicInfoFromEnterprise();
+
+
+
+        /*//test case .
         ['538fe05c76cb8a0068b14031', '539fb9834353b42976e62d72', '539fb9834353b42976e62d72'].forEach(function(chapterId){
             that.getChapterById(chapterId, function(err, chapter){
                 console.log('++++', JSON.parse(chapter).name);
             });
-        });
+        });*/
         
     });
 };
@@ -70,7 +85,7 @@ DataManager.prototype.login = function(callback){
 };
 /**
  * [getJar description]
- * @return {[type]} [description]
+ * @return {[Object]} [description]
  */
 DataManager.prototype.getJar = function(){
     var jar = request.jar();
@@ -81,21 +96,20 @@ DataManager.prototype.getJar = function(){
 
 /**
  * [request description]
- * @param  {[type]}   options  [description]
+ * @param  {[Object]}   options  [description]
  * @param  {Function} callback [description]
  * @return {[type]}            [description]
  */
 DataManager.prototype.request = function(options, callback){
     var defaults = {
-        methods : 'GET',
+        methods : 'GET'
     };
     for(var key in options){
         defaults[key] = options[key];
     }
     options = defaults;
     options.jar = this.getJar();
-    //options.uri = this.config.mo_url + options.url;
-    console.log('request %s', options.uri);
+    console.log('request %s', options.url);
     request(options, function(err, response, body){
         if(err) return callback(err);
         if(response.statusCode == 200){
