@@ -64,7 +64,7 @@ ModuleLoader.prototype.loadModules = function(callback) {
 		//disabled is avaliable now .
 		if(module && !module.disabled){
 			modules.push(module)
-			console.log('[ModulesLoader]: load %s %s tasks .', module.name, module.tasks.length);
+			console.log('[ModuleLoader]: load %s %s tasks .', module.name, module.tasks.length);
 		}
 	});
 	modules = _.sortBy(modules, 'seq')

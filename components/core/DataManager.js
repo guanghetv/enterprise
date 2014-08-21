@@ -33,7 +33,7 @@ DataManager.prototype.setCacheProvider = function (cache) {
  */
 DataManager.prototype.getCache = function (key, cachedHandler, requestHandler) {
     this.cache.get(key, function (err, data) {
-        if (data) cachedHandler(err, data);
+        if (data) cachedHandler(err, JSON.parse(data));
         else requestHandler(err);
     });
 };

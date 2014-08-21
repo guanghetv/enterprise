@@ -3,7 +3,6 @@ var TaskManager     = require('./core/TaskManager');
 var DataManager     = require('./core/DataManager');
 var ModuleLoader    = require('./core/ModuleLoader');
 var CacheManager    = require('./core/CacheManager');
-var MissionManager   = require('./core/MissionManager');
 
 exports.bootstrap = function (config, callback) {
     console.log('[ENGINE] enterprise is running');
@@ -22,27 +21,27 @@ exports.bootstrap = function (config, callback) {
     });
 
     taskManager.on('mission_start', function(){
-        console.log('mission start.',new Date());
+        console.log('[ENGINE] mission start.',new Date());
     });
 
     taskManager.on('module_start', function(name){
-        console.log('module %s start.',name);
+        console.log('[ENGINE] module < %s > start.',name);
     });
 
     taskManager.on('task_start', function(name){
-        console.log('task %s start.',name);
+        console.log('[ENGINE] task < %s > start.',name);
     });
 
     taskManager.on('task_end', function(name){
-        console.log('task %s end.', name);
+        console.log('[ENGINE] task < %s > end.', name);
     });
 
     taskManager.on('module_end', function(name){
-        console.log('module %s end.',name);
+        console.log('[ENGINE] module< %s > end.',name);
     });
 
     taskManager.on('mission_end', function(){
-        console.log('mission end.',Date.now);
+        console.log('[ENGINE] mission end.',new Date());
         process.exit(0);
     });
 

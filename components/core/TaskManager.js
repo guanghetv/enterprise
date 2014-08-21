@@ -42,7 +42,30 @@ TaskManager.prototype.run = function () {
 
     var moduleGroups = [];
     _.each(mTaskManager.modules, function (module) {
+
         moduleGroups.push(function (callback) {
+
+            module.async(mDataManager,function(keys){
+                var userTasks = []
+                _.each(keys,function(key){
+                    userTasks.push(function(cb){
+                        mTaskManager.runForEachModule(module,function(err,results){
+                            mTaskManager.trigger('module_end',module.name);
+
+                            cb(err,result);
+
+                        })
+                    })
+                });
+
+                async.parallel(userTasks,function(err,results){
+                 console.
+
+                })
+            })
+
+
+
             mTaskManager.runForEachModule(module,function(err,results){
                 mTaskManager.trigger('module_end',module.name);
                 callback(err,results);
@@ -53,7 +76,6 @@ TaskManager.prototype.run = function () {
     async.series(moduleGroups, function (err, results) {       // console.log(results);
         mTaskManager.trigger('mission_end');
     });
-
 };
 
 

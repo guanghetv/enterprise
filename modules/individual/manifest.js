@@ -4,5 +4,6 @@ module.exports = {
     "async":function(mDataManager){
         return ['gynsolomon','libook','lsong'];
     },
-    "limit":3
+    "limit":3,
+    "disabled":true
 };
