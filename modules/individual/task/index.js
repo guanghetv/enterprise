@@ -2,9 +2,9 @@ exports.create = function (data, originData, callback) {
     console.log("--------按用户分类事件--------");
     var userifyTracks = {};
     var tracks = originData.tracks;
+    var repairedData = {};
 
-
-    _.each(tracks, function (trackSet, key) {
+    _.each(tracks, function (trackSet, trackSetKey) {
 
         var shouldBeRemovedIndexArray = [];
         var addToNoUseTrack = function (index, track, errormsg) {
@@ -21,18 +21,22 @@ exports.create = function (data, originData, callback) {
                 if (userifyTracks[distinct_id] == undefined) {
                     userifyTracks[distinct_id] = {};
                 }
-                if (userifyTracks[distinct_id][key] == undefined) {
-                    userifyTracks[distinct_id][key] = [];
+                if (userifyTracks[distinct_id][trackSetKey] == undefined) {
+                    userifyTracks[distinct_id][trackSetKey] = [];
                 }
-                userifyTracks[distinct_id][key].push(track);
+                userifyTracks[distinct_id][trackSetKey].push(track);
             } else {
                 addToNoUseTrack(index, track, "Cannot find distinct_id of this track, delete it:");
             }
         });
 
-        Utils.deleteMultiElementsFromArrayAtOnce(trackSet, shouldBeRemovedIndexArray);
-
+        if(shouldBeRemovedIndexArray.length!=0){
+            repairedData[trackSetKey] = Utils.deleteMultiElementsFromArrayAtOnce(trackSet, shouldBeRemovedIndexArray);
+        }else{
+            repairedData[trackSetKey] = trackSet;
+        }
     });
+
     callback(null, userifyTracks);
 };
 
