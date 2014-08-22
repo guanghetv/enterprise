@@ -188,16 +188,10 @@ DataManager.prototype.getAllTracks = function(callback){
             var taskGroups = [];
             _.each(json.track,function(event_key){
                 taskGroups.push(function(cb){
-
-
                     that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
                         that.cache.set('track_' + event_key, data, function(){});
                         cb(err,event_key+' OK');
                     });
-
-
-
-
                 });
             });
 

@@ -48,26 +48,40 @@ TaskManager.prototype.run = function () {
 
     _.each(mTaskManager.modules, function (module) {
         moduleGroups.push(function (callback) {
-            module.async(mTaskManager.dataManager,function(err,keys){
-                var userTasks = []
-                console.log("----------------",keys);
-                _.each(keys,function(key){
-                    userTasks.push(function(cb){
-                        mTaskManager.runForEachModule(module,function(err,results){
-                            mTaskManager.trigger('module_end',module.name);
-                            console.log("---------",results);
-                            cb(err,results);
+
+            mTaskManager.trigger('module_start',module.name);
+
+            if(module.async!=undefined){
+                module.async(mTaskManager.dataManager,function(err,keys){
+                    var keyifyTasks = [];
+                    console.log("----------------",keys);
+                    _.each(keys,function(key){
+                        keyifyTasks.push(function(cb){
+                            console.log("%s is running!",key);
+                            mTaskManager.runForEachModule(module,function(err,results){
+                                console.log("---------",results);
+                                cb(err,results);
+                            });
                         });
                     });
-                });
 
-                async.parallelLimit(userTasks, module.limit || 3 ,function(err,results){
-                    console.log("------",results);
+                    async.parallelLimit(keyifyTasks, module.limit || 3 ,function(err,results){
+                        mTaskManager.trigger('module_end',module.name);
+                        console.log("------",results);
+                        callback(err,results);
+                    });
                 });
-            });
+            }else{
+                mTaskManager.runForEachModule(module,function(err,results){
+                    mTaskManager.trigger('module_end',module.name);
+                    console.log("---------",results);
+                    callback(err,results);
+                });
+            }
         });
     });
-    async.series(moduleGroups, function (err, results) {       // console.log(results);
+
+    async.series(moduleGroups, function (err, results) {
         mTaskManager.trigger('mission_end');
     });
 };
@@ -75,12 +89,6 @@ TaskManager.prototype.run = function () {
 
 TaskManager.prototype.runForEachModule = function (module, callback) {
     var mTaskManager = this;
-    mTaskManager.trigger('module_start',module.name);
-    // if(module.async){
-    //     module.async(mTaskManager.dataManager, function(keys){
-    //         console.log(keys);
-    //     });
-    // }
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {
