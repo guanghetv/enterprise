@@ -164,15 +164,19 @@ DataManager.prototype.getAllTracks = function(callback){
     this.getCache(prefix, callback, function(){
         that.getEnterprise(function(err, data){
             var json = JSON.parse(data);
-            var counter = 0;
-            json.track.forEach(function(event_key){
-                 that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
-                    counter++;
-                    that.cache.set('track_' + event_key, data, function(){});
-                    if(counter == json.track.length){
-                        callback(err);
-                    }
+            var taskGroups = [];
+            _.each(json.track,function(event_key){
+                taskGroups.push(function(cb){
+                    that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
+                        that.cache.set('track_' + event_key, data, function(){});
+                        cb(err,event_key+' OK');
+                    });
                 });
+            });
+
+            async.series(taskGroups,function(err,results){
+                console.log(results);
+                callback(err);
             });
         });
     });
