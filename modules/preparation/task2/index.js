@@ -5,7 +5,7 @@
 
 
 var getAllTracks = function (dataManager, callback) {
-    var prefix = 'origin@track';
+    var prefix = 'origin@track@';
     var url = dataManager.config.mothership_url + '/tracks?$and=[{"data.event":"$event_key"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]';
 
     dataManager.getCache('basic@track', function (err, trackEventNamesArray) {

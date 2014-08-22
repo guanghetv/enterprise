@@ -4,5 +4,5 @@
     "type":"individual",
     "entrance": "index.js",
     "dependencies":["crew_captain"],
-    "disabled":true
+    "disabled":false
 }

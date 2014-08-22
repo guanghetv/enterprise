@@ -1,7 +1,8 @@
 exports.create = function (dataManager, callback) {
     console.log("--------填充用户信息--------");
-    callback(null, 'OK');
-    /*
+    callback(null,'OK');
+   /* callback(null, 'OK');
+    *//*
     
 
     var users = originData.users.all;

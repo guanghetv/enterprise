@@ -39,7 +39,6 @@ CacheManager.prototype.setHash = function (key, obj, callback) {
         var tasks = [];
         _.each(obj, function (value,field) {
             tasks.push(function(cb){
-                console.log(key,field,value);
                 that.client.hset(key,field,JSON.stringify(value),function(){
                     var map = {};
                     map[field] = value;
@@ -54,14 +53,28 @@ CacheManager.prototype.setHash = function (key, obj, callback) {
     }
 };
 
-CacheManager.prototype.sadd = function (key, values, callback) {
+CacheManager.prototype.removeHashField = function(key,field,callback){
     var that = this;
-    if (Object.prototype.toString(values) == 'Array'){
-        _.each(values, function (value) {
-            that.client.sadd(key, value)
-        });
+    that.client.hdel(key,field,function(){
+        callback(null);
+    })
+};
+
+CacheManager.prototype.getHash = function(key,field,callback){
+    var that = this;
+    if(arguments.length == 2){
+        callback = field;
+        that.client.hgetall(key,function(error,reply){
+            callback(null,reply);
+        })
+    }
+    if(arguments.length == 3){
+        that.client.hget(key,field,function(error,reply){
+            callback(null,reply);
+        })
     }
 };
+
 
 
 
