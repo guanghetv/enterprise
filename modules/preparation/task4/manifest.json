@@ -1,9 +1,9 @@
 {
-    "name": "crew_captain",
-    "description": "This is a task for get basic info",
+    "name": "crew_0004",
+    "description": "This is a task for test",
     "type":"preparation",
     "entrance": "index.js",
     "dependencies":[],
-    "seq":0,
+    "seq":4,
     "disabled" : false
 }

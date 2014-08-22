@@ -169,7 +169,7 @@ DataManager.prototype.getEnterprise = function (callback) {
  * @return {[type]}             [description]
  */
 DataManager.prototype.getChapterById = function (chapterId, callback) {
-    var that = this, prefix = 'course_';
+    var that = this, prefix = 'course@';
     this.getCache(prefix + chapterId, callback, function () {
         that.request({ uri: that.config.mothership_url + '/api/v1/courses/' + chapterId }, function (err, data) {
             that.cache.set(prefix + chapterId, JSON.parse(data), function () {
@@ -180,7 +180,7 @@ DataManager.prototype.getChapterById = function (chapterId, callback) {
 };
 
 DataManager.prototype.getAllTracks = function(callback){
-    var that = this, prefix = 'tracks';
+    var that = this, prefix = 'track_FinishVideo';
     var url = that.config.mothership_url + '/tracks?$and=[{"data.event":"$event_key"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]';
     this.getCache(prefix, callback, function(){
         that.getEnterprise(function(err, data){
@@ -196,7 +196,6 @@ DataManager.prototype.getAllTracks = function(callback){
             });
 
             async.series(taskGroups,function(err,results){
-                console.log(results);
                 callback(err);
             });
         });

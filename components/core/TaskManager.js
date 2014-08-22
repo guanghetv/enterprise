@@ -44,7 +44,6 @@ TaskManager.prototype.run = function () {
     mTaskManager.trigger('mission_start');
 
     var moduleGroups = [];
-    console.log(mTaskManager.modules);
 
     _.each(mTaskManager.modules, function (module) {
         moduleGroups.push(function (callback) {
@@ -54,12 +53,10 @@ TaskManager.prototype.run = function () {
             if(module.async!=undefined){
                 module.async(mTaskManager.dataManager,function(err,keys){
                     var keyifyTasks = [];
-                    console.log("----------------",keys);
                     _.each(keys,function(key){
                         keyifyTasks.push(function(cb){
-                            console.log("%s is running!",key);
+                            console.log("【 %s 】 is running!",key);
                             mTaskManager.runForEachModule(module,function(err,results){
-                                console.log("---------",results);
                                 cb(err,results);
                             });
                         });
@@ -67,14 +64,12 @@ TaskManager.prototype.run = function () {
 
                     async.parallelLimit(keyifyTasks, module.limit || 3 ,function(err,results){
                         mTaskManager.trigger('module_end',module.name);
-                        console.log("------",results);
                         callback(err,results);
                     });
                 });
             }else{
                 mTaskManager.runForEachModule(module,function(err,results){
                     mTaskManager.trigger('module_end',module.name);
-                    console.log("---------",results);
                     callback(err,results);
                 });
             }
@@ -92,17 +87,19 @@ TaskManager.prototype.runForEachModule = function (module, callback) {
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {
+
+            mTaskManager.trigger('task_start',task.name);
             try {
                 task.create(mTaskManager.dataManager, function (err, data) {
-
                     var STATUS_SUCCESS = 0x11;
                     mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
                     console.log(task.name,data);
-
+                    mTaskManager.trigger('task_end',task.name);
                     callback(err, data);
                 });
             } catch (e) {
                 task.restore(mTaskManager.dataManager, function (err) {
+                    mTaskManager.trigger('task_end',task.name);
                     callback(err);
                 });
             }
@@ -110,7 +107,7 @@ TaskManager.prototype.runForEachModule = function (module, callback) {
     });
 
     async.series(taskGroups, function (err, results) {
-        console.log("============",results);
+        console.log("execute each task result: ",results);
         callback(err,results);
     });
 

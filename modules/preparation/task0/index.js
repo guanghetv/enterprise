@@ -4,7 +4,7 @@
 
 exports.create = function (mDataManager, callback) {
     var getBasicInfoForEnterprise = function (callback) {
-        var prefix = 'basic_';
+        var prefix = 'basic@';
         mDataManager.request({"url": mDataManager.config.mothership_url + '/enterprise'}, function (err, response) {
             if (err) {
                 console.error(err);

@@ -4,9 +4,9 @@
 
 exports.create = function(mDataManager,callback){
     var getCourseInfo = function (callback) {
-        var prefix = 'origin_course_';
+        var prefix = 'origin@course@';
 
-        mDataManager.getCache('basic_course',function(err,courseIdsArray){
+        mDataManager.getCache('basic@course',function(err,courseIdsArray){
             if(err){
                 console.error(err);
                 callback(err)
@@ -14,14 +14,13 @@ exports.create = function(mDataManager,callback){
                 var taskGroups = [];
                 _.each(courseIdsArray,function(courseId){
                     taskGroups.push(function(cb){
-                        mDataManager.request({"url": mDataManager.config.mothership_url + '/api/v1/courses/'+courseId}, function (err, response,body) {
+                        mDataManager.request({"url": mDataManager.config.mothership_url + '/api/v1/courses/'+courseId}, function (err, data) {
                             if(err){
                                 console.error(err);
-                                cb(err,response.statusCode);
+                                cb(err,"404");
                             }else{
-                                console.log(courseId);
-                                mDataManager.cache.set(prefix + courseId, body, function () {
-                                    cb(null,response.statusCode);
+                                mDataManager.cache.set(prefix + courseId, data, function () {
+                                    cb(null,"200");
                                 });
                             }
                         });

@@ -4,5 +4,6 @@
     "type":"preparation",
     "entrance": "index.js",
     "dependencies":[],
+    "seq":1,
     "disabled" : false
 }

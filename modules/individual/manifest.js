@@ -2,35 +2,42 @@ module.exports = {
     "name": "individual",
     "seq": 1,
     "async": function (dataManager, callback) {
-        dataManager.getAllTracks(function (err) {
-            dataManager.getEnterprise(function (err, info) {
-                var trackEvents = JSON.parse(info).track;
-                var taskGroups = [];
 
-                _.each(trackEvents, function (eventKey) {
-                    taskGroups.push(function (cb) {
+
+        dataManager.getCache('basic@track', function (err, eventKeysArray) {
+
+            var group = [];
+            _.each(eventKeysArray, function (eventKey) {
+                group.push(function (cb) {
+                    dataManager.getCache('origin@track_' + eventKey, function (err, tracks) {
                         var usersArrayFromThisEvent = [];
+                        _.each(tracks, function (track, index) {
+                            var essentialVariables = [track.data.properties.distinct_id];
 
-                        dataManager.getCache('track_' + eventKey, function (err, trackSet) {
-                            JSON.parse(trackSet).forEach(function (track) {
-                                var distinct_id = track.data.properties.distinct_id;
-                                usersArrayFromThisEvent.push(distinct_id);
-                            })
-                            usersArrayFromThisEvent = _.uniq(usersArrayFromThisEvent);
-                            cb(null, usersArrayFromThisEvent);
-                        })
-                    })
-                })
+                             if (Utils.haveEssentialVariables(essentialVariables)) {
+                                 var distinct_id = track.data.properties.distinct_id;
+                                 usersArrayFromThisEvent.push(distinct_id);
+                             } else {
+                                 addToNoUseTrack(index, track, "Cannot find distinct_id of this track, delete it:");
+                             }
 
-                async.parallel(taskGroups, function (err, usersArrays) {
+
+
+
+
+                        });
+                        cb(null, usersArrayFromThisEvent);
+                    });
+                });
+
+                async.series(group, function (err, usersArrays) {
                     var users = _.uniq(_.flatten(usersArrays));
-                    console.log(users);
+                    console.log("=================",users);
                     callback(err, users);
                 })
             })
         });
     },
     "limit": 3,
-    "disabled": false
-
+    "disabled": true
 };

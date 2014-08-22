@@ -53,8 +53,8 @@ exports.bootstrap = function (config, callback) {
     var moduleLoaderReady = function(from){
         status.push(from);
         if(status.length >= 2){
-           taskManager.run();
-           setTimeout(callback, 0);
+            callback();
+            taskManager.run();
         }
     };
 
