@@ -24,7 +24,7 @@ exports.bootstrap = function (config, callback) {
     });
 
     taskManager.on('module_start', function(name){
-        console.log('[ENGINE] module < %s > start.',name);
+        console.log('[ENGINE] module < %s > start.',name,taskManager.modules[name].description);
     });
 
     taskManager.on('task_start', function(name){

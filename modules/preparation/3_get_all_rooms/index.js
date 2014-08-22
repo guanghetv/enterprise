@@ -5,7 +5,7 @@
 
 
 var getAllRooms = function (dataManager, callback) {
-    var prefix = 'origin@room_';
+    var prefix = 'origin@room@';
     var url = dataManager.config.mothership_url + '/school/';
 
     dataManager.getCache('basic@school', function (err, schoolIdsArray) {

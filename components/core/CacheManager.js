@@ -39,11 +39,15 @@ CacheManager.prototype.setHash = function (key, obj, callback) {
         var tasks = [];
         _.each(obj, function (value,field) {
             tasks.push(function(cb){
-                that.client.hset(key,field,JSON.stringify(value),function(){
-                    var map = {};
-                    map[field] = value;
-                    cb(null,map);
-                });
+                if(_.size(value) > 0){
+                    that.client.hset(key,field,JSON.stringify(value),function(){
+                        var map = {};
+                        map[field] = value;
+                        cb(null,map);
+                    });
+                }else{
+                    cb(null,"obj value is empty");
+                }
             })
         });
 
@@ -75,6 +79,12 @@ CacheManager.prototype.getHash = function(key,field,callback){
     }
 };
 
+CacheManager.prototype.getHashFields = function(key,callback){
+    var that = this;
+    that.client.hkeys(key, function (err, replies) {
+        callback(null,replies);
+    });
+};
 
 
 
