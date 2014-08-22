@@ -30,6 +30,7 @@
     "cron": "^1.0.4",
     "express": "~4.7.2",
     "mongoose": "~3.8.14",
+    "progress": "^1.1.8",
     "promise": "^5.0.0",
     "redis": "^0.12.1",
     "request": "~2.39.0",

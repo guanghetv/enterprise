@@ -1,5 +1,7 @@
 var _ = require('underscore');
 var request = require('request');
+var ProgressBar = require('progress');
+
 
 /**
  * [DataManager description]
@@ -104,13 +106,32 @@ DataManager.prototype.request = function (options, callback) {
     options = defaults;
     options.jar = this.getJar();
     console.log('request %s', options.uri || options.url);
-    request(options, function (err, response, body) {
+    var req = request(options, function (err, response, body) {
         if (err) return callback(err);
         if (response.statusCode == 200) {
             callback(null, body);
         } else {
             callback(err, response.statusCode);
         }
+    });
+
+    req.on('response', function(res){
+         var len = parseInt(res.headers['content-length'], 10);
+          console.log();
+          var bar = new ProgressBar('  downloading [:bar] :percent :etas', {
+            complete: '=',
+            incomplete: ' ',
+            width: 20,
+            total: len
+          });
+
+          res.on('data', function (chunk) {
+            bar.tick(chunk.length);
+          });
+
+          res.on('end', function () {
+            console.log('\n');
+          });
     });
 };
 /**
@@ -167,10 +188,16 @@ DataManager.prototype.getAllTracks = function(callback){
             var taskGroups = [];
             _.each(json.track,function(event_key){
                 taskGroups.push(function(cb){
+
+
                     that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
                         that.cache.set('track_' + event_key, data, function(){});
                         cb(err,event_key+' OK');
                     });
+
+
+
+
                 });
             });
 

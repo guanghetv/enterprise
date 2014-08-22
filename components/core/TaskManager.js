@@ -33,8 +33,7 @@ TaskManager.prototype.unRegister = function (modules_name, callback) {
 
 TaskManager.prototype.setTaskStatus = function (name, status) {
     this.status[ name ] = status;
-    var STATUS_CHANGE = 0x12;
-    this.trigger(STATUS_CHANGE, {
+    this.trigger('status_cahnge', {
         name    : name, 
         status  : status 
     });
@@ -62,7 +61,7 @@ TaskManager.prototype.run = function () {
                     });
                 });
 
-                async.parallel(userTasks,function(err,results){
+                async.parallelLimit(userTasks, module.limit || 3 ,function(err,results){
                     console.log("------",results);
                 });
             });
@@ -88,9 +87,9 @@ TaskManager.prototype.runForEachModule = function (module, callback) {
             try {
                 task.create(mTaskManager.dataManager, function (err, data) {
 
-                    // var STATUS_SUCCESS = 0x11;
-                    // mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
-                     console.log(task.name,data);
+                    var STATUS_SUCCESS = 0x11;
+                    mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
+                    console.log(task.name,data);
 
                     callback(err, data);
                 });
@@ -117,10 +116,12 @@ TaskManager.prototype.on = function (event, callback) {
 };
 
 TaskManager.prototype.trigger = function (event, args) {
-    var callback = this.eventQueue[event];
-    callback.forEach(function (cb) {
-        cb(args);
-    });
+    var handlers = this.eventQueue[event];
+    if(handlers){
+        handlers.forEach(function (cb) {
+            cb(args);
+        });
+    }
 };
 
 module.exports = TaskManager;
