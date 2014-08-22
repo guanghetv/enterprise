@@ -4,5 +4,6 @@
     "type":"individual",
     "entrance": "index.js",
     "dependencies":[],
-    "disabled" : true
+    "seq":0,
+    "disabled" : false
 }

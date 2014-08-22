@@ -45,38 +45,29 @@ TaskManager.prototype.run = function () {
     mTaskManager.trigger('mission_start');
 
     var moduleGroups = [];
+    console.log(mTaskManager.modules);
+
     _.each(mTaskManager.modules, function (module) {
-
         moduleGroups.push(function (callback) {
-
-            module.async(mDataManager,function(keys){
+            module.async(mTaskManager.dataManager,function(err,keys){
                 var userTasks = []
+                console.log("----------------",keys);
                 _.each(keys,function(key){
                     userTasks.push(function(cb){
                         mTaskManager.runForEachModule(module,function(err,results){
                             mTaskManager.trigger('module_end',module.name);
-
-                            cb(err,result);
-
-                        })
-                    })
+                            console.log("---------",results);
+                            cb(err,results);
+                        });
+                    });
                 });
 
                 async.parallel(userTasks,function(err,results){
-                 console.
-
-                })
-            })
-
-
-
-            mTaskManager.runForEachModule(module,function(err,results){
-                mTaskManager.trigger('module_end',module.name);
-                callback(err,results);
-            })
-        })
+                    console.log("------",results);
+                });
+            });
+        });
     });
-
     async.series(moduleGroups, function (err, results) {       // console.log(results);
         mTaskManager.trigger('mission_end');
     });
@@ -86,18 +77,21 @@ TaskManager.prototype.run = function () {
 TaskManager.prototype.runForEachModule = function (module, callback) {
     var mTaskManager = this;
     mTaskManager.trigger('module_start',module.name);
-    if(module.async){
-        module.async(mTaskManager.dataManager, function(keys){
-            console.log(keys);
-        });
-    }
+    // if(module.async){
+    //     module.async(mTaskManager.dataManager, function(keys){
+    //         console.log(keys);
+    //     });
+    // }
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {
             try {
                 task.create(mTaskManager.dataManager, function (err, data) {
-                    var STATUS_SUCCESS = 0x11;
-                    mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
+
+                    // var STATUS_SUCCESS = 0x11;
+                    // mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
+                     console.log(task.name,data);
+
                     callback(err, data);
                 });
             } catch (e) {
@@ -109,7 +103,7 @@ TaskManager.prototype.runForEachModule = function (module, callback) {
     });
 
     async.series(taskGroups, function (err, results) {
-        console.log(results);
+        console.log("============",results);
         callback(err,results);
     });
 

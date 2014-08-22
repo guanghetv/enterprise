@@ -163,13 +163,14 @@ DataManager.prototype.getAllTracks = function(callback){
     var url = that.config.mothership_url + '/tracks?$and=[{"data.event":"$event_key"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]';
     this.getCache(prefix, callback, function(){
         that.getEnterprise(function(err, data){
-            var json = JSON.parse(JSON.parse(data));
-            var results = [];
+            var json = JSON.parse(data);
+            var counter = 0;
             json.track.forEach(function(event_key){
                  that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
-                    results.push(data);
-                    if(results.length == json.track.length){
-                        callback(err, results);
+                    counter++;
+                    that.cache.set('track_' + event_key, data, function(){});
+                    if(counter == json.track.length){
+                        callback(err);
                     }
                 });
             });

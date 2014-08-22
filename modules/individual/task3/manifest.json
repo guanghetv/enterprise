@@ -3,5 +3,6 @@
     "description": "This is a task for calculating the correct ratio of each user",
     "type":"individual",
     "entrance": "index.js",
-    "dependencies":["crew_0002"]
+    "dependencies":["crew_0002"],
+    "disabled":true
 }

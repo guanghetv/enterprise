@@ -3,5 +3,6 @@
     "description": "This is a task for fulfill courseInfo",
     "type":"individual",
     "entrance": "index.js",
-    "dependencies":["crew_0001"]
+    "dependencies":["crew_0001"],
+    "disabled":true
 }
