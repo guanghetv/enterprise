@@ -1,28 +1,20 @@
+var dispatchByUsername = function(dataManager,callback){
+    var pattern = '*origin@track@*';
+    dataManager.cache.getKeys(pattern, function (err, keys) {
+        var usersArray = _.map(keys, function (key) {
+            return key.split('@').slice(2,3);
+        });
+        var uniqUsersArray = _.uniq(_.flatten(usersArray));
+        console.log("==============",uniqUsersArray);
+        callback(null, uniqUsersArray);
+    });
+};
+
 module.exports = {
     "name": "individual",
+    "description": "This is a module for analysis and calculate each student's personal learning situation.",
     "seq": 1,
-    "async": function (dataManager, callback) {
-        dataManager.getCache('basic@track', function (err, eventKeysArray) {
-            var group = [];
-            _.each(eventKeysArray, function (eventKey) {
-                group.push(function (cb) {
-                    var pattern = '*origin@track@$event_name@*';
-                    dataManager.cache.getKeys(pattern.replace('$event_name', eventKey), function (err, keys) {
-                        var userArrayFromThisEvent = _.map(keys, function (key) {
-                            return _.last(key.split('@'));
-                        });
-                        cb(null, userArrayFromThisEvent);
-                    });
-                });
-            });
-
-            async.series(group, function (err, usersArrays) {
-                var users = _.uniq(_.flatten(usersArrays));
-                console.log("=================", users);
-                callback(err, users);
-            })
-        });
-    },
+    "async": dispatchByUsername,
     "limit": 3,
     "disabled": false
 };

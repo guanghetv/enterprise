@@ -1,40 +1,40 @@
-exports.create = function (dataManager, callback) {
-    console.log("--------填充用户信息--------");
-    callback(null,'OK');
-   /* callback(null, 'OK');
-    *//*
-    
+exports.create = function (username, dataManager, callback) {
+    console.log("--------填充 %s 信息--------",username);
 
-    var users = originData.users.all;
-    var repairedData = {};
-    _.each(data, function (trackSet,trackSetKey) {
-
-        var shouldBeRemovedIndexArray = [];
-        var addToNoUseTrack = function (index, track, errormsg) {
-            shouldBeRemovedIndexArray.push(index);
-            console.error(errormsg,track);
-        };
-
-        _.each(trackSet, function (track, index) {
-            var user = _.find(users, function (user) {
-                return user.username === key;
-            });
-            var essentialVariables = [user];
-            if (Utils.haveEssentialVariables(essentialVariables)) {
-                track.user = user;
-            } else {
-                addToNoUseTrack(index, track, "Didn't find user info from database for this track, delete it:");
-            }
-        });
-        if(shouldBeRemovedIndexArray.length!=0){
-            repairedData[trackSetKey] = Utils.deleteMultiElementsFromArrayAtOnce(trackSet, shouldBeRemovedIndexArray);
-        }else{
-            repairedData[trackSetKey] = trackSet;
-        }
+    // 先把这个 user 的 object 取出来
+    dataManager.cache.getHash('origin@user', username, function (err, user) {
+        fulfillUserInfo(username, JSON.parse(user), function (err, result) {
+            callback(err, result);
+        })
     });
 
-    callback(null, repairedData);
-     */
+    // 再把每条 track 的 user 信息填充进去
+    var fulfillUserInfo = function (username, user, callback) {
+        var pattern = '*origin@track@$username@*';
+        dataManager.cache.getKeys(pattern.replace('$username', username), function (err, keys) {
+            var taskGroup = [];
+            _.each(keys, function (key) {
+                taskGroup.push(function (cb) {
+                    dataManager.cache.getHash(key, function (err, trackSet) {
+                        var newTrackSet = {};
+                        _.each(trackSet, function (track, trackId) {
+                            var newTrack = JSON.parse(track);
+                            newTrack['user'] = user;
+                            newTrackSet[trackId] = newTrack;
+                        });
+                        dataManager.cache.setHash(key, newTrackSet, function (err, result) {
+                            cb(err, result);
+                        })
+                    })
+                })
+            });
+
+            async.parallel(taskGroup, function (err, results) {
+                callback(err, 'OK')
+            });
+        })
+
+    };
 };
 
 exports.restore = function () {

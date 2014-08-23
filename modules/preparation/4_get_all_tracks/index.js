@@ -35,7 +35,7 @@ var getAllTracks = function (dataManager, callback) {
                                             trackSet[track._id] = track;
                                         });
 
-                                        dataManager.cache.setHash(prefix + trackEventName+'@'+username, trackSet, function (err,results) {
+                                        dataManager.cache.setHash(prefix + username +'@'+trackEventName, trackSet, function (err,results) {
                                             callback(null, "200");
                                         });
                                     }

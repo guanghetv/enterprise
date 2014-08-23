@@ -34,8 +34,8 @@ TaskManager.prototype.unRegister = function (modules_name, callback) {
 TaskManager.prototype.setTaskStatus = function (name, status) {
     this.status[ name ] = status;
     this.trigger('status_cahnge', {
-        name    : name, 
-        status  : status 
+        name: name,
+        status: status
     });
 };
 
@@ -48,29 +48,29 @@ TaskManager.prototype.run = function () {
     _.each(mTaskManager.modules, function (module) {
         moduleGroups.push(function (callback) {
 
-            mTaskManager.trigger('module_start',module.name);
+            mTaskManager.trigger('module_start', module.name);
 
-            if(module.async!=undefined){
-                module.async(mTaskManager.dataManager,function(err,keys){
+            if (module.async != undefined) {
+                module.async(mTaskManager.dataManager, function (err, keys) {
                     var keyifyTasks = [];
-                    _.each(keys,function(key){
-                        keyifyTasks.push(function(cb){
-                            console.log("【 %s 】 is running!",key);
-                            mTaskManager.runForEachModule(module,function(err,results){
-                                cb(err,results);
+                    _.each(keys, function (asyncKey) {
+                        keyifyTasks.push(function (cb) {
+                            console.log("【 %s 】 is running!", asyncKey);
+                            mTaskManager.runForEachModule(asyncKey, module, function (err, results) {
+                                cb(err, results);
                             });
                         });
                     });
 
-                    async.parallelLimit(keyifyTasks, module.limit || 3 ,function(err,results){
-                        mTaskManager.trigger('module_end',module.name);
-                        callback(err,results);
+                    async.parallelLimit(keyifyTasks, module.limit || 3, function (err, results) {
+                        mTaskManager.trigger('module_end', module.name);
+                        callback(err, results);
                     });
                 });
-            }else{
-                mTaskManager.runForEachModule(module,function(err,results){
-                    mTaskManager.trigger('module_end',module.name);
-                    callback(err,results);
+            } else {
+                mTaskManager.runForEachModule(null, module, function (err, results) {
+                    mTaskManager.trigger('module_end', module.name);
+                    callback(err, results);
                 });
             }
         });
@@ -82,33 +82,44 @@ TaskManager.prototype.run = function () {
 };
 
 
-TaskManager.prototype.runForEachModule = function (module, callback) {
+TaskManager.prototype.runForEachModule = function (asyncKey, module, callback) {
     var mTaskManager = this;
     var taskGroups = [];
     _.each(module.tasks, function (task) {
         taskGroups.push(function (callback) {
 
-            mTaskManager.trigger('task_start',task.name);
+            mTaskManager.trigger('task_start', task.name);
+
+            var getArgs = function (asyncKey, dataManager, cb) {
+                var args = [];
+                if (asyncKey == null) {
+                    args = [dataManager, cb];
+                } else {
+                    args = [asyncKey, dataManager, cb];
+                }
+                return args;
+            };
+
             try {
-                task.create(mTaskManager.dataManager, function (err, data) {
+                task.create.apply(task.create, getArgs(asyncKey, mTaskManager.dataManager, function (err, data) {
                     var STATUS_SUCCESS = 0x11;
                     mTaskManager.setTaskStatus(task.name, STATUS_SUCCESS);
-                    console.log(task.name,data);
-                    mTaskManager.trigger('task_end',task.name);
+                    console.log(task.name, data);
+                    mTaskManager.trigger('task_end', task.name);
                     callback(err, data);
-                });
+                }));
             } catch (e) {
-                task.restore(mTaskManager.dataManager, function (err) {
-                    mTaskManager.trigger('task_end',task.name);
+                task.restore.apply(task.restore, getArgs(asyncKey, mTaskManager.dataManager, function (err) {
+                    mTaskManager.trigger('task_end', task.name);
                     callback(err);
-                });
+                }));
             }
         })
     });
 
     async.series(taskGroups, function (err, results) {
-        console.log("execute each task result: ",results);
-        callback(err,results);
+        console.log("execute each task result: ", results);
+        callback(err, results);
     });
 
 };
@@ -122,7 +133,7 @@ TaskManager.prototype.on = function (event, callback) {
 
 TaskManager.prototype.trigger = function (event, args) {
     var handlers = this.eventQueue[event];
-    if(handlers){
+    if (handlers) {
         handlers.forEach(function (cb) {
             cb(args);
         });

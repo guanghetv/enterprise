@@ -5,5 +5,5 @@
     "entrance": "index.js",
     "dependencies":[],
     "seq":0,
-    "disabled" : false
+    "disabled" : true
 }
