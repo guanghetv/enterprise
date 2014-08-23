@@ -6,26 +6,26 @@ exports.create = function (username, dataManager, callback) {
 
     // 先把这个 user 的 object 取出来
     dataManager.cache.getHash('origin@user', username, function (err, user) {
+    // 再把每条 track 的 各种信息（userInfo,roomInfo,courseInfo）填充进去
         fulfillInfo(username, JSON.parse(user), function (err, result) {
             callback(err, result);
         })
     });
 
-    // 再把每条 track 的 user 信息填充进去
-    var fulfillInfo = function (username, user, callback) {
-        dataManager.cache.getHash('origin@room', function (err, rooms) {
-            var roomsArray = [];
-            _.each(rooms, function (room) {
-                room = JSON.parse(room);
-                var student = _.find(room.students, function (studentId) {
-                    return studentId == user._id;
-                });
-                if (student != undefined) {
-                    roomsArray.push(room);
-                }
-            });
 
-            user['rooms'] = roomsArray;
+    var fulfillInfo = function (username, user, callback) {
+//        dataManager.cache.getHash('origin@room', function (err, rooms) {
+//            var roomsArray = [];
+//            _.each(rooms, function (room) {
+//                room = JSON.parse(room);
+//                var student = _.find(room.students, function (studentId) {
+//                    return studentId == user._id;
+//                });
+//                if (student != undefined) {
+//                    roomsArray.push(room);
+//                }
+//            });
+//            user['rooms'] = roomsArray;
 
             var pattern = '*origin@track@$username@*';
             dataManager.cache.getKeys(pattern.replace('$username', username), function (err, keys) {
@@ -66,19 +66,18 @@ exports.create = function (username, dataManager, callback) {
                                 taskGroupForTracks.push(function (callback) {
                                     var newTrack = JSON.parse(track);
                                     newTrack['user'] = user;
+                                    //console.log(important,newTrack);
                                     fulfillCourseInfo(newTrack, trackId, trackSetKey, dataManager, function (err, result) {
+                                        var ret = 'OK';
                                         if (err) {
-                                            //console.log(err);
-                                            // 将这条数据标记为无用数据   里面的 addtonouse 需要立刻 callback error
+                                            // 将这条数据标记为无用数据
                                             addToNoUseTrack(key, trackId, track, err);
+                                            ret = 'NOT OK';
                                         } else {
                                             // 执行 calculate 方法
-                                            //console.log(important,result);
-                                            //-----------------------
                                             calculatePersonalSituation(newTrack,trackSetKey,chapterSituation);
-                                            //-----------------------
-                                            callback(null, 'OK');
                                         }
+                                        callback(null, ret);
                                     });
                                 });
                             });
@@ -89,14 +88,14 @@ exports.create = function (username, dataManager, callback) {
                     })
                 });
                 async.parallel(taskGroup, function (err, results) {
-                    //console.log(JSON.stringify(chapterSituation));
                     //removeNoUseTracks();
-                    dataManager.cache.setHash("result@individual@"+username,chapterSituation,function(err,data){
+                    dataManager.cache.setHash("middle@individual@"+username,chapterSituation,function(err,data){
+                       // console.log(JSON.stringify(data));
                         callback(err, 'OK')
                     })
                 });
-            })
-        });
+            });
+        //});
     };
 };
 

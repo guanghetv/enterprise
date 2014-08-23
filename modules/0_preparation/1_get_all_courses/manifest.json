@@ -1,6 +1,6 @@
 {
     "name": "crew_0001",
-    "description": "This is a task for test",
+    "description": "This is a task for getting all courses, and save it to cache as origin@course",
     "type":"preparation",
     "entrance": "index.js",
     "dependencies":[],

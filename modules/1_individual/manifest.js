@@ -16,5 +16,6 @@ module.exports = {
     "seq": 1,
     "async": dispatchByUsername,
     "limit": 3,
-    "disabled": false
+    "disabled": false,
+    "output":"/stats/individuals/"
 };

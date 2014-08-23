@@ -78,7 +78,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                             if (Utils.haveEssentialVariables(StatusesForFinishLesson)) {
                                 fulfillStatusInfo();
                             } else {
-                                throwError("Lack of information for FinishLesson event, delete it:");
+                                return throwError("Lack of information for FinishLesson event, delete it:");
                             }
                         }
 
@@ -110,10 +110,10 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                 track['course']['VideoUrl'] = videoObject.url;
                                                 fulfillStatusInfo();
                                             } else {
-                                                throwError("Cannot find video from database for this track, delete it:");
+                                                return throwError("Cannot find video from database for this track, delete it:");
                                             }
                                         } else {
-                                            throwError("Lack of information for FinishVideo event, delete it:");
+                                            return throwError("Lack of information for FinishVideo event, delete it:");
                                         }
                                     }
 
@@ -126,7 +126,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                         if (Utils.haveEssentialVariables(StatusesForStartProblemSet)) {
                                             fulfillStatusInfo();
                                         } else {
-                                            throwError("Lack of information for StartProblemSet event, delete it:");
+                                            return throwError("Lack of information for StartProblemSet event, delete it:");
                                         }
                                     }
 
@@ -140,7 +140,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                         if (Utils.haveEssentialVariables(StatusesForFinishProblemSet)) {
                                             fulfillStatusInfo();
                                         } else {
-                                            throwError("Lack of information for FinishProblemSet event, delete it:");
+                                            return throwError("Lack of information for FinishProblemSet event, delete it:");
                                         }
                                     }
 
@@ -174,7 +174,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                             fulfillStatusInfo();
                                                             track['status']['UserAnswer'] = [choiceObject._id];
                                                         } else {
-                                                            throwError("Cannot find choice from database for this track, delete it:");
+                                                            return throwError("Cannot find choice from database for this track, delete it:");
                                                         }
                                                         break;
                                                     case 'multichoice':
@@ -186,7 +186,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                                 fulfillStatusInfo();
                                                                 track['status']['UserAnswer'].push(choiceObject._id);
                                                             } else {
-                                                                throwError("Cannot find choice from database for this track, delete it:");
+                                                                return throwError("Cannot find choice from database for this track, delete it:");
                                                             }
                                                         });
                                                         break;
@@ -197,35 +197,35 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                     default :
                                                 }
                                             } else {
-                                                throwError("Cannot find problem from database for this track, delete it:");
+                                                return throwError("Cannot find problem from database for this track, delete it:");
                                             }
 
                                         } else {
-                                            throwError("Lack of information for AnswerProblem event, delete it:");
+                                            return throwError("Lack of information for AnswerProblem event, delete it:");
                                         }
                                     }
                                 } else {
-                                    throwError("Cannot find activity from database for this track, delete it:");
+                                    return throwError("Cannot find activity from database for this track, delete it:");
                                 }
                             } else {
-                                throwError("Lack of basic course info, delete it:");
+                                return throwError("Lack of basic course info, delete it:");
                             }
                         }
                     } else {
-                        throwError("Cannot find lesson from database for this track, delete it:");
+                        return throwError("Cannot find lesson from database for this track, delete it:");
                     }
                 } else {
-                    throwError("Cannot find layer from database for this track, delete it:");
+                    return throwError("Cannot find layer from database for this track, delete it:");
                 }
             } else {
-                throwError("Cannot find chapter from database for this track, delete it:");
+                return throwError("Cannot find chapter from database for this track, delete it:");
             }
 
-            throwError(null,track);
+            return throwError(null,track);
         });
     } else {
-        throwError("Lack of basic course info, delete it:");
+        return throwError("Lack of basic course info, delete it:");
     }
-};
+}
 
 

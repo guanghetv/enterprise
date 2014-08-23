@@ -57,6 +57,10 @@ TaskManager.prototype.run = function () {
                         keyifyTasks.push(function (cb) {
                             console.log("【 %s 】 is running!", asyncKey);
                             mTaskManager.runForEachModule(asyncKey, module, function (err, results) {
+                               // if(module.output){
+                                //getCache(result@module.name@asyncKey)  ---> DataManager (module.url)
+
+                               // }
                                 cb(err, results);
                             });
                         });
@@ -70,6 +74,12 @@ TaskManager.prototype.run = function () {
             } else {
                 mTaskManager.runForEachModule(null, module, function (err, results) {
                     mTaskManager.trigger('module_end', module.name);
+                    //if(module.output){
+                    // result@module.name
+                    //
+                    //}
+
+
                     callback(err, results);
                 });
             }
@@ -215,9 +225,9 @@ var run = function (modules, originData, callback) {
                     //-----------------------
                     (function () {
                         console.log("==========================> ROOM DIMENSION <==============================");
-                        var task = require('../../modules/room/task/index.js');
-                        var task0 = require('../../modules/room/task0/index.js');
-                        var task1 = require('../../modules/room/task1/index.js');
+                        var task = require('.././task/index.js');
+                        var task0 = require('.././task0/index.js');
+                        var task1 = require('.././task1/index.js');
                         var modules = [task, task0, task1];
                         cacheManager.load(function (err, mem) {
                             var originStats = mem.crew_0003;

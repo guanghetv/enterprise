@@ -9,7 +9,7 @@ Modules
 |    |---task2
 |    |---task3
 |    |
-|    |---Manifest.json:{
+|    |---Manifest.js:{
 |                            is_async: true | false,
 |                            index_function: function(){console.log("hello world")},
 |                            final_output: 'crew_0003',

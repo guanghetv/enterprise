@@ -1,6 +1,6 @@
 {
     "name": "crew_0001",
-    "description": "This is a task for restruct personal result",
+    "description": "This is a task for restructing personal result",
     "type":"individual",
     "entrance": "index.js",
     "seq":1,

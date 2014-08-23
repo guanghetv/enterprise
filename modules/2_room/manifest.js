@@ -5,6 +5,7 @@ module.exports = {
         return ['classA','classB','classC'];
     },
     "limit": 2,
-    "disabled":true
+    "disabled":true,
+    "output":"/stats/rooms/"
 
 };

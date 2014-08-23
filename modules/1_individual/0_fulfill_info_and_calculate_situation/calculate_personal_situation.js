@@ -93,7 +93,6 @@ module.exports = function (track, trackSetKey, chapterSituation) {
             break;
         case "FinishProblemSet":
             if (track.course != undefined && _.contains(['gonggu', 'lianxi'], track.course.ActivityType)) {
-
                 if (chapterId != undefined && lessonId != undefined) {
                     if (chapterSituation[chapterId][lessonId].stats['QuizSituation'] == undefined) {
                         chapterSituation[chapterId][lessonId].stats['QuizSituation'] = {};
@@ -105,16 +104,13 @@ module.exports = function (track, trackSetKey, chapterSituation) {
                         chapterSituation[chapterId][lessonId].stats['QuizSituation']['finishProblemSet'][time] = {};
                     }
 
-
                     var problemSize = track.status.CorrectCount / track.status.CorrectPercent;
                     chapterSituation[chapterId][lessonId].stats['QuizSituation']['finishProblemSet'][time] = {
                         wrong_ratio: (problemSize - track.status.CorrectCount).toString() + "/" + problemSize.toString(),
                         correct_ratio: track.status.CorrectCount.toString() + "/" + problemSize.toString(),
                         "is_review": track.status.isReview
                     };
-
                 }
-
             }
             break;
 

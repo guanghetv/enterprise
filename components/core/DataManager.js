@@ -9,16 +9,15 @@ var ProgressBar = require('progress');
  * @param {[type]} cache [description]
  */
 var DataManager = function (config, cache) {
-    var that = this;
+    var mDataManager = this;
     this.config = config;
     this.eventQueue = {};
     if (cache) this.cache = cache;
     this.login(function (err) {
         if (err) return console.error(err);
-        that.trigger('login_succeed', {});
+        mDataManager.trigger('login_succeed', {});
     });
 };
-
 
 DataManager.prototype.trigger = function(event, args){
     if(event in this.eventQueue) {
@@ -26,8 +25,7 @@ DataManager.prototype.trigger = function(event, args){
             handler(args);
         });
     }
-}; 
-
+};
 
 DataManager.prototype.on = function(event, handler){
     if(!(event in this.eventQueue)) this.eventQueue[event] = [];
@@ -60,7 +58,7 @@ DataManager.prototype.getCache = function (key, cachedHandler, requestHandler) {
  * @return {[type]}            [description]
  */
 DataManager.prototype.login = function (callback) {
-    var that = this;
+    var mDataManager = this;
     var loginUrl = this.config.mothership_url + '/login';
     var jar = request.jar();
     var form = request({
@@ -71,7 +69,7 @@ DataManager.prototype.login = function (callback) {
         if (httpResponse.statusCode != 200 || !body)
             return callback(new Error('login error'));
 
-        that.cookieString = jar.getCookieString(loginUrl);
+        mDataManager.cookieString = jar.getCookieString(loginUrl);
         var cookies = jar.getCookies(loginUrl);
         callback(null, cookies);
     }).form();
@@ -134,75 +132,7 @@ DataManager.prototype.request = function (options, callback) {
           });
     });
 };
-/**
- * [getUserifyTracks description]
- * @param  {Function} callback [description]
- * @return {[type]}            [description]
- */
-DataManager.prototype.getUserifyTracks = function (callback) {
-    this.getCache('users', callback, request('/users'));
-};
 
-/**
- * [getCourses description]
- * @param  {Function} callback [description]
- * @return {[type]}            [description]
- */
-DataManager.prototype.getEnterprise = function (callback) {
-    var that = this;
-    this.getCache('enterprise', callback, function () {
-        //http://0:3000/enterprise
-        that.request({ uri: that.config.mothership_url + '/enterprise' }, function (err, data) {
-            if (err)return console.error(err);
-            that.cache.set('enterprise', data, function(err, data){
-                callback(err, data);
-            });
-
-        });
-    });
-};
-
-/**
- * [getChapterById description]
- * @param  {[type]}   chapterId [description]
- * @param  {Function} callback  [description]
- * @return {[type]}             [description]
- */
-DataManager.prototype.getChapterById = function (chapterId, callback) {
-    var that = this, prefix = 'course_';
-    this.getCache(prefix + chapterId, callback, function () {
-        that.request({ uri: that.config.mothership_url + '/api/v1/courses/' + chapterId }, function (err, data) {
-            that.cache.set(prefix + chapterId, JSON.parse(data), function () {
-                callback(null, data);
-            });
-        });
-    })
-};
-
-DataManager.prototype.getAllTracks = function(callback){
-    var that = this, prefix = 'tracks';
-    var url = that.config.mothership_url + '/tracks?$and=[{"data.event":"$event_key"},{"$or":[{"data.properties.usergroup":"student"},{"data.properties.roles":"student"}]}]';
-    this.getCache(prefix, callback, function(){
-        that.getEnterprise(function(err, data){
-            var json = JSON.parse(data);
-            var taskGroups = [];
-            _.each(json.track,function(event_key){
-                taskGroups.push(function(cb){
-
-                    that.request({ uri: url.replace('$event_key', event_key) }, function(err, data){
-                        that.cache.set('track_' + event_key, data, function(){});
-                        cb(err,event_key+' OK');
-                    });
-                });
-            });
-
-            async.series(taskGroups,function(err,results){
-                console.log(results);
-                callback(err);
-            });
-        });
-    });
-};
 
 /**
  * [exports description]

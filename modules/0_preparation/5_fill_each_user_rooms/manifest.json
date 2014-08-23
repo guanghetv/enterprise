@@ -1,0 +1,9 @@
+{
+    "name": "crew_0005",
+    "description": "This is a task for fulfilling each user's rooms, and save it back to cache.",
+    "type":"preparation",
+    "entrance": "index.js",
+    "dependencies":[],
+    "seq":5,
+    "disabled" : false
+}
