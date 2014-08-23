@@ -2,10 +2,8 @@
  * Created by solomon on 14-8-21.
  */
 
-
-
 var getAllRooms = function (dataManager, callback) {
-    var prefix = 'origin@room@';
+    var prefix = 'origin@room';
     var url = dataManager.config.mothership_url + '/school/';
 
     dataManager.getCache('basic@school', function (err, schoolIdsArray) {
@@ -22,18 +20,11 @@ var getAllRooms = function (dataManager, callback) {
                             cb(err, "404");
                         } else {
                             var rooms = JSON.parse(data).rooms;
-                            var groups = [];
-                            _.each(rooms, function (room) {
-                                groups.push(function (cb) {
-                                    //console.log(room);
-                                    dataManager.cache.set(prefix + room._id, room, function () {
-                                        cb(null, 'OK');
-                                    });
-                                })
-                            });
 
-                            async.parallel(groups, function (err, results) {
-                                cb(err, '200');
+                            var map = _.indexBy(rooms,'_id');
+
+                            dataManager.cache.setHash(prefix, map, function (err,result) {
+                                cb(err, 'OK');
                             });
                         }
                     });

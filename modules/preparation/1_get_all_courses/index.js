@@ -4,7 +4,7 @@
 
 exports.create = function(mDataManager,callback){
     var getCourseInfo = function (callback) {
-        var prefix = 'origin@course@';
+        var prefix = 'origin@course';
 
         mDataManager.getCache('basic@course',function(err,courseIdsArray){
             if(err){
@@ -19,8 +19,8 @@ exports.create = function(mDataManager,callback){
                                 console.error(err);
                                 cb(err,"404");
                             }else{
-                                mDataManager.cache.set(prefix + courseId, data, function () {
-                                    cb(null,"200");
+                                mDataManager.cache.setHash(prefix, courseId, data, function (err,result) {
+                                    cb(err,"200");
                                 });
                             }
                         });
