@@ -59,9 +59,13 @@ CacheManager.prototype.setHash = function (key, obj, callback) {
 
 CacheManager.prototype.setHashField = function(key,field,value,callback){
     var mCacheManager = this;
-    mCacheManager.client.hset(key,field,JSON.stringify(value),function(){
-        callback(null,value);
-    });
+    if (/Object/.test(Object.prototype.toString(value))){
+        mCacheManager.client.hset(key,field,JSON.stringify(value),function(){
+            callback(null,value);
+        });
+    }else{
+        callback("cannot save string as value");
+    }
 };
 
 

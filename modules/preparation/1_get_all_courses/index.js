@@ -19,7 +19,7 @@ exports.create = function(mDataManager,callback){
                                 console.error(err);
                                 cb(err,"404");
                             }else{
-                                mDataManager.cache.setHash(prefix, courseId, data, function (err,result) {
+                                mDataManager.cache.setHashField(prefix, courseId, JSON.parse(data), function (err,result) {
                                     cb(err,"200");
                                 });
                             }

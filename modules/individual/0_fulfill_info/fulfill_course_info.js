@@ -1,13 +1,3 @@
-var addToNoUseTrack = function (eventKey, id, track, errormsg,shouldBeRemovedIdObject) {
-    if (shouldBeRemovedIdObject[eventKey] == undefined) {
-        shouldBeRemovedIdObject[eventKey] = [];
-    }
-    shouldBeRemovedIdObject[eventKey].push(id);
-    console.error(errormsg, track);
-};
-
-
-
 var statusInfo = [
     "isReview", //
     "Rate",
@@ -31,7 +21,7 @@ var statusInfo = [
 ];
 
 
-module.exports = function (track, trackId, trackSetKey, dataManager, username, callback,shouldBeRemovedObject) {
+module.exports = function (track, trackId, trackSetKey, dataManager,throwError) {
     var essentialVariables = [
         track.data.properties.ChapterId,
         track.data.properties.LayerId,
@@ -64,13 +54,13 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
         track['status'] = {};
         dataManager.cache.getHash("origin@course", track.data.properties.ChapterId, function (err, data) {
             var courseObject = JSON.parse(data);
-
             if (courseObject != undefined) {
                 track['course']['ChapterId'] = courseObject._id;
                 track['course']['ChapterTitle'] = courseObject.name;
                 var layerObject = _.find(courseObject.layers, function (layer) {
                     return layer._id == track.data.properties.LayerId;
                 });
+
                 if (layerObject != undefined) {
                     track['course']['LayerId'] = layerObject._id;
                     track['course']['LayerTitle'] = layerObject.title;
@@ -83,13 +73,12 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                         track['course']['LessonTitle'] = lessonObject.title;
                         track['course']['LessonType'] = lessonObject.type;
 
-
                         if (trackSetKey === 'FinishLesson') {
                             var StatusesForFinishLesson = [track.data.properties.isReview, track.data.properties.PassOrNot];
                             if (Utils.haveEssentialVariables(StatusesForFinishLesson)) {
                                 fulfillStatusInfo();
                             } else {
-                                addToNoUseTrack(trackSetKey, trackId, track, "Lack of information for FinishLesson event, delete it:");
+                                throwError("Lack of information for FinishLesson event, delete it:");
                             }
                         }
 
@@ -121,10 +110,10 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                                 track['course']['VideoUrl'] = videoObject.url;
                                                 fulfillStatusInfo();
                                             } else {
-                                                addToNoUseTrack(trackSetKey, trackId, track, "Cannot find video from database for this track, delete it:");
+                                                throwError("Cannot find video from database for this track, delete it:");
                                             }
                                         } else {
-                                            addToNoUseTrack(trackSetKey, trackId, track, "Lack of information for FinishVideo event, delete it:");
+                                            throwError("Lack of information for FinishVideo event, delete it:");
                                         }
                                     }
 
@@ -137,7 +126,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                         if (Utils.haveEssentialVariables(StatusesForStartProblemSet)) {
                                             fulfillStatusInfo();
                                         } else {
-                                            addToNoUseTrack(trackSetKey, trackId, track, "Lack of information for StartProblemSet event, delete it:");
+                                            throwError("Lack of information for StartProblemSet event, delete it:");
                                         }
                                     }
 
@@ -151,7 +140,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                         if (Utils.haveEssentialVariables(StatusesForFinishProblemSet)) {
                                             fulfillStatusInfo();
                                         } else {
-                                            addToNoUseTrack(trackSetKey, trackId, track, "Lack of information for FinishProblemSet event, delete it:");
+                                            throwError("Lack of information for FinishProblemSet event, delete it:");
                                         }
                                     }
 
@@ -185,7 +174,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                                             fulfillStatusInfo();
                                                             track['status']['UserAnswer'] = [choiceObject._id];
                                                         } else {
-                                                            addToNoUseTrack(trackSetKey, trackId, track, "Cannot find choice from database for this track, delete it:");
+                                                            throwError("Cannot find choice from database for this track, delete it:");
                                                         }
                                                         break;
                                                     case 'multichoice':
@@ -197,7 +186,7 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                                                 fulfillStatusInfo();
                                                                 track['status']['UserAnswer'].push(choiceObject._id);
                                                             } else {
-                                                                addToNoUseTrack(trackSetKey, trackId, track, "Cannot find choice from database for this track, delete it:");
+                                                                throwError("Cannot find choice from database for this track, delete it:");
                                                             }
                                                         });
                                                         break;
@@ -208,37 +197,35 @@ module.exports = function (track, trackId, trackSetKey, dataManager, username, c
                                                     default :
                                                 }
                                             } else {
-                                                addToNoUseTrack(trackSetKey, trackId, track, "Cannot find problem from database for this track, delete it:");
+                                                throwError("Cannot find problem from database for this track, delete it:");
                                             }
 
                                         } else {
-                                            addToNoUseTrack(trackSetKey, trackId, track, "Lack of information for AnswerProblem event, delete it:");
+                                            throwError("Lack of information for AnswerProblem event, delete it:");
                                         }
                                     }
                                 } else {
-                                    addToNoUseTrack(trackSetKey, trackId, track, "Cannot find activity from database for this track, delete it:");
+                                    throwError("Cannot find activity from database for this track, delete it:");
                                 }
                             } else {
-                                addToNoUseTrack(trackSetKey, trackId, track, "Lack of basic course info, delete it:");
+                                throwError("Lack of basic course info, delete it:");
                             }
                         }
                     } else {
-                        addToNoUseTrack(trackSetKey, trackId, track, "Cannot find chapter from database for this track, delete it:");
+                        throwError("Cannot find lesson from database for this track, delete it:");
                     }
                 } else {
-                    addToNoUseTrack(trackSetKey, trackId, track, "Cannot find chapter from database for this track, delete it:");
+                    throwError("Cannot find layer from database for this track, delete it:");
                 }
             } else {
-                addToNoUseTrack(trackSetKey, trackId, track, "Cannot find chapter from database for this track, delete it:");
+                throwError("Cannot find chapter from database for this track, delete it:");
             }
+
+            throwError(null,track);
         });
     } else {
-        addToNoUseTrack(trackSetKey, trackId, track, "Lack of basic course info, delete it:");
+        throwError("Lack of basic course info, delete it:");
     }
 };
 
-//
-//removeNoUseTracks(dataManager, username, function (err, result) {
-//    callback(err, result);
-//})
 
