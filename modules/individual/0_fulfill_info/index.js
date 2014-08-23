@@ -56,31 +56,35 @@ exports.create = function (username, dataManager, callback) {
                     console.error(errormsg, track);
                 };
 
-
                 _.each(keys, function (key) {
                     taskGroup.push(function (cb) {
                         dataManager.cache.getHash(key, function (err, trackSet) {
                             var trackSetKey = _.last(key.split('@'));
                             var newTrackSet = {};
+                            var taskGroupForTracks = [];
                             _.each(trackSet, function (track, trackId) {
-                                var newTrack = JSON.parse(track);
-                                newTrack['user'] = user;
-                                newTrackSet[trackId] = newTrack;
 
-                                fulfillCourseInfo(newTrack, trackId, trackSetKey, dataManager,function (err, result) {
-                                    if (err) {
-                                        //console.log(err);
-                                        // 将这条数据标记为无用数据   里面的 addtonouse 需要立刻 callback error
-                                        addToNoUseTrack(key, trackId, track, err);
-                                    } else {
-                                        // 执行 calculate 方法
-                                        //console.log(important,result);
-                                    }
+                                taskGroupForTracks.push(function(callback){
+                                    var newTrack = JSON.parse(track);
+                                    newTrack['user'] = user;
+                                    newTrackSet[trackId] = newTrack;
+
+                                    fulfillCourseInfo(newTrack, trackId, trackSetKey, dataManager,function (err, result) {
+                                        if (err) {
+                                            //console.log(err);
+                                            // 将这条数据标记为无用数据   里面的 addtonouse 需要立刻 callback error
+                                            addToNoUseTrack(key, trackId, track, err);
+                                        } else {
+                                            // 执行 calculate 方法
+                                            //console.log(important,result);
+                                            callback(null,'OK');
+                                        }
+                                    });
                                 });
                             });
-//                            dataManager.cache.setHash(key, newTrackSet, function (err, result) {
-//                                cb(err, result);
-//                            })
+                            async.parallelLimit(taskGroupForTracks,10,function(err,results){
+                                cb(err,'OK');
+                            })
                         })
                     })
                 });
