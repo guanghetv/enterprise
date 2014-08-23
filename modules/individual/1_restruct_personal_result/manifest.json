@@ -1,0 +1,8 @@
+{
+    "name": "crew_0001",
+    "description": "This is a task for restruct personal result",
+    "type":"individual",
+    "entrance": "index.js",
+    "seq":1,
+    "disabled":false
+}

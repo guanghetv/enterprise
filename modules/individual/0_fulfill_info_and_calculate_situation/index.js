@@ -1,4 +1,5 @@
 var fulfillCourseInfo = require('./fulfill_course_info');
+var calculatePersonalSituation = require('./calculate_personal_situation');
 
 exports.create = function (username, dataManager, callback) {
     console.log("--------填充 %s 信息--------", username);
@@ -13,7 +14,6 @@ exports.create = function (username, dataManager, callback) {
     // 再把每条 track 的 user 信息填充进去
     var fulfillInfo = function (username, user, callback) {
         dataManager.cache.getHash('origin@room', function (err, rooms) {
-
             var roomsArray = [];
             _.each(rooms, function (room) {
                 room = JSON.parse(room);
@@ -56,20 +56,17 @@ exports.create = function (username, dataManager, callback) {
                     console.error(errormsg, track);
                 };
 
+                var chapterSituation = {};
                 _.each(keys, function (key) {
                     taskGroup.push(function (cb) {
                         dataManager.cache.getHash(key, function (err, trackSet) {
                             var trackSetKey = _.last(key.split('@'));
-                            var newTrackSet = {};
                             var taskGroupForTracks = [];
                             _.each(trackSet, function (track, trackId) {
-
-                                taskGroupForTracks.push(function(callback){
+                                taskGroupForTracks.push(function (callback) {
                                     var newTrack = JSON.parse(track);
                                     newTrack['user'] = user;
-                                    newTrackSet[trackId] = newTrack;
-
-                                    fulfillCourseInfo(newTrack, trackId, trackSetKey, dataManager,function (err, result) {
+                                    fulfillCourseInfo(newTrack, trackId, trackSetKey, dataManager, function (err, result) {
                                         if (err) {
                                             //console.log(err);
                                             // 将这条数据标记为无用数据   里面的 addtonouse 需要立刻 callback error
@@ -77,20 +74,26 @@ exports.create = function (username, dataManager, callback) {
                                         } else {
                                             // 执行 calculate 方法
                                             //console.log(important,result);
-                                            callback(null,'OK');
+                                            //-----------------------
+                                            calculatePersonalSituation(newTrack,trackSetKey,chapterSituation);
+                                            //-----------------------
+                                            callback(null, 'OK');
                                         }
                                     });
                                 });
                             });
-                            async.parallelLimit(taskGroupForTracks,10,function(err,results){
-                                cb(err,'OK');
+                            async.parallelLimit(taskGroupForTracks, 10, function (err, results) {
+                                cb(err, 'OK');
                             })
                         })
                     })
                 });
                 async.parallel(taskGroup, function (err, results) {
-                   // removeNoUseTracks();
-                    callback(err, 'OK')
+                    //console.log(JSON.stringify(chapterSituation));
+                    //removeNoUseTracks();
+                    dataManager.cache.setHash("result@individual@"+username,chapterSituation,function(err,data){
+                        callback(err, 'OK')
+                    })
                 });
             })
         });

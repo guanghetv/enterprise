@@ -35,7 +35,6 @@ CacheManager.prototype.set = function (key, value, callback) {
 CacheManager.prototype.setHash = function (key, obj, callback) {
     var mCacheManager = this;
     if (/Object/.test(Object.prototype.toString(obj))){
-
         var tasks = [];
         _.each(obj, function (value,field) {
             tasks.push(function(cb){
