@@ -2,7 +2,6 @@
  * Created by solomon on 14-8-21.
  */
 var getAllUserNames = function(dataManager,callback){
-
     dataManager.cache.getHashFields('origin@user',function(err,data){
         callback(err,data);
     })

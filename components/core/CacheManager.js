@@ -26,21 +26,21 @@ CacheManager.prototype.get = function (key, callback) {
 };
 
 CacheManager.prototype.set = function (key, value, callback) {
-    var that = this;
+    var mCacheManager = this;
     this.client.set(key, JSON.stringify(value), function () {
-        that.get(key, callback);
+        mCacheManager.get(key, callback);
     });
 };
 
 CacheManager.prototype.setHash = function (key, obj, callback) {
-    var that = this;
+    var mCacheManager = this;
     if (/Object/.test(Object.prototype.toString(obj))){
 
         var tasks = [];
         _.each(obj, function (value,field) {
             tasks.push(function(cb){
                 if(_.size(value) > 0){
-                    that.client.hset(key,field,JSON.stringify(value),function(){
+                    mCacheManager.client.hset(key,field,JSON.stringify(value),function(){
                         var map = {};
                         map[field] = value;
                         cb(null,map);
@@ -58,32 +58,39 @@ CacheManager.prototype.setHash = function (key, obj, callback) {
 };
 
 CacheManager.prototype.removeHashField = function(key,field,callback){
-    var that = this;
-    that.client.hdel(key,field,function(){
+    var mCacheManager = this;
+    mCacheManager.client.hdel(key,field,function(){
         callback(null);
     })
 };
 
 CacheManager.prototype.getHash = function(key,field,callback){
-    var that = this;
+    var mCacheManager = this;
     if(arguments.length == 2){
         callback = field;
-        that.client.hgetall(key,function(error,reply){
+        mCacheManager.client.hgetall(key,function(error,reply){
             callback(null,reply);
         })
     }
     if(arguments.length == 3){
-        that.client.hget(key,field,function(error,reply){
+        mCacheManager.client.hget(key,field,function(error,reply){
             callback(null,reply);
         })
     }
 };
 
 CacheManager.prototype.getHashFields = function(key,callback){
-    var that = this;
-    that.client.hkeys(key, function (err, replies) {
+    var mCacheManager = this;
+    mCacheManager.client.hkeys(key, function (err, replies) {
         callback(null,replies);
     });
+};
+
+CacheManager.prototype.getKeys = function(pattern,callback){
+    var mCacheManager = this;
+    mCacheManager.client.keys(pattern,function(err,replies){
+        callback(null,replies);
+    })
 };
 
 
