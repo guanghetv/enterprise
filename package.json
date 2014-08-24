@@ -36,7 +36,6 @@
     "request": "~2.39.0",
     "shelljs": "^0.3.0",
     "synchronize": "~0.9.8",
-    "underscore": "~1.6.0",
-    "hiredis": "~0.1.17"
+    "underscore": "~1.6.0"
   }
 }
