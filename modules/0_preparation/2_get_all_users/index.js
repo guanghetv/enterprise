@@ -12,7 +12,7 @@ var getAllUsers = function (dataManager, callback) {
             callback(err, "404");
         } else {
             var users = JSON.parse(data);
-            var map = _.indexBy(users,'username');
+            var map = _.indexBy(users,'_id');
             dataManager.cache.setHash(prefix, map, function () {
                 callback(null, 'OK');
             });
