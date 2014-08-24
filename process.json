@@ -1,8 +1,21 @@
 {
-        "name"        : "DataServer",
-        "script"      : "server.js",
-        "watch"       : "true",
-        "env": {
-            "NODE_ENV": "production"
+    "apps": [
+        {
+            "name": "DataPipe",
+            "script": "server.js",
+            "watch": "true",
+            "env": {
+                "NODE_ENV": "production"
+            }
+        },
+        {
+            "name": "DataFactory",
+            "script": "enterprise.js",
+            "log_date_format": "YYYY-MM-DD",
+            "env": {
+                "NODE_ENV": "production"
+            },
+            "exec_mode": "cluster_mode"
         }
+    ]
 }
