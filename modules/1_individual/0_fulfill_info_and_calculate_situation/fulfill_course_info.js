@@ -21,7 +21,7 @@ var statusInfo = [
 ];
 
 
-module.exports = function (track, trackId, trackSetKey, dataManager,throwError) {
+module.exports = function (track, trackId, trackSetKey, dataManager, throwError) {
     var essentialVariables = [
         track.data.properties.ChapterId,
         track.data.properties.LayerId,
@@ -77,12 +77,11 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                             var StatusesForFinishLesson = [track.data.properties.isReview, track.data.properties.PassOrNot];
                             if (Utils.haveEssentialVariables(StatusesForFinishLesson)) {
                                 fulfillStatusInfo();
+                                throwError(null);
                             } else {
-                                return throwError("Lack of information for FinishLesson event, delete it:");
+                                throwError("Lack of information for FinishLesson event, delete it:");
                             }
-                        }
-
-                        if (_.contains(['FinishVideo', 'StartProblemSet', 'AnswerProblem', 'FinishProblemSet'], trackSetKey)) {
+                        } else if (_.contains(['FinishVideo', 'StartProblemSet', 'AnswerProblem', 'FinishProblemSet'], trackSetKey)) {
 
                             if (Utils.haveEssentialVariables([track.data.properties.ActivityId, track.data.properties.isReview])) {
                                 var activityObject = _.find(lessonObject.activities, function (activity) {
@@ -109,11 +108,12 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                 track['course']['VideoTitle'] = videoObject.title;
                                                 track['course']['VideoUrl'] = videoObject.url;
                                                 fulfillStatusInfo();
+                                                throwError(null);
                                             } else {
-                                                return throwError("Cannot find video from database for this track, delete it:");
+                                                throwError("Cannot find video from database for this track, delete it:");
                                             }
                                         } else {
-                                            return throwError("Lack of information for FinishVideo event, delete it:");
+                                            throwError("Lack of information for FinishVideo event, delete it:");
                                         }
                                     }
 
@@ -125,8 +125,9 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                         ];
                                         if (Utils.haveEssentialVariables(StatusesForStartProblemSet)) {
                                             fulfillStatusInfo();
+                                            throwError(null);
                                         } else {
-                                            return throwError("Lack of information for StartProblemSet event, delete it:");
+                                            throwError("Lack of information for StartProblemSet event, delete it:");
                                         }
                                     }
 
@@ -139,8 +140,9 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                         ];
                                         if (Utils.haveEssentialVariables(StatusesForFinishProblemSet)) {
                                             fulfillStatusInfo();
+                                            throwError(null);
                                         } else {
-                                            return throwError("Lack of information for FinishProblemSet event, delete it:");
+                                            throwError("Lack of information for FinishProblemSet event, delete it:");
                                         }
                                     }
 
@@ -173,11 +175,13 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                         if (choiceObject != undefined) {
                                                             fulfillStatusInfo();
                                                             track['status']['UserAnswer'] = [choiceObject._id];
+                                                            throwError(null);
                                                         } else {
-                                                            return throwError("Cannot find choice from database for this track, delete it:");
+                                                            throwError("Cannot find choice from database for this track, delete it:");
                                                         }
                                                         break;
                                                     case 'multichoice':
+                                                        var ret = true;
                                                         _.each(userAnswer, function (answer) {
                                                             var choiceObject = _.find(problemObject.choices, function (choice) {
                                                                 return choice.body === answer;
@@ -186,46 +190,53 @@ module.exports = function (track, trackId, trackSetKey, dataManager,throwError) 
                                                                 fulfillStatusInfo();
                                                                 track['status']['UserAnswer'].push(choiceObject._id);
                                                             } else {
-                                                                return throwError("Cannot find choice from database for this track, delete it:");
+                                                                ret = false;
                                                             }
                                                         });
+                                                        if (ret) {
+                                                            throwError(null);
+                                                        } else {
+                                                            throwError("Cannot find choice from database for this track, delete it:");
+                                                        }
                                                         break;
                                                     case 'singlefilling':
                                                         fulfillStatusInfo();
                                                         track['status']['UserAnswer'].push(userAnswer);
+                                                        throwError(null);
                                                         break;
                                                     default :
+                                                        throwError("Cannot read this problem's type, delete it");
                                                 }
                                             } else {
-                                                return throwError("Cannot find problem from database for this track, delete it:");
+                                                throwError("Cannot find problem from database for this track, delete it:");
                                             }
 
                                         } else {
-                                            return throwError("Lack of information for AnswerProblem event, delete it:");
+                                            throwError("Lack of information for AnswerProblem event, delete it:");
                                         }
                                     }
                                 } else {
-                                    return throwError("Cannot find activity from database for this track, delete it:");
+                                    throwError("Cannot find activity from database for this track, delete it:");
                                 }
                             } else {
-                                return throwError("Lack of basic course info, delete it:");
+                                throwError("Lack of basic course info, delete it:");
                             }
+                        } else {
+                            throwError("Cannot find this event key, delete it:");
                         }
                     } else {
-                        return throwError("Cannot find lesson from database for this track, delete it:");
+                        throwError("Cannot find lesson from database for this track, delete it:");
                     }
                 } else {
-                    return throwError("Cannot find layer from database for this track, delete it:");
+                    throwError("Cannot find layer from database for this track, delete it:");
                 }
             } else {
-                return throwError("Cannot find chapter from database for this track, delete it:");
+                throwError("Cannot find chapter from database for this track, delete it:");
             }
-
-            return throwError(null,track);
         });
     } else {
-        return throwError("Lack of basic course info, delete it:");
+        throwError("Lack of basic course info, delete it:");
     }
-}
+};
 
 
