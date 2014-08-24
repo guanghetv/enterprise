@@ -30,5 +30,21 @@ global.Utils = {
         });
 
         return newArray;
+    },
+
+    findFirstTime: function (obj) {
+        var timeTableArray = _.map(obj, function (value, timeKey) {
+            return parseInt(timeKey);
+        });
+
+        return _.min(timeTableArray);
+    },
+
+    findLastTime: function (obj) {
+        var timeTableArray = _.map(obj, function (value, timeKey) {
+            return parseInt(timeKey);
+        });
+
+        return _.max(timeTableArray);
     }
 };
