@@ -12,7 +12,7 @@ var dispatchByUsername = function (dataManager, callback) {
 
 module.exports = {
     "name": "individual",
-    "description": "This is a module for analysis and calculate each student's personal learning situation.",
+    "description": "This is a module for analyzing and calculating each student's personal learning situation.",
     "seq": 1,
     "async": dispatchByUsername,
     "limit": 3,

@@ -4,5 +4,6 @@
     "type":"room",
     "entrance": "index.js",
     "dependencies":[],
-    "seq": 0
+    "seq": 0,
+    "disabled":false
 }
