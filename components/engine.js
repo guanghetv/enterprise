@@ -61,7 +61,7 @@ exports.bootstrap = function (config, callback) {
     moduleLoader.loadModules(function(err, modules){
         taskManager.register(modules, function(err){
             if(err) return console.error(err);
-            moduleLoaderReady('modules')
+            moduleLoaderReady('modules');
             console.info('[ENGINE] %s modules is register .', modules.length);
         });
     });
