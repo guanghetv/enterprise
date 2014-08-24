@@ -105,8 +105,12 @@ CacheManager.prototype.getKeys = function(pattern,callback){
     })
 };
 
-
-
+CacheManager.prototype.flushAllData = function(callback){
+    var mCacheManager = this;
+    mCacheManager.client.flushall(function(err){
+        callback(err);
+    })
+};
 
 module.exports = CacheManager;
 

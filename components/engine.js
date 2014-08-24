@@ -41,7 +41,10 @@ exports.bootstrap = function (config, callback) {
 
     taskManager.on('mission_end', function(){
         console.log('[ENGINE] mission end.',new Date());
-        process.exit(0);
+        console.log('flushing redis cache data');
+        taskManager.dataManager.cache.flushAllData(function(err){
+            process.exit(0);
+        })
     });
 
     dataManager.on('login_succeed', function(){
