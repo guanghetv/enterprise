@@ -1,20 +1,20 @@
 var fulfillCourseInfo = require('./fulfill_course_info');
 var calculatePersonalSituation = require('./calculate_personal_situation');
 
-exports.create = function (username, dataManager, callback) {
-    console.log("--------填充 %s 信息--------", username);
+exports.create = function (userId, dataManager, callback) {
+    console.log("--------填充 %s 信息--------", userId);
 
     // 先把这个 user 的 object 取出来
-    dataManager.cache.getHash('origin@user', username, function (err, user) {
+    dataManager.cache.getHash('origin@user', userId, function (err, user) {
         // 再把每条 track 的 各种信息（userInfo,roomInfo,courseInfo）填充进去
-        fulfillInfo(username, JSON.parse(user), function (err, result) {
+        fulfillInfo(userId, JSON.parse(user), function (err, result) {
             callback(err, result);
         })
     });
 
-    var fulfillInfo = function (username, user, callback) {
-        var pattern = '*origin@track@$username@*';
-        dataManager.cache.getKeys(pattern.replace('$username', username), function (err, keys) {
+    var fulfillInfo = function (userId, user, callback) {
+        var pattern = '*origin@track@$userId@*';
+        dataManager.cache.getKeys(pattern.replace('$userId', userId), function (err, keys) {
             var taskGroup = [];
             var shouldBeRemovedIdObject = {};
             var removeNoUseTracks = function (callback) {
@@ -22,7 +22,7 @@ exports.create = function (username, dataManager, callback) {
                 _.each(shouldBeRemovedIdObject, function (shouldBeRemovedIdArray, eventKey) {
                     taskGroup.push(function (cb) {
                         shouldBeRemovedIdArray.forEach(function (id) {
-                            dataManager.cache.removeHashField('origin@track@' + username + '@' + eventKey, id, function (err) {
+                            dataManager.cache.removeHashField('origin@track@' + userId + '@' + eventKey, id, function (err) {
                                 cb(err, 'OK');
                             });
                         })
@@ -74,7 +74,7 @@ exports.create = function (username, dataManager, callback) {
             });
             async.parallel(taskGroup, function (err, results) {
                 //removeNoUseTracks();
-                dataManager.cache.setHash("middle@individual@" + username, chapterSituation, function (err, data) {
+                dataManager.cache.setHash("middle@individual@" + userId, chapterSituation, function (err, data) {
                     callback(err, 'OK')
                 })
             });

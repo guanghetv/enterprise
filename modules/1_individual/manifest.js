@@ -1,12 +1,12 @@
-var dispatchByUsername = function (dataManager, callback) {
+var dispatchByUserId = function (dataManager, callback) {
     var pattern = '*origin@track@*';
     dataManager.cache.getKeys(pattern, function (err, keys) {
-        var usersArray = _.map(keys, function (key) {
+        var userIdsArray = _.map(keys, function (key) {
             return key.split('@').slice(2, 3);
         });
-        var uniqUsersArray = _.uniq(_.flatten(usersArray));
-        console.log("==============", uniqUsersArray);
-        callback(null, uniqUsersArray);
+        var uniqUserIdsArray = _.uniq(_.flatten(userIdsArray));
+        console.log("==============", uniqUserIdsArray);
+        callback(null, uniqUserIdsArray);
     });
 };
 
@@ -14,8 +14,8 @@ module.exports = {
     "name": "individual",
     "description": "This is a module for analyzing and calculating each student's personal learning situation.",
     "seq": 1,
-    "async": dispatchByUsername,
+    "async": dispatchByUserId,
     "limit": 3,
-    "disabled": true,
+    "disabled": false,
     "output": "/stats/individuals/"
 };

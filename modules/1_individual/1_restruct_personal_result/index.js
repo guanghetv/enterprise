@@ -3,8 +3,8 @@
  */
 
 var restructAllSituation = function (user,dataManager,callback) {
-    var pattern = "middle@individual@$username";
-    dataManager.cache.getHash(pattern.replace('$username', user.username), function (err, chapterSituation) {
+    var pattern = "middle@individual@$userId";
+    dataManager.cache.getHash(pattern.replace('$userId', user._id), function (err, chapterSituation) {
         var allStats = [];
         _.each(chapterSituation, function (chapter, chapterId) {
             chapter = JSON.parse(chapter);
@@ -24,11 +24,11 @@ var restructAllSituation = function (user,dataManager,callback) {
     });
 };
 
-exports.create = function (username, dataManager, callback) {
-    dataManager.cache.getHash('origin@user', username, function (err, user) {
+exports.create = function (userId, dataManager, callback) {
+    dataManager.cache.getHash('origin@user', userId, function (err, user) {
         restructAllSituation(JSON.parse(user),dataManager,function(err,allStats){
             //console.log(JSON.stringify(allStats));
-            dataManager.cache.setHash('result@individual@'+username, _.indexBy(allStats,function(item){
+            dataManager.cache.setHash('result@individual@'+userId, _.indexBy(allStats,function(item){
                 return item.stats.chapter.chapterId;
             }),function(err,result){
                 callback(err,'OK');
