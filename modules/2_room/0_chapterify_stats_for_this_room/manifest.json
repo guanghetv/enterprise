@@ -1,0 +1,9 @@
+{
+    "name": "crew_0000",
+    "description": "This is a task for chapterify this room's stats, and save it to cache as middle@room@chapter_id",
+    "type":"room",
+    "entrance": "index.js",
+    "dependencies":[],
+    "seq": 0,
+    "disabled":false
+}

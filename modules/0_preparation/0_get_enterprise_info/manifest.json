@@ -1,5 +1,5 @@
 {
-    "name": "crew_captain",
+    "name": "crew_0000",
     "description": "This is a task for getting basic info, and save it to cache as basic@course||track||user||room",
     "type":"preparation",
     "entrance": "index.js",

@@ -12,6 +12,6 @@ module.exports = {
     "seq": 2,
     "async": dispatchByRoomId,
     "limit": 3,
-    "disabled":true,
+    "disabled":false,
     "output":"/stats/rooms/"
 };
