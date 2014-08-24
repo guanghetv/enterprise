@@ -55,7 +55,7 @@ TaskManager.prototype.run = function () {
                             console.log("【 %s 】 is running!", asyncKey);
                             mTaskManager.runForEachModule(asyncKey, module, function (err, results) {
                                 // 应该将发送数据的操作放在整个 mission 的末尾，尽可能保证用户从前端页面看到 ？？？？
-                               /* if (module.output) {
+                                if (module.output) {
                                     var hashKey = 'result@$module_name@$async_key';
                                     mTaskManager.dataManager.cache.getHash(hashKey.replace('$module_name', module.name).replace('$async_key', asyncKey),
                                         function (err, allStats) {
@@ -73,13 +73,11 @@ TaskManager.prototype.run = function () {
                                                 })
                                             });
                                             async.parallelLimit(taskGroups, 2, function (err, results) {
-                                                console.log(important,asyncKey, results);
                                                 cb(err, results);
                                             })
                                         }
                                     )
-                                }*/
-                                cb(err, results);
+                                }
                             });
                         });
                     });
@@ -91,13 +89,8 @@ TaskManager.prototype.run = function () {
                 });
             } else {
                 mTaskManager.runForEachModule(null, module, function (err, results) {
+                    // Todo: if(module.output)
                     mTaskManager.trigger('module_end', module.name);
-                    //if(module.output){
-                    // result@module.name
-                    //
-                    //}
-
-
                     callback(err, results);
                 });
             }
