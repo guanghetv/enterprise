@@ -36,7 +36,6 @@ exports.create = function (roomId, dataManager, callback) {
                                 }
 
                                 dataManager.cache.setHashField('result@room@'+roomId,chapterId,ret,function(err,result){
-                                    console.log(important,JSON.stringify(result));
                                     callback(err, 'OK');
                                 });
                             });
