@@ -43,6 +43,24 @@ module.exports = function (track, trackSetKey, chapterSituation) {
             };
             break;
 
+        case 'StartLesson':
+            if (chapterSituation[chapterId][lessonId].stats['LessonSituation'] == undefined) {
+                chapterSituation[chapterId][lessonId].stats['LessonSituation'] = {};
+            }
+            if (chapterSituation[chapterId][lessonId].stats['LessonSituation']['startLesson'] == undefined) {
+                chapterSituation[chapterId][lessonId].stats['LessonSituation']['startLesson'] = {};
+            }
+
+            if (chapterSituation[chapterId][lessonId].stats['LessonSituation']['startLesson'][time] == undefined) {
+                chapterSituation[chapterId][lessonId].stats['LessonSituation']['startLesson'][time] = {};
+            }
+
+            chapterSituation[chapterId][lessonId].stats['LessonSituation']['startLesson'][time] = {
+                "is_review": track.status.isReview
+            };
+            break;
+
+
         case 'FinishVideo':
             if (track.course.ActivityType === 'video') {
                 if (chapterId != undefined && lessonId != undefined) {

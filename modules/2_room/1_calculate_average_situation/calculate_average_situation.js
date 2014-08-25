@@ -69,8 +69,11 @@ module.exports = function (stats, cb) {
                 *       stats:{
                 *           LessonSituation:{
                 *               finishLesson:{
-                *                   "time1":{"is_review": "false", "pass_or_not": true},
-                *                   "time2":{"is_review": "false", "pass_or_not": true}
+                *                   "time1":{"is_review": false, "pass_or_not": true},
+                *                   "time2":{"is_review": false, "pass_or_not": true}
+                *               }
+                *               startLesson:{
+                *                   "time1":{"is_review": false}
                 *               }
                 *           },
                 *
@@ -122,6 +125,24 @@ module.exports = function (stats, cb) {
 
             lessonsStats[lessonId]['lesson'] = lessonObject;
 
+
+            //------------------计算LessonSituation 中的 startLesson-----------------------
+            if (lessonsStats[lessonId]['stats']['LessonSituation'] == undefined) {
+                lessonsStats[lessonId]['stats']['LessonSituation'] = {};
+            }
+
+            if (lessonsStats[lessonId]['stats']['LessonSituation']['startLesson'] == undefined) {
+                lessonsStats[lessonId]['stats']['LessonSituation']['startLesson'] = {};
+                lessonsStats[lessonId]['stats']['LessonSituation']['startLesson']['details'] = {};
+            }
+
+            if (userStatsAboutThisLesson.LessonSituation != undefined &&
+                _.keys(userStatsAboutThisLesson.LessonSituation.startLesson).length > 0) {
+                lessonsStats[lessonId]['stats']['LessonSituation']['startLesson']['details'][user._id] =
+                    userStatsAboutThisLesson.LessonSituation.startLesson;
+            }
+
+
             //------------------计算LessonSituation 中的 finishLesson-----------------------
             if (lessonsStats[lessonId]['stats']['LessonSituation'] == undefined) {
                 lessonsStats[lessonId]['stats']['LessonSituation'] = {};
@@ -139,6 +160,27 @@ module.exports = function (stats, cb) {
                 lessonsStats[lessonId]['stats']['LessonSituation']['finishLesson']['details'][user._id] =
                     userStatsAboutThisLesson.LessonSituation.finishLesson;
             }
+
+
+            //------------------ 计算LessonSituation 中的 isLearning ------------------------
+
+            if (lessonsStats[lessonId]['stats']['LessonSituation'] == undefined) {
+                lessonsStats[lessonId]['stats']['LessonSituation'] = {};
+            }
+
+            if (lessonsStats[lessonId]['stats']['LessonSituation']['isLearning'] == undefined) {
+                lessonsStats[lessonId]['stats']['LessonSituation']['isLearning'] = {};
+                lessonsStats[lessonId]['stats']['LessonSituation']['isLearning']['count'] = 0;
+                lessonsStats[lessonId]['stats']['LessonSituation']['isLearning']['details'] = [];
+            }
+
+            if (userStatsAboutThisLesson.LessonSituation != undefined) {
+                if (_.keys(userStatsAboutThisLesson.LessonSituation.startLesson).length > 0 && userStatsAboutThisLesson.LessonSituation.finishLesson == undefined) {
+                    lessonsStats[lessonId]['stats']['LessonSituation']['isLearning']['count']++;
+                    lessonsStats[lessonId]['stats']['LessonSituation']['isLearning']['details'].push(user._id);
+                }
+            }
+
 
             //------------------计算VideoSituation 中的 watchVideo--------------------------
             if (lessonObject.lessonType === 'learn' && _.keys(userStatsAboutThisLesson.VideoSituation).length > 0) {

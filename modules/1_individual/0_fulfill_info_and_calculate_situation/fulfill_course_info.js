@@ -81,7 +81,15 @@ module.exports = function (track, trackId, trackSetKey, dataManager, throwError)
                             } else {
                                 throwError("Lack of information for FinishLesson event, delete it:");
                             }
-                        } else if (_.contains(['FinishVideo', 'StartProblemSet', 'AnswerProblem', 'FinishProblemSet'], trackSetKey)) {
+                        } else if (trackSetKey === 'StartLesson'){
+                            var StatusesForStartLesson = [track.data.properties.isReview];
+                            if (Utils.haveEssentialVariables(StatusesForStartLesson)) {
+                                fulfillStatusInfo();
+                                throwError(null);
+                            } else {
+                                throwError("Lack of information for StartLesson event, delete it:");
+                            }
+                        }else if (_.contains(['FinishVideo', 'StartProblemSet', 'AnswerProblem', 'FinishProblemSet'], trackSetKey)) {
 
                             if (Utils.haveEssentialVariables([track.data.properties.ActivityId, track.data.properties.isReview])) {
                                 var activityObject = _.find(lessonObject.activities, function (activity) {
