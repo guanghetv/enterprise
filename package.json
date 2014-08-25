@@ -7,7 +7,8 @@
     "factory": "node enterprise.js",
     "app": "node app.js",
     "test": "node test/test.js",
-    "server": "node server.js"
+    "server": "node server.js",
+    "production" :"NODE_ENV=production pm2 start process.json"
   },
   "repository": {
     "type": "git",
