@@ -7,15 +7,6 @@
             "env": {
                 "NODE_ENV": "production"
             }
-        },
-        {
-            "name": "DataFactory",
-            "script": "enterprise.js",
-            "log_date_format": "YYYY-MM-DD",
-            "env": {
-                "NODE_ENV": "production"
-            },
-            "exec_mode": "cluster_mode"
         }
     ]
 }
