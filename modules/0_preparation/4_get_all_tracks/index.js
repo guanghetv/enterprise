@@ -46,13 +46,13 @@ var getAllTracks = function (dataManager, callback) {
 
                             })
                         });
-                        async.parallelLimit(userTasks, 50, function (err, results) {
+                        async.parallelLimit(userTasks, 100, function (err, results) {
                             cb(err, results);
                         })
                     });
                 });
 
-                async.parallel(taskGroups, function (err, results) {
+                async.series(taskGroups, function (err, results) {
                     if (err) {
                         console.error(err);
                     } else {

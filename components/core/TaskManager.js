@@ -72,7 +72,7 @@ TaskManager.prototype.run = function () {
                                                     })
                                                 })
                                             });
-                                            async.parallelLimit(taskGroups, 2, function (err, results) {
+                                            async.series(taskGroups, function (err, results) {
                                                 cb(err, results);
                                             })
                                         }

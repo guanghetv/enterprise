@@ -11,7 +11,7 @@ module.exports = {
     "description": "This is a module for analyzing and calculating each room's average learning situation.",
     "seq": 2,
     "async": dispatchByRoomId,
-    "limit": 3,
+    "limit": 2,
     "disabled":false,
     "output":"/stats/rooms/"
 };
