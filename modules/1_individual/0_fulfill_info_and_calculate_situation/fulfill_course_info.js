@@ -99,6 +99,8 @@ module.exports = function (track, trackId, trackSetKey, dataManager, throwError)
                                     track['course']['ActivityId'] = activityObject._id;
                                     track['course']['ActivityTitle'] = activityObject.title;
                                     track['course']['ActivityType'] = activityObject.type;
+                                    track['course']['ActivityPoolCount'] = activityObject.pool_count;
+                                    track['course']['ActivityProblemsLength'] = activityObject.problems.length;
 
                                     if (trackSetKey === 'FinishVideo') {
                                         var StatusesForFinishVideo = [

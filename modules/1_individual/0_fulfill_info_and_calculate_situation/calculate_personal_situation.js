@@ -122,12 +122,22 @@ module.exports = function (track, trackSetKey, chapterSituation) {
                         chapterSituation[chapterId][lessonId].stats['QuizSituation']['finishProblemSet'][time] = {};
                     }
 
-                    var problemSize = track.status.CorrectCount / track.status.CorrectPercent;
-                    chapterSituation[chapterId][lessonId].stats['QuizSituation']['finishProblemSet'][time] = {
-                        wrong_ratio: (problemSize - track.status.CorrectCount).toString() + "/" + problemSize.toString(),
-                        correct_ratio: track.status.CorrectCount.toString() + "/" + problemSize.toString(),
-                        "is_review": track.status.isReview
-                    };
+                    //var problemSize = track.status.CorrectCount / track.status.CorrectPercent;
+                    var problemSize;
+
+                    if(track.course.ActivityPoolCount == undefined){
+                        problemSize = track.course.ActivityProblemsLength;
+                    }else{
+                        problemSize = track.course.ActivityPoolCount;
+                    }
+
+                    if(problemSize!=0 && problemSize!=undefined){
+                        chapterSituation[chapterId][lessonId].stats['QuizSituation']['finishProblemSet'][time] = {
+                            wrong_ratio: (problemSize - track.status.CorrectCount).toString() + "/" + problemSize.toString(),
+                            correct_ratio: track.status.CorrectCount.toString() + "/" + problemSize.toString(),
+                            "is_review": track.status.isReview
+                        };
+                    }
                 }
             }
             break;
