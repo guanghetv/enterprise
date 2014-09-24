@@ -19,7 +19,7 @@ module.exports = {
     },
     production: {
         'modules_path': modules_path,
-        'mothership_url': 'http://10.122.84.12:9000',
+        'mothership_url': 'http://10.122.84.12:9002',
         'datapipe_url': 'http://localhost:3002',
         'db_url': "mongodb://root:xiaoshu815@10.160.68.76/enterprise"
     }
