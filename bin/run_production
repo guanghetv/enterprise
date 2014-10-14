@@ -2,7 +2,7 @@
 
 NODE_BIN=`which node`
 NODE_LOCK=/tmp/enterprise.lock
-NODE_APP=/Users/Lsong/Documents/projects/enterprise/app.js
+NODE_APP=/home/master/enterprise/app.js
 
 if [ -f $NODE_LOCK ]; then
 	echo "enterprise already running , exit 0"
