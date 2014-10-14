@@ -1,0 +1,1 @@
+0 */8 * * * screen -S EnterpriseApp -dm /bin/bash /home/master/enterprise/bin/run_production

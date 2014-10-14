@@ -8,7 +8,8 @@
     "app": "node app.js",
     "test": "node test/test.js",
     "server": "node server.js",
-    "production" :"NODE_ENV=production pm2 start process.json"
+    "production" :"NODE_ENV=production pm2 start process.json",
+		"cronjob": "NODE_ENV=production /usr/bin/node /home/master/enterprise/app.js"
   },
   "repository": {
     "type": "git",
