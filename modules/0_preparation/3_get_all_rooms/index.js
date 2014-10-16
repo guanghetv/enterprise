@@ -4,26 +4,23 @@
 
 var getAllRooms = function (dataManager, callback) {
     var prefix = 'origin@room';
-    var url = dataManager.config.mothership_url + '/school/';
+    var url = dataManager.config.mothership_url + '/rooms/';
 
-    dataManager.getCache('basic@school', function (err, schoolIdsArray) {
+    dataManager.getCache('basic@room', function (err, roomIdsArray) {
         if (err) {
             console.error(err);
             callback(err)
         } else {
             var taskGroups = [];
-            _.each(schoolIdsArray, function (schoolId) {
+            _.each(roomIdsArray, function (roomId) {
                 taskGroups.push(function (cb) {
-                    dataManager.request({"url": url + schoolId}, function (err, data) {
+                    dataManager.request({"url": url + roomId}, function (err, data) {
                         if (err) {
                             console.error(err);
                             cb(err, "404");
                         } else {
-                            var rooms = JSON.parse(data).rooms;
-
-                            var map = _.indexBy(rooms,'_id');
-
-                            dataManager.cache.setHash(prefix, map, function (err,result) {
+                            var room = JSON.parse(data);
+                            dataManager.cache.setHashField(prefix, room._id, room, function (err,result) {
                                 cb(err, 'OK');
                             });
                         }
