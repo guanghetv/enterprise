@@ -479,8 +479,9 @@ module.exports = function (stats, cb) {
 
                     _.each(problemDetail.answer_situation, function (countOfChoose, answerId) {
                         var averageAnswerRatio = countOfChoose / problemDetail.user_count * 100;
+                        //如果率的数字是以'.5'结尾的，则保留小数位，否则取近似数
                         lessonsStats[lessonId]['stats']['QuizSituation']['answerProblem'][problemId]['average_answer_ratio'][answerId] =
-                            Math.round(averageAnswerRatio).toString() + '%';
+                            (/^([0-9]\d*)(?:\.[05]0?)?$/.test(parseFloat(averageAnswerRatio))? averageAnswerRatio : Math.round(averageAnswerRatio)).toString() + '%';
                     });
                 });
             }
